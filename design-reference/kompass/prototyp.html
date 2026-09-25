@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Fira+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Fira+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#ECE6D9;font-family:'Fira Sans',sans-serif;color:#1F1B16}
+a{color:#1F1B16}a:hover{color:#8A6A00}
+::selection{background:#F4C530;color:#1F1B16}
+textarea:focus,input:focus,button:focus{outline:none}
+textarea::placeholder{color:#B0A796;font-style:italic}
+@keyframes bSway{0%{transform:rotate(0deg)}25%{transform:rotate(5deg)}75%{transform:rotate(-5deg)}100%{transform:rotate(0deg)}}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes popS{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes popD{from{transform:rotate(45deg) scale(0)}to{transform:rotate(45deg) scale(1)}}
+@keyframes sweep{to{background-size:100% 32%}}
+@keyframes duPulse{0%{box-shadow:0 0 0 0 rgba(244,197,48,.8)}70%,100%{box-shadow:0 0 0 12px rgba(244,197,48,0)}}
+.dv-turn{padding:40px 44px 32px;border-bottom:1px solid rgba(0,0,0,.08);scroll-margin-top:16px}.dv-thd{display:flex;align-items:baseline;gap:10px;margin:0 0 12px}.dv-tid{font:600 10px ui-monospace,Menlo,monospace;padding:3px 7px;background:#1a1a1a;color:#fff;border-radius:4px;text-decoration:none}.dv-tname{font:600 13px/1.2 system-ui,sans-serif;color:#1a1a1a}.dv-opts{display:flex;flex-wrap:wrap;gap:44px;align-items:flex-start}.dv-opt{flex:none;display:flex;flex-direction:column;gap:9px;scroll-margin-top:16px}.dv-oid{font:600 10.5px ui-monospace,Menlo,monospace;padding:3px 7px;background:rgba(0,0,0,.08);color:#1a1a1a;border-radius:5px;text-decoration:none}.dv-olabel{display:flex;align-items:baseline;gap:8px;font:400 12.5px/1.45 system-ui,sans-serif;color:rgba(0,0,0,.62);max-width:900px}.dv-card{max-width:100%;border:1px solid rgba(0,0,0,.1);border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.06),0 12px 40px -20px rgba(60,40,10,.25);overflow:hidden}.dv-opt:target .dv-oid{background:#2a78d6;color:#fff}
+</style>
+</helmet>
+<section class="dv-turn" id="t2">
+<div class="dv-thd"><a class="dv-tid" href="#t2">2</a><span class="dv-tname">Kompass-läget — koncept 2a "Kompassen lyssnar"</span></div>
+<p style="margin:0 0 30px;max-width:980px;font:13px/1.6 system-ui,sans-serif;color:rgba(0,0,0,.62);text-wrap:pretty">Detta är den godkända prototypen för <b>Kompass-läget</b>. Tryck på "Skriv ett exempel åt mig" för att se Boggel reagera medan texten skrivs, och klicka dig sedan igenom alla steg fram till sammanställningen. Gemensamt designspråk: streckad understrykning betyder att Boggel har noterat något, gul understrykning att den har läst och förstått det, romben är en punkt i resan och nålen visar riktningen.</p>
+<div class="dv-opts">
+
+<div class="dv-opt" id="2a">
+<div class="dv-olabel"><a class="dv-oid" href="#2a">2a</a><span><b>Kompassen lyssnar.</b> Nålen är Boggels uppmärksamhet. Den rycker till när du skriver något viktigt och sveper till varje mening Boggel stryker under. Varje fynd fäster som en punkt på kompassen. När du väljer vrids kompassen så att din riktning blir norr, och den gula sektorn smalnar för varje steg.</span></div>
+<div class="dv-card" style="width:1180px;background:#FAF7F0;display:grid;grid-template-columns:420px minmax(0,1fr);min-height:900px">
+<div style="background:#F3EDE0;border-right:1px solid #E4DDCE;padding:22px 30px 32px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;align-items:center;gap:7px;font-family:'DM Serif Display',serif;font-size:22px">Boggel<span style="width:7px;height:7px;background:#F4C530;transform:rotate(45deg);margin-top:5px"></span></div>
+<div style="position:relative;width:360px;height:360px;margin:6px auto 0">
+<div style="position:absolute;left:50px;top:50px;width:260px;height:260px;border-radius:50%;background:{{ aWedge }};opacity:{{ aWedgeOp }};transition:opacity .6s"></div>
+<div style="position:absolute;inset:0;transform:rotate({{ aRot }}deg);transition:transform 1.5s cubic-bezier(.6,0,.2,1)">
+<svg width="360" height="360" style="position:absolute;left:0;top:0"><circle cx="180" cy="180" r="130" fill="none" stroke="#1F1B16" stroke-width="1"></circle><circle cx="180" cy="180" r="92" fill="none" stroke="#CFC6B4" stroke-width="1" style="stroke-dasharray:2 5"></circle><path d="{{ aTicks }}" stroke="#8A8172" stroke-width="1"></path></svg>
+<div style="position:absolute;left:180px;top:22px;transform:translateX(-50%);font:500 11px 'Fira Mono',monospace;color:#8A8172">N</div>
+</div>
+<sc-for list="{{ aPins }}" as="p" hint-placeholder-count="0"><div style="position:absolute;left:180px;top:180px;width:0;height:0;transform:{{ p.tf }};opacity:{{ p.op }};transition:transform 1.5s cubic-bezier(.6,0,.2,1), opacity .4s"><div style="position:absolute;left:{{ p.off }}px;top:{{ p.off }}px;width:{{ p.sz }}px;height:{{ p.sz }}px;box-sizing:border-box;transform:rotate(45deg);background:{{ p.bg }};border:1.5px solid {{ p.bd }};transition:all .35s"></div></div></sc-for>
+<sc-for list="{{ aMarks }}" as="m" hint-placeholder-count="0"><div style="position:absolute;left:180px;top:180px;width:0;height:0;transform:{{ m.tf }};opacity:{{ m.op }};pointer-events:{{ m.pe }};transition:transform 1.5s cubic-bezier(.6,0,.2,1), opacity .4s"><div onMouseEnter="{{ m.enter }}" onMouseLeave="{{ m.leave }}" onClick="{{ m.pick }}" style="position:absolute;left:-15px;top:-15px;width:30px;height:30px;box-sizing:border-box;border-radius:50%;border:1.5px solid #1F1B16;background:{{ m.bg }};display:flex;align-items:center;justify-content:center;font:600 12px 'Fira Mono',monospace;cursor:pointer;transition:background .25s">{{ m.L }}</div></div></sc-for>
+<div style="position:absolute;left:180px;top:180px;width:0;height:0;animation:{{ aSway }}">
+<div style="position:absolute;left:-1px;bottom:0;width:2px;height:104px;background:#1F1B16;transform-origin:50% 100%;transform:rotate({{ aNeedle }}deg);transition:transform 1.1s cubic-bezier(.34,1.45,.5,1)">
+<div style="position:absolute;left:50%;top:-8px;width:14px;height:14px;margin-left:-7px;transform:rotate(45deg);background:{{ aTip }};border:1.5px solid #1F1B16;box-sizing:border-box;transition:background .3s"></div>
+<div style="position:absolute;left:0;top:100%;width:2px;height:26px;background:#BDB3A0"></div>
+</div>
+<div style="position:absolute;left:-9px;top:-9px;width:18px;height:18px;border-radius:50%;background:#FAF7F0;border:2px solid #1F1B16;box-sizing:border-box"></div>
+</div>
+</div>
+<div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;border-top:1px solid #1F1B16;padding-top:12px"><span style="font:500 11px 'Fira Mono',monospace;letter-spacing:.08em;color:#8A8172">{{ aHeadKicker }}</span><span style="font:500 14px 'Fira Mono',monospace">{{ aHeadDeg }}</span></div>
+<div style="font-family:'DM Serif Display',serif;font-size:23px;line-height:1.2;margin-top:6px;min-height:28px">{{ aHeadLabel }}</div>
+</div>
+<div>
+<p style="margin:0 0 6px;font:500 11px 'Fira Mono',monospace;letter-spacing:.08em;color:#8A8172">DET BOGGEL HAR HÖRT</p>
+<sc-if value="{{ aKnowEmpty }}" hint-placeholder-val="{{ true }}"><p style="margin:0;font-size:14px;line-height:1.5;color:#8A8172">Inget än. Boggel lyssnar först och säger något sen.</p></sc-if>
+<sc-for list="{{ aKnow }}" as="kn" hint-placeholder-count="0"><div style="display:grid;grid-template-columns:18px 90px minmax(0,1fr);gap:8px;align-items:baseline;padding:7px 0;border-bottom:1px solid #E4DDCE;opacity:{{ kn.op }};animation:rise .45s both"><span style="width:8px;height:8px;transform:rotate(45deg);background:{{ kn.bg }};border:1px solid #1F1B16"></span><span style="font:10.5px 'Fira Mono',monospace;letter-spacing:.05em;color:#8A8172">{{ kn.cat }}</span><span style="font-size:14px;line-height:1.35">{{ kn.short }}</span></div></sc-for>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;min-width:0">
+<div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));column-gap:10px;padding:28px 56px 0">
+<sc-for list="{{ aSteps }}" as="s" hint-placeholder-count="6"><div style="position:relative;padding-top:20px"><div style="position:absolute;left:0;right:0;top:5px;height:0;border-top:1px {{ s.ls }} {{ s.lc }};transition:border-color .5s"></div><div style="position:absolute;left:0;top:0;width:11px;height:11px;box-sizing:border-box;transform:rotate(45deg) scale({{ s.sc }});background:{{ s.bg }};border:1.5px solid {{ s.bd }};transition:all .5s"></div><span style="font:10.5px 'Fira Mono',monospace;color:{{ s.col }};background:linear-gradient(#F4C530,#F4C530) 0 100%/{{ s.ul }} 2px no-repeat;padding-bottom:3px;transition:background-size .9s cubic-bezier(.2,.8,.2,1), color .4s">{{ s.short }}</span></div></sc-for>
+</div>
+<div style="padding:38px 56px 48px;opacity:{{ aOp }};transform:{{ aTf }};transition:{{ aTr }}">
+<sc-if value="{{ aShowText }}" hint-placeholder-val="{{ true }}">
+<p style="margin:0 0 10px;font:500 12px 'Fira Mono',monospace;letter-spacing:.08em;color:#8A8172">{{ aKicker }}</p>
+<sc-if value="{{ aHasLead }}" hint-placeholder-val="{{ false }}"><p style="margin:0 0 14px;font-size:17px;line-height:1.6;color:#4F483E;max-width:620px;text-wrap:pretty">{{ aLeadPre }}<span style="background:linear-gradient(rgba(244,197,48,.6),rgba(244,197,48,.6)) 0 88%/100% 42% no-repeat;color:#1F1B16">{{ aLeadQ }}</span>{{ aLeadPost }}</p></sc-if>
+<h3 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:36px;line-height:1.12;max-width:620px;text-wrap:pretty">{{ aH }}</h3>
+<sc-if value="{{ aIsW }}" hint-placeholder-val="{{ true }}"><p style="margin:10px 0 0;font-size:16px;line-height:1.55;color:#6E665B;max-width:600px">{{ aSub }}</p></sc-if>
+<sc-if value="{{ aSwapped }}" hint-placeholder-val="{{ false }}"><p style="margin:10px 0 0;font:12px 'Fira Mono',monospace;color:#8A8172">Prototypen kan bara läsa exempeltexten, så den visas här.</p></sc-if>
+<div style="position:relative;margin-top:24px;border-top:1px solid #E1D9C8;border-bottom:1px solid #E1D9C8;background:repeating-linear-gradient(transparent 0 31px,#EDE6D8 31px 32px)">
+<div style="position:relative;min-height:{{ aBoxH }}px;box-sizing:border-box;padding:0 2px;font:17px/32px 'Fira Sans',sans-serif;white-space:pre-wrap;overflow-wrap:break-word;color:#3A342C"><sc-for list="{{ aSegs }}" as="g" hint-placeholder-count="0"><span style="position:relative;background-image:{{ g.bgi }};background-size:{{ g.bs }};background-position:{{ g.bp }};background-repeat:no-repeat;color:{{ g.col }};transition:background-size .9s cubic-bezier(.2,.8,.2,1), color .3s">{{ g.t }}<sc-if value="{{ g.mk }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;right:-8px;top:-13px;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font:600 9px 'Fira Mono',monospace;color:#1F1B16;animation:popS .35s both"><span style="position:absolute;inset:2px;background:{{ g.mkBg }};border:1px solid #1F1B16;transform:rotate(45deg)"></span><span style="position:relative">{{ g.n }}</span></span></sc-if></span></sc-for></div>
+<sc-if value="{{ aIsW }}" hint-placeholder-val="{{ true }}"><textarea value="{{ aText }}" onChange="{{ aOnText }}" placeholder="Börja var som helst…" style="position:absolute;inset:0;width:100%;height:100%;box-sizing:border-box;padding:0 2px;margin:0;border:none;background:transparent;font:17px/32px 'Fira Sans',sans-serif;color:#1F1B16;resize:none;overflow:hidden;caret-color:#1F1B16"></textarea></sc-if>
+</div>
+<sc-if value="{{ aIsW }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:20px;margin-top:18px">
+<div style="display:flex;align-items:center;gap:10px"><div style="display:flex;gap:6px"><sc-for list="{{ aLive }}" as="l" hint-placeholder-count="0"><span style="width:8px;height:8px;box-sizing:border-box;border:1.5px solid #C9A227;animation:popD .4s both;transform:rotate(45deg)"></span></sc-for></div><span style="font:12px 'Fira Mono',monospace;color:#8A8172">{{ aLiveLabel }}</span></div>
+<div style="display:flex;gap:22px;align-items:center">
+<button onClick="{{ aSimulate }}" style="background:none;border:none;padding:0;font:15px 'Fira Sans',sans-serif;color:#6E665B;text-decoration:underline;text-underline-offset:3px;cursor:pointer" style-hover="color:#1F1B16">Skriv ett exempel åt mig</button>
+<button onClick="{{ aRead }}" style="display:inline-flex;align-items:center;gap:10px;background:#F4C530;color:#1F1B16;border:none;padding:13px 22px;font:600 15px 'Fira Sans',sans-serif;cursor:pointer;box-shadow:2px 2px 0 #1F1B16;transition:transform .12s, box-shadow .12s" style-hover="background:#F0BA14" style-active="transform:translate(2px,2px);box-shadow:0 0 0 #1F1B16">Klar, vad ser du? →</button>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{ aIsR }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 36px;margin-top:26px">
+<sc-for list="{{ aNotes }}" as="nt" hint-placeholder-count="0"><div style="display:grid;grid-template-columns:22px minmax(0,1fr);gap:10px;padding:12px 0;border-top:1px solid #E4DDCE;opacity:{{ nt.op }};transform:translateY({{ nt.ty }}px);transition:opacity .6s, transform .6s cubic-bezier(.2,.8,.2,1)"><span style="position:relative;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font:600 9px 'Fira Mono',monospace;margin-top:2px"><span style="position:absolute;inset:2px;background:#F4C530;border:1px solid #1F1B16;transform:rotate(45deg)"></span><span style="position:relative">{{ nt.n }}</span></span><div><div style="font:10.5px 'Fira Mono',monospace;letter-spacing:.08em;color:#8A8172">{{ nt.cat }}</div><div style="font-family:'DM Serif Display',serif;font-style:italic;font-size:18px;line-height:1.3;margin-top:3px;text-wrap:pretty">{{ nt.note }}</div></div></div></sc-for>
+</div>
+<sc-if value="{{ aReadDone }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;gap:14px;align-items:flex-start;margin-top:26px;animation:rise .6s .2s both"><span style="flex:none;width:9px;height:9px;background:#F4C530;border:1px solid #1F1B16;transform:rotate(45deg);margin-top:9px"></span><div style="display:flex;flex-direction:column;gap:18px"><p style="margin:0;font-size:19px;line-height:1.55;color:#2B2620;max-width:600px;text-wrap:pretty">{{ aSynth }}</p><div><button onClick="{{ aChoose }}" style="display:inline-flex;align-items:center;gap:10px;background:#F4C530;color:#1F1B16;border:none;padding:13px 22px;font:600 15px 'Fira Sans',sans-serif;cursor:pointer;box-shadow:2px 2px 0 #1F1B16;transition:transform .12s, box-shadow .12s" style-hover="background:#F0BA14" style-active="transform:translate(2px,2px);box-shadow:0 0 0 #1F1B16">Se vart det pekar →</button></div></div></div>
+</sc-if>
+</sc-if>
+</sc-if>
+<sc-if value="{{ aChooseOpen }}" hint-placeholder-val="{{ false }}">
+<p style="margin:0 0 10px;font:500 12px 'Fira Mono',monospace;letter-spacing:.08em;color:#8A8172">{{ aKicker }}</p>
+<h3 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:36px;line-height:1.12">{{ aH }}</h3>
+<p style="margin:10px 0 0;font-size:16px;line-height:1.55;color:#6E665B;max-width:600px">{{ aCsub }}</p>
+<div style="display:flex;flex-direction:column;border-top:1px solid #1F1B16;margin-top:26px">
+<sc-for list="{{ aDirs }}" as="d" hint-placeholder-count="3"><div onMouseEnter="{{ d.enter }}" onMouseLeave="{{ d.leave }}" onClick="{{ d.pick }}" style="display:grid;grid-template-columns:64px minmax(0,1fr) 150px;gap:18px;padding:20px 14px;margin:0 -14px;border-bottom:1px solid #E4DDCE;cursor:pointer;background:{{ d.bg }};transition:background .2s">
+<div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start"><span style="width:30px;height:30px;box-sizing:border-box;border-radius:50%;border:1.5px solid #1F1B16;background:{{ d.lBg }};display:flex;align-items:center;justify-content:center;font:600 12px 'Fira Mono',monospace;transition:background .25s">{{ d.L }}</span><span style="font:11px 'Fira Mono',monospace;color:#8A8172">{{ d.deg }}</span></div>
+<div><div style="font-family:'DM Serif Display',serif;font-size:24px;line-height:1.18;text-wrap:pretty">{{ d.t }}</div><p style="margin:6px 0 0;font-size:15px;line-height:1.5;color:#4F483E;text-wrap:pretty">{{ d.why }}</p><div style="display:flex;align-items:center;gap:6px;margin-top:10px"><span style="font:italic 13px 'Fira Sans',sans-serif;color:#8A8172;margin-right:4px">Bygger på</span><sc-for list="{{ d.nums }}" as="nm" hint-placeholder-count="0"><span style="position:relative;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font:600 9px 'Fira Mono',monospace"><span style="position:absolute;inset:2px;background:#F4C530;border:1px solid #1F1B16;transform:rotate(45deg)"></span><span style="position:relative">{{ nm.n }}</span></span></sc-for></div></div>
+<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;padding-top:6px"><span style="display:flex;gap:6px"><sc-for list="{{ d.fit }}" as="f" hint-placeholder-count="3"><span style="width:8px;height:8px;transform:rotate(45deg);background:{{ f }};border:1px solid #1F1B16"></span></sc-for></span><span style="font:11px 'Fira Mono',monospace;color:#6E665B;text-align:right">{{ d.fitLabel }}</span></div>
+</div></sc-for>
+</div>
+<sc-if value="{{ aHasSel }}" hint-placeholder-val="{{ false }}">
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px 36px;margin-top:22px;animation:rise .45s both">
+<div style="display:flex;flex-direction:column;gap:6px"><span style="display:flex;align-items:center;gap:8px;font:500 11px 'Fira Mono',monospace;letter-spacing:.08em;color:#6E665B"><span style="width:14px;height:2px;background:#F4C530"></span>TALAR FÖR</span><span style="font-size:15.5px;line-height:1.5">{{ aSelPlus }}</span></div>
+<div style="display:flex;flex-direction:column;gap:6px"><span style="display:flex;align-items:center;gap:8px;font:500 11px 'Fira Mono',monospace;letter-spacing:.08em;color:#6E665B"><span style="width:14px;height:0;border-top:2px dotted #1F1B16"></span>TÄNK PÅ</span><span style="font-size:15.5px;line-height:1.5">{{ aSelMinus }}</span></div>
+<div style="grid-column:1/-1;display:flex;gap:22px;align-items:center"><button onClick="{{ aConfirm }}" style="display:inline-flex;align-items:center;gap:10px;background:#F4C530;color:#1F1B16;border:none;padding:13px 22px;font:600 15px 'Fira Sans',sans-serif;cursor:pointer;box-shadow:2px 2px 0 #1F1B16;transition:transform .12s, box-shadow .12s" style-hover="background:#F0BA14" style-active="transform:translate(2px,2px);box-shadow:0 0 0 #1F1B16">Sätt kurs →</button><button onClick="{{ aUnsel }}" style="background:none;border:none;padding:0;font:15px 'Fira Sans',sans-serif;color:#6E665B;text-decoration:underline;text-underline-offset:3px;cursor:pointer" style-hover="color:#1F1B16">Jämför de andra</button></div>
+</div>
+</sc-if>
+</sc-if>
+<sc-if value="{{ aGoing }}" hint-placeholder-val="{{ false }}">
+<div style="padding-top:36px;animation:rise .5s both">
+<p style="margin:0 0 12px;font:500 12px 'Fira Mono',monospace;letter-spacing:.08em;color:#8A8172">KURS SATT · {{ aGoDeg }}</p>
+<h3 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:40px;line-height:1.15;max-width:640px"><span style="background:linear-gradient(#F4C530,#F4C530) 0 90%/0% 32% no-repeat;animation:sweep .9s .25s cubic-bezier(.2,.8,.2,1) forwards">{{ aGoT }}</span></h3>
+<p style="margin:16px 0 0;font-size:17px;line-height:1.55;color:#6E665B">Kompassen vrider sig så att din riktning blir norr. Nästa: {{ aNext }}.</p>
+</div>
+</sc-if>
+<sc-if value="{{ aIsS }}" hint-placeholder-val="{{ false }}">
+<p style="margin:0 0 10px;font:500 12px 'Fira Mono',monospace;letter-spacing:.08em;color:#8A8172">STEG 6 AV 6 · SAMMANSTÄLLNING</p>
+<h3 style="margin:0;font-family:'DM Serif Display',serif;font-weight:400;font-size:36px;line-height:1.12">Din idé, som den ser ut nu.</h3>
+<p style="margin:18px 0 0;font-family:'DM Serif Display',serif;font-size:27px;line-height:1.38;max-width:680px;text-wrap:pretty"><span style="background:linear-gradient(#F4C530,#F4C530) 0 90%/0% 32% no-repeat;animation:sweep .9s .3s cubic-bezier(.2,.8,.2,1) forwards">{{ aS1 }}</span>. Första steget: <span style="background:linear-gradient(#F4C530,#F4C530) 0 90%/0% 32% no-repeat;animation:sweep .9s 1s cubic-bezier(.2,.8,.2,1) forwards">{{ aS2 }}</span>.</p>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:34px;border-top:1px solid #1F1B16;padding-top:20px">
+<div><p style="display:flex;align-items:center;gap:8px;margin:0 0 6px;font:500 11px 'Fira Mono',monospace;letter-spacing:.08em;color:#6E665B"><span style="width:14px;height:2px;background:#F4C530"></span>DET SOM BÄR</p><sc-for list="{{ aBar }}" as="it" hint-placeholder-count="3"><div style="padding:12px 0;border-bottom:1px solid #E4DDCE;animation:rise .5s both"><div style="font-weight:500;font-size:16.5px">{{ it.t }}</div><div style="font:italic 14.5px/1.5 'Fira Sans',sans-serif;color:#6E665B;margin-top:4px">Du skrev: <span style="background:linear-gradient(rgba(244,197,48,.55),rgba(244,197,48,.55)) 0 88%/100% 40% no-repeat;color:#2B2620">{{ it.q }}</span></div></div></sc-for></div>
+<div><p style="display:flex;align-items:center;gap:8px;margin:0 0 6px;font:500 11px 'Fira Mono',monospace;letter-spacing:.08em;color:#6E665B"><span style="width:14px;height:0;border-top:2px dotted #1F1B16"></span>ATT ARBETA MED</p><sc-for list="{{ aWork }}" as="it" hint-placeholder-count="3"><div style="padding:12px 0;border-bottom:1px solid #E4DDCE;animation:rise .5s both"><div style="font-weight:500;font-size:16.5px">{{ it.t }}</div><div style="display:grid;grid-template-columns:20px minmax(0,1fr);gap:6px;margin-top:6px;font-size:14.5px;line-height:1.5;color:#2B2620"><span style="font:500 12px 'Fira Mono',monospace;color:#8A8172">→</span><span>{{ it.next }}</span></div></div></sc-for></div>
+</div>
+<div style="display:flex;gap:22px;align-items:center;margin-top:24px"><button onClick="{{ aReset }}" style="background:none;border:none;padding:0;font:15px 'Fira Sans',sans-serif;color:#6E665B;text-decoration:underline;text-underline-offset:3px;cursor:pointer" style-hover="color:#1F1B16">Börja om</button><span style="font:12px 'Fira Mono',monospace;color:#A39A8A">Förutsättningar och Konkurrenter hoppas över i prototypen.</span></div>
+</sc-if>
+</div>
+</div>
+</div>
+</div>
+
+
+</div>
+</section>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const INK='#1F1B16',Y='#F4C530';
+const STEPS=['Dina tankar','Riktning','Problemet','Förutsättningar','Konkurrenter','Sammanställning'];
+const S0=`Jag har jobbat som IT-konsult i sex år, mest med att koppla ihop system som inte vill prata med varandra. Det roligaste är när något krångligt plötsligt blir enkelt för den som använder det.
+
+Min mamma är undersköterska och klagar varje vecka på hur mycket tid som går till papper istället för patienter. Jag har byggt några småsaker åt hennes mottagning på fritiden.
+
+Jag vill inte sälja timmar resten av livet. Jag vill bygga något som fungerar även när jag sover. Men jag klarar mig inte utan lön mer än ett halvår.`;
+const S1=`Efter varje besök ska allt skrivas in i journalen, och sen en gång till i systemet för fakturor. Mamma säger att hon lägger nästan en timme om dagen på det.
+
+De har provat ett stort system men det var för dyrt och krångligt. Chefen har frågat om jag kan hjälpa dem, men de har ingen budget för något stort.`;
+const R=[{
+step:0,cstep:1,box:384,
+q:'Berätta med egna ord.',sub:'Vad kan du, vad gillar du, vad skaver? Det behöver inte hänga ihop. Boggel läser allt innan den säger något.',
+intro:'Skriv som du tänker. Jag letar efter vad du kan, vad du bryr dig om och var gränserna går.',
+sample:S0,
+synth:'Tre saker återkommer: du gör krångligt enkelt, du ser ett problem i vården på nära håll, och du vill bygga något eget utan att riskera för mycket.',
+cq:'Det pekar åt tre håll.',csub:'Varje riktning bygger på det du skrev. Ju fler av dina meningar den vilar på, desto starkare är den.',
+finds:[
+{id:'f1',p:'koppla ihop system som inte vill prata med varandra',cat:'Förmåga',note:'Integrationer är din tekniska kärna.',short:'kopplar ihop system',a:-44,x:24,y:44},
+{id:'f2',p:'krångligt plötsligt blir enkelt',cat:'Drivkraft',note:'Du drivs av att göra saker enkla, inte av tekniken i sig.',short:'gör krångligt enkelt',a:96,x:62,y:36},
+{id:'f3',p:'hur mycket tid som går till papper',cat:'Problem',note:'Ett verkligt problem, på nära håll.',short:'papper i vården',a:26,x:58,y:82},
+{id:'f4',p:'byggt några småsaker åt hennes mottagning',cat:'Tillgång',note:'Du har redan testat, och du har en testplats.',short:'har en testplats',a:52,x:70,y:90},
+{id:'f5',p:'fungerar även när jag sover',cat:'Ambition',note:'Du vill bygga en produkt, inte sälja timmar.',short:'vill bygga produkt',a:12,x:90,y:58},
+{id:'f6',p:'klarar mig inte utan lön mer än ett halvår',cat:'Gräns',note:'En tydlig gräns för hur mycket du kan riskera.',short:'max ett halvår utan lön',a:-20,x:32,y:62}],
+dirs:[
+{t:'Ett administrativt verktyg för små vårdmottagningar',short:'Vårdverktyg',why:'Du börjar där problemet redan finns, med din mammas mottagning som första testplats.',plus:'Ett verkligt problem och en testplats från första dagen.',minus:'Vården köper långsamt. Ett halvår utan lön kan bli kort.',src:['f3','f4','f5','f2'],a:36,x:76,y:84},
+{t:'Integrationskonsult för vården, med en egen produkt på sikt',short:'Konsult först',why:'Uppdrag betalar lönen medan du lär dig vad mottagningarna behöver.',plus:'Intäkter från start, inom din gräns på ett halvår.',minus:'Lätt att fastna i uppdrag och aldrig bygga det egna.',src:['f1','f6','f3'],a:-32,x:28,y:78},
+{t:'Ett förenklingsverktyg för en annan bransch',short:'Annan bransch',why:'Samma förmåga, en annan marknad. Svagare, eftersom du inte nämner någon annan bransch du känner lika väl.',plus:'Större frihet att välja marknad.',minus:'Du börjar utan kunskap om kunderna och utan testplats.',src:['f2','f5'],a:112,x:84,y:22}]
+},{
+step:2,cstep:2,box:224,
+q:'Vad är det som tar tid på mottagningen?',sub:'Beskriv en vanlig dag så konkret du kan. Siffror hjälper, men gissningar går också bra.',
+intro:'Nu vill jag förstå problemet så konkret som möjligt. Tid, pengar och vem som bestämmer är det viktigaste.',
+sample:S1,
+synth:'Problemet är konkret och går att mäta, och någon har redan bett om hjälp. Det som skaver är priset.',
+cq:'Var börjar du?',csub:'Tre sätt att ta första steget. Alla håller sig inom den riktning du valde.',
+finds:[
+{id:'g1',p:'en gång till i systemet för fakturor',cat:'Problem',note:'Dubbelregistrering. Konkret och lätt att förklara.',short:'skriver allt två gånger',a:8,x:6,y:2},
+{id:'g2',p:'nästan en timme om dagen',cat:'Värde',note:'Går att räkna på: runt 20 timmar i månaden per person.',short:'en timme om dagen',a:20,x:3,y:-7},
+{id:'g3',p:'för dyrt och krångligt',cat:'Lucka',note:'De stora systemen är för stora. Där finns en lucka.',short:'stora system passar inte',a:-6,x:10,y:-2},
+{id:'g4',p:'Chefen har frågat om jag kan hjälpa dem',cat:'Efterfrågan',note:'Någon har redan bett om det. Det är en starkare signal än du kanske tror.',short:'chefen har frågat',a:30,x:-6,y:6},
+{id:'g5',p:'ingen budget för något stort',cat:'Hinder',note:'Priset måste vara litet, eller betala sig självt genom tiden de sparar.',short:'liten budget',a:-20,x:-9,y:-5}],
+dirs:[
+{t:'Ett litet verktyg som flyttar journalanteckningen till fakturan',short:'Litet verktyg',why:'Du löser exakt det som tar en timme om dagen, utan att ersätta deras system.',plus:'Mätbart värde, och de stora systemen är för krångliga för dem.',minus:'Du behöver sätta dig in i journalsystemens regler kring säkerhet.',src:['g1','g2','g3'],a:6,x:10,y:6},
+{t:'Ett betalt pilotprojekt för mammans mottagning',short:'Betald pilot',why:'Chefen har redan frågat. Gör det till din första kund, men ta betalt.',plus:'En första kund som redan vill. Du lär dig med riktiga användare.',minus:'En mottagning är inte en marknad. Planera för nummer två och tre.',src:['g4','g5','g2'],a:24,x:-8,y:8},
+{t:'Intervjua fem mottagningar till innan du bygger',short:'Intervjua fem',why:'Ta reda på om problemet finns på fler ställen innan du lägger tid på att bygga.',plus:'Du vet om det finns en marknad innan du bygger.',minus:'Tar några veckor och ger inga intäkter än.',src:['g3','g5'],a:-18,x:2,y:-10}]
+}];
+const SUM={
+bar:[{t:'Problemet är verkligt och går att mäta.',q:'nästan en timme om dagen'},{t:'Du har en testplats och någon som frågat.',q:'Chefen har frågat om jag kan hjälpa dem'},{t:'Din förmåga passar problemet.',q:'koppla ihop system som inte vill prata med varandra'}],
+work:[{t:'Vården köper långsamt.',q:null,next:'Ta reda på vem som beslutar om inköp på en mottagning.'},{t:'Priset måste vara lågt.',q:'ingen budget för något stort',next:'Räkna på vad en sparad timme om dagen är värd för dem.'},{t:'Ett halvår går fort.',q:'klarar mig inte utan lön mer än ett halvår',next:'Sätt ett datum då du ska ha en betalande kund.'}]};
+function findSegs(text,finds){
+  const hits=[];finds.forEach((f,i)=>{const at=text.indexOf(f.p);if(at>=0)hits.push({at,end:at+f.p.length,i});});
+  hits.sort((a,b)=>a.at-b.at);
+  const segs=[],order=[];let pos=0;
+  hits.forEach(h=>{if(h.at<pos)return;if(h.at>pos)segs.push({t:text.slice(pos,h.at),f:-1});segs.push({t:text.slice(h.at,h.end),f:h.i});order.push(h.i);pos=h.end;});
+  if(pos<text.length)segs.push({t:text.slice(pos),f:-1});
+  segs.push({t:'\u200b',f:-1});
+  return {segs,order};
+}
+const fmtB=b=>String(((Math.round(b)%360)+360)%360).padStart(3,'0')+'°';
+const lc=s=>s?s[0].toLowerCase()+s.slice(1):'';
+const init=()=>({r:0,phase:'write',texts:['',''],rev:0,hover:null,sel:null,picks:[],typing:false,F:'',rej:[{},{}],glance:null,going:false,swapped:false,noteHover:null});
+const pre=(k,o)=>{const out={};for(const n in o)out[k+n[0].toUpperCase()+n.slice(1)]=o[n];return out;};
+const TICKS=(()=>{let d='';for(let a=0;a<360;a+=5){const r=a*Math.PI/180,maj=a%30===0,r1=130,r2=maj?118:124;d+=`M${(180+r1*Math.sin(r)).toFixed(1)} ${(180-r1*Math.cos(r)).toFixed(1)}L${(180+r2*Math.sin(r)).toFixed(1)} ${(180-r2*Math.cos(r)).toFixed(1)}`;}return d;})();
+const tfAt=(b,rad)=>`rotate(${b}deg) translateY(-${rad}px) rotate(${-b}deg)`;
+
+class Component extends DCLogic{
+  state={a:init(),b:init(),c:init()};
+  T={a:[],b:[],c:[]};IV={};G={};
+  componentWillUnmount(){['a','b','c'].forEach(k=>this.clear(k));}
+  clear(k){this.T[k].forEach(clearTimeout);this.T[k]=[];clearInterval(this.IV[k]);clearTimeout(this.G[k]);}
+  later(k,fn,ms){this.T[k].push(setTimeout(fn,ms));}
+  up(k,p){this.setState(s=>({[k]:{...s[k],...(typeof p==='function'?p(s[k]):p)}}));}
+  fade(k,p){this.up(k,{F:'out'});this.later(k,()=>{this.up(k,s=>({...(typeof p==='function'?p(s):p),F:'in'}));this.later(k,()=>this.up(k,{F:''}),40);},320);}
+  fx(k){const f=this.state[k].F;
+    if(f==='out')return{op:0,tf:'translateY(-14px)',tr:'opacity .3s ease, transform .3s ease'};
+    if(f==='in')return{op:0,tf:'translateY(18px)',tr:'none'};
+    return{op:1,tf:'none',tr:'opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1)'};}
+  setText(k,v){const c=this.state[k],r=c.r,fd=R[r].finds;
+    const before=findSegs(c.texts[r],fd).order,after=findSegs(v,fd).order;
+    const texts=[...c.texts];texts[r]=v;const p={texts};
+    const nw=after.find(i=>!before.includes(i));
+    if(nw!=null){p.glance=nw;clearTimeout(this.G[k]);this.G[k]=setTimeout(()=>this.up(k,{glance:null}),1200);}
+    this.up(k,p);}
+  simulate(k){const c=this.state[k];if(c.typing||c.phase!=='write')return;const full=R[c.r].sample;let n=0;this.up(k,{typing:true});clearInterval(this.IV[k]);
+    this.IV[k]=setInterval(()=>{n=Math.min(full.length,n+3);this.setText(k,full.slice(0,n));if(n>=full.length){clearInterval(this.IV[k]);this.up(k,{typing:false});}},24);}
+  read(k){clearInterval(this.IV[k]);const c=this.state[k],r=c.r,fd=R[r].finds;let t=c.texts[r],swapped=false;
+    if(findSegs(t,fd).order.length<2){swapped=t.trim().length>0;t=R[r].sample;}
+    const texts=[...c.texts];texts[r]=t;const n=findSegs(t,fd).order.length;
+    this.fade(k,{phase:'read',texts,rev:0,typing:false,glance:null,swapped,sel:null,hover:null});
+    for(let i=1;i<=n;i++)this.later(k,()=>this.up(k,{rev:i}),800+i*900);}
+  confirm(k){const c=this.state[k];if(c.sel==null||c.going)return;const picks=[...c.picks];picks[c.r]=c.sel;
+    this.up(k,{picks,going:true,hover:null,noteHover:null});
+    this.later(k,()=>this.fade(k,s=>s.r===0?{r:1,phase:'write',rev:0,sel:null,going:false,swapped:false}:{phase:'summary',sel:null,going:false}),1700);}
+
+  common(k){
+    const c=this.state[k],r=c.r,RD=R[r],sum=c.phase==='summary';
+    const fs=findSegs(c.texts[r],RD.finds),n=fs.order.length;
+    const n0=findSegs(c.texts[0],R[0].finds).order.length;
+    const isW=c.phase==='write',isR=c.phase==='read',isC=c.phase==='choose';
+    const readDone=(isR||isC)&&c.rev>=n;
+    const choosing=isC||(k==='c'&&isR&&readDone);
+    const numOf=i=>(r===1?n0:0)+fs.order.indexOf(i)+1;
+    const isRev=i=>{const o=fs.order.indexOf(i);if(o<0)return false;return isR?o<c.rev:(isC||sum);};
+    const rej=c.rej[r]||{};
+    const actI=c.going?c.sel:(c.hover!=null?c.hover:c.sel);
+    const actSrc=choosing&&actI!=null?RD.dirs[actI].src:null;
+    const nh=c.noteHover;
+    const segs=fs.segs.map(g=>{
+      if(g.f<0)return{t:g.t,bgi:'none',bs:'0 0',bp:'0 0',col:isW?'transparent':((actSrc||nh)?'#8A8172':'#3A342C'),mk:false,n:'',mkBg:Y};
+      const f=RD.finds[g.f];
+      if(isW)return{t:g.t,bgi:'repeating-linear-gradient(90deg,#C9A227 0 4px,transparent 4px 7px)',bs:'100% 2px',bp:'0 100%',col:'transparent',mk:false,n:'',mkBg:Y};
+      const rv=isRev(g.f);
+      if(rej[f.id])return{t:g.t,bgi:'linear-gradient(#8A8172,#8A8172)',bs:'100% 1px',bp:'0 58%',col:'#8A8172',mk:rv,n:numOf(g.f),mkBg:'#FAF7F0'};
+      let hc='rgba(244,197,48,.6)',h='42%';
+      const lit=(actSrc&&actSrc.includes(f.id))||nh===f.id;
+      if(lit){hc=Y;h='92%';}else if(actSrc||nh)hc='rgba(244,197,48,.25)';
+      return{t:g.t,bgi:`linear-gradient(${hc},${hc})`,bs:(rv?'100% ':'0% ')+h,bp:'0 88%',col:INK,mk:rv,n:numOf(g.f),mkBg:Y};
+    });
+    const foundIds=new Set(fs.order.map(i=>RD.finds[i].id));
+    const fIdx=id=>RD.finds.findIndex(f=>f.id===id);
+    const dirs=RD.dirs.map((d,i)=>{
+      const sc=d.src.filter(id=>foundIds.has(id)&&!rej[id]).length,fit=Math.min(3,sc>=3?3:sc);
+      const on=d.src.filter(id=>foundIds.has(id));
+      return{i,L:'ABC'[i],t:d.t,short:d.short,why:d.why,a:d.a,score:sc,
+        nums:on.map(id=>({n:numOf(fIdx(id))})),
+        quotes:on.map(id=>{const rj=!!rej[id];return{q:RD.finds[fIdx(id)].p,col:rj?'#A39A8A':'#3A342C',hc:rj?'#A39A8A':'rgba(244,197,48,.55)',bp:rj?'55%':'88%',bh:rj?'1px':'40%'};}),
+        fit:[1,2,3].map(x=>x<=fit?Y:'transparent'),fitLabel:['Ingen koppling','Svag koppling','Bygger på en del','Bygger på det mesta'][fit],
+        bg:c.sel===i?'rgba(244,197,48,.16)':(c.hover===i?'rgba(244,197,48,.07)':'transparent'),
+        lBg:actI===i?Y:'#FAF7F0',op:c.going&&c.sel!==i?.3:1,
+        enter:()=>this.up(k,{hover:i}),leave:()=>this.up(k,{hover:null}),pick:()=>{if(!this.state[k].going)this.up(k,{sel:i});}};
+    });
+    const notes=fs.order.map(i=>{const f=RD.finds[i],rv=isRev(i),rj=!!rej[f.id],lit=(actSrc&&actSrc.includes(f.id))||nh===f.id;
+      return{id:f.id,n:numOf(i),cat:f.cat.toUpperCase(),note:f.note,short:f.short,op:rv?1:0,ty:rv?0:10,rej:rj,
+        col:rj?'#A39A8A':INK,td:rj?'line-through':'none',bl:lit?Y:'transparent',dBg:rj?'#FAF7F0':Y,
+        kCol:rj?'#8A8172':INK,kBd:rj?'transparent':INK,dCol:rj?INK:'#8A8172',dBd:rj?INK:'transparent',
+        enter:()=>this.up(k,{noteHover:f.id}),leave:()=>this.up(k,{noteHover:null}),
+        keep:()=>this.up(k,s=>{const x=s.rej.map(o=>({...o}));delete x[s.r][f.id];return{rej:x};}),
+        drop:()=>this.up(k,s=>{const x=s.rej.map(o=>({...o}));x[s.r][f.id]=true;return{rej:x};})};});
+    const cur=sum?5:(choosing?RD.cstep:RD.step);
+    const steps=STEPS.map((nm,i)=>{const skip=sum&&(i===3||i===4);const done=!skip&&(i<cur||(c.going&&i===cur)||(sum&&i===5));const now=!done&&!skip&&i===cur;
+      return{name:nm,short:nm==='Förutsättningar'?'Förutsättn.':(nm==='Sammanställning'?'Sammanst.':nm),bg:done?INK:(now?Y:'#FAF7F0'),bd:done||now?INK:'#BDB3A0',sc:now?1.25:1,col:done||now?INK:'#A39A8A',ul:done?'100%':'0%',
+        lc:done?INK:'#CFC6B4',ls:done?'solid':'dashed',seg:done?INK:(now?Y:(skip?'#EDE7DB':'#DDD5C5')),h:(i+1)*6,stc:done?INK:(now?Y:'#D5CCB9')};});
+    const p0=c.picks[0],p1=c.picks[1];
+    const sel=c.sel!=null?RD.dirs[c.sel]:null;
+    const live=fs.order.map(i=>({short:RD.finds[i].short}));
+    const f=this.fx(k);
+    return{c,r,RD,fs,n,n0,sum,isW,isR,isC,readDone,choosing,actI,actSrc,rej,foundIds,
+      pub:{isW,isR,isC,isS:sum,readDone,going:c.going,chooseOpen:choosing&&!c.going,
+        kicker:isW?`STEG ${RD.step+1} AV 6 · ${STEPS[RD.step].toUpperCase()}`:isR?(readDone?`STEG ${RD.step+1} AV 6 · DET HÄR HÖRDE JAG`:'BOGGEL LÄSER…'):`STEG ${RD.cstep+1} AV 6 · ${STEPS[RD.cstep].toUpperCase()}`,
+        h:isW?RD.q:isR?'Det här hörde jag.':RD.cq,sub:RD.sub,csub:RD.csub,cq:RD.cq,synth:RD.synth,boxH:isW?RD.box:0,
+        hasLead:isW&&r===1&&p0!=null,leadPre:p0!=null?`Du valde ${lc(R[0].dirs[p0].short)}. I början skrev du att din mamma klagar på `:'',leadQ:'hur mycket tid som går till papper',leadPost:'. Där börjar vi.',
+        swapped:c.swapped&&!isW,segs,text:c.texts[r],onText:e=>this.setText(k,e.target.value),
+        simulate:()=>this.simulate(k),read:()=>this.read(k),choose:()=>this.fade(k,{phase:'choose',hover:null,sel:null}),
+        confirm:()=>this.confirm(k),unsel:()=>this.up(k,{sel:null}),reset:()=>{this.clear(k);this.fade(k,init());},
+        live,liveLabel:n===0?(c.typing?'Boggel lyssnar…':'Boggel lyssnar medan du skriver'):`Boggel har noterat ${n} ${n===1?'sak':'saker'}`,
+        dirs,notes,steps,stepLabel:`Steg ${cur+1} av 6 · ${STEPS[cur]}`,
+        hasSel:!!sel&&!c.going,selT:sel?sel.t:'',selWhy:sel?sel.why:'',selPlus:sel?sel.plus:'',selMinus:sel?sel.minus:'',
+        goT:sel?sel.t:'',next:r===0?'Problemet':'Sammanställningen',
+        s1:p0!=null?R[0].dirs[p0].t:'',s2:p1!=null?lc(R[1].dirs[p1].t):'',bar:SUM.bar,work:SUM.work.map(w=>({...w,hasQ:!!w.q})),
+        op:f.op,tf:f.tf,tr:f.tr}};
+  }
+
+  va(){
+    const X=this.common('a'),{c,r,sum,isW,isR,isC,readDone,actI,actSrc,fs,n}=X,o=X.pub;
+    const p0=c.picks[0],p1=c.picks[1];
+    const H0=p0!=null?R[0].dirs[p0].a:0,H=H0+(p1!=null?R[1].dirs[p1].a:0),rot=-H;
+    const pinsFor=rr=>{const RD=R[rr],f2=findSegs(c.texts[rr],RD.finds);
+      return RD.finds.map((f,i)=>{const oi=f2.order.indexOf(i);let st='hidden';
+        if(oi>=0){if(rr<r||sum)st='rev';else if(rr===r){if(isW)st='live';else if(isR)st=oi<c.rev?'rev':'hidden';else st='rev';}}
+        const b=(rr===0?0:H0)+f.a,abs=b+rot;
+        const reading=rr===r&&isR&&!readDone&&oi===c.rev-1;
+        const lit=!sum&&((rr===r&&isW&&c.glance===i)||reading||(actSrc&&rr===r&&actSrc.includes(f.id)));
+        const old=rr<r&&!sum,sz=lit?15:10;
+        return{tf:tfAt(abs,130),op:st==='hidden'?0:1,sz,off:-sz/2,abs,st,cat:f.cat.toUpperCase(),short:f.short,old,lit,
+          bg:lit?Y:(st==='live'?'#FAF7F0':(old?'#D9D0BE':INK)),bd:lit?INK:(st==='live'?'#C9A227':(old?'#B3AA99':INK))};});};
+    const P0=pinsFor(0),P1=pinsFor(1),Pn=r===0?P0:P1;
+    const RD=R[r];
+    const marks=RD.dirs.map((d,i)=>{const b=(r===0?0:H0)+d.a,abs=b+rot,vis=isC&&(!c.going||c.sel===i);
+      return{tf:tfAt(abs,164),op:vis?1:0,pe:vis?'auto':'none',L:'ABC'[i],b,abs,bg:actI===i?Y:'#FAF7F0',enter:o.dirs[i].enter,leave:o.dirs[i].leave,pick:o.dirs[i].pick};});
+    let na=0,sway=!sum;
+    if(isW){if(c.glance!=null){na=Pn[c.glance].abs;sway=false;}else if(c.typing){na=Math.sin(c.texts[r].length/11)*9;sway=false;}}
+    else if(isR&&!readDone&&c.rev>0){na=Pn[fs.order[c.rev-1]].abs;sway=false;}
+    else if(isC){if(c.going){na=0;sway=false;}else if(actI!=null){na=marks[actI].abs;sway=false;}}
+    let wS=0,wW=0;
+    if(sum){wW=16;wS=-8;}
+    else if(isC&&!c.going){const bs=marks.map(m=>m.abs);wS=Math.min(...bs)-16;wW=Math.max(...bs)+16-wS;}
+    else if(c.going){wW=r===0?60:24;wS=-wW/2;}
+    else if(r===1){wW=60;wS=-30;}
+    const know=[...P0,...P1].filter(p=>p.st==='rev').map(p=>({cat:p.cat,short:p.short,bg:p.lit?Y:(p.old?'#D9D0BE':INK),op:p.old?.6:1}));
+    let hk='DIN KURS',hd='—',hl='Inte satt än';
+    if(isC&&!c.going&&actI!=null){hk='PEKAR MOT';hd=fmtB(marks[actI].b);hl=RD.dirs[actI].short;}
+    else if(c.going){hk='KURS SATT';hd=fmtB(marks[c.sel].b);hl=RD.dirs[c.sel].short;}
+    else if(p0!=null){hd=fmtB(H);hl=p1!=null?`${R[0].dirs[p0].short} · ${R[1].dirs[p1].short}`:R[0].dirs[p0].short;}
+    const dirs=o.dirs.map((d,i)=>({...d,deg:fmtB(marks[i].b)}));
+    return pre('a',{...o,dirs,showText:isW||isR,
+      ticks:TICKS,rot,wedge:`conic-gradient(from ${wS}deg, rgba(244,197,48,.3) 0deg ${wW}deg, transparent ${wW}deg 360deg)`,wedgeOp:wW>0?1:0,
+      pins:[...P0,...P1],marks,needle:na,sway:sway?'bSway 5s ease-in-out infinite':'none',tip:(p0!=null||c.sel!=null)?Y:'#FAF7F0',
+      headKicker:hk,headDeg:hd,headLabel:hl,know,knowEmpty:know.length===0,goDeg:c.sel!=null?fmtB(marks[c.sel].b):''});
+  }
+
+  vb(){
+    const X=this.common('b'),{c,r,sum,isW,isR,isC,readDone,actI,actSrc,fs}=X,o=X.pub;
+    const M=440,p0=c.picks[0],p1=c.picks[1];
+    const pull=(p,t)=>({x:p.x+.38*(t.x-p.x),y:p.y+.38*(t.y-p.y)});
+    const clamp=v=>Math.max(5,Math.min(95,v));
+    const pc=p=>({l:p.x+'%',t:(100-p.y)+'%'});
+    const px=p=>`${(p.x/100*M).toFixed(1)} ${((1-p.y/100)*M).toFixed(1)}`;
+    const mvTxt=(dx,dy)=>{const a=[];if(dx>1.2)a.push('mot produkt');if(dx<-1.2)a.push('mot att sälja tid');if(dy>1.2)a.push('mot en bransch');if(dy<-1.2)a.push('mot fler branscher');return a.length?'→ flyttar dig '+a.join(' och '):'→ håller dig kvar';};
+    let pos={x:50,y:50};const pts=[pos],wps=[{...pos,l:'Start'}],lands=[],mv={};let last=null,prePick=pos,D0=null;
+    const f0=findSegs(c.texts[0],R[0].finds).order;
+    const rev0=(r>0||sum)?f0.length:(isW?0:c.rev);
+    f0.forEach((i,oi)=>{const f=R[0].finds[i];const st=oi<rev0?'rev':(r===0&&isW?'live':'hidden');lands.push({f,x:f.x,y:f.y,st,round:0,n:oi+1});
+      if(oi<rev0){const np=pull(pos,f);mv[f.id]=mvTxt(np.x-pos.x,np.y-pos.y);last={f,n:oi+1,id:f.id};pos=np;pts.push(pos);}});
+    if(f0.length&&rev0===f0.length&&!(r===0&&isW))wps.push({...pos,l:'Dina tankar'});
+    if(r===0)prePick=pos;
+    if(p0!=null){const d=R[0].dirs[p0];D0={x:d.x,y:d.y};pos=D0;pts.push(pos);wps.push({...pos,l:d.short});}
+    if((r===1||sum)&&D0){const f1=findSegs(c.texts[1],R[1].finds).order;const rev1=sum?f1.length:(isW?0:c.rev);
+      f1.forEach((i,oi)=>{const f=R[1].finds[i],t={x:clamp(D0.x+f.x),y:clamp(D0.y+f.y)};const st=oi<rev1?'rev':(isW?'live':'hidden');
+        lands.push({f,x:t.x,y:t.y,st,round:1,n:f0.length+oi+1});
+        if(oi<rev1){const np=pull(pos,t);mv[f.id]=mvTxt(np.x-pos.x,np.y-pos.y);last={f,n:f0.length+oi+1,id:f.id};pos=np;pts.push(pos);}});
+      if(f1.length&&rev1===f1.length&&!isW)wps.push({...pos,l:'Problemet'});
+      prePick=pos;
+      if(p1!=null){const d=R[1].dirs[p1];pos={x:clamp(D0.x+d.x),y:clamp(D0.y+d.y)};pts.push(pos);wps.push({...pos,l:d.short});}}
+    const RD=R[r];
+    const destP=RD.dirs.map(d=>r===0?{x:d.x,y:d.y}:{x:clamp(D0.x+d.x),y:clamp(D0.y+d.y)});
+    const dests=RD.dirs.map((d,i)=>{const vis=isC&&(!c.going||c.sel===i);return{...pc(destP[i]),L:'ABC'[i],short:d.short,op:vis?1:0,pe:vis?'auto':'none',bg:actI===i?Y:'#FAF7F0',enter:o.dirs[i].enter,leave:o.dirs[i].leave,pick:o.dirs[i].pick};});
+    let destD='',actD='';
+    if(isC&&!c.going)destP.forEach((p,i)=>{const s=`M${px(prePick)}L${px(p)}`;if(i===actI)actD=s;else destD+=s;});
+    const zoomed=r===1&&!sum&&D0;const z=zoomed?2.2:1,ctr=zoomed?D0:{x:50,y:50};
+    const cx=ctr.x/100*M,cy=(1-ctr.y/100)*M;
+    const readingId=isR&&!readDone&&last?last.id:null;
+    const landsOut=lands.map(l=>{const lit=!sum&&((actSrc&&l.round===r&&actSrc.includes(l.f.id))||readingId===l.f.id);const old=l.round<r&&!sum;
+      const flip=l.x>72;
+      return{...pc(l),tx:flip?'calc(-100% + 8px)':'-8px',to:flip?'calc(100% - 8px) 50%':'8px 50%',fd:flip?'row-reverse':'row',n:l.n,short:l.f.short,lop:(sum&&l.round===1)||(r===1&&!sum&&l.round===0&&false)?0:(sum&&l.f.id==='f3'?0:1),op:l.st==='hidden'?0:1,bg:lit?Y:(l.st==='live'?'#FAF7F0':(old?'#E4DDCE':'#FAF7F0')),bd:l.st==='live'?'#C9A227':(old?'#B3AA99':INK),bs:l.st==='live'?'dashed':'solid',nc:old?'#8A8172':INK,lc:old?'#A39A8A':(lit?INK:'#4F483E')};});
+    const dist=['Långt bort','En bit bort','Nära','Nära'];
+    const dirs=o.dirs.map((d,i)=>{const dx=destP[i].x-prePick.x,dy=destP[i].y-prePick.y,dd=Math.sqrt(dx*dx+dy*dy);
+      return{...d,dist:(r===0?(dd<32?'Nära':dd<40?'En bit bort':'Långt bort'):dist[Math.min(3,d.score)])};});
+    const act=actI!=null&&isC?RD.dirs[actI]:null;
+    const notes=o.notes.map(nt=>({...nt,mv:mv[nt.id]||''}));
+    const hereName=sum?'Sammanställning':(isC?STEPS[RD.cstep]:STEPS[RD.step]);
+    return pre('b',{...o,dirs,notes,showText:isW||isR||isC,showSub:isW||isC,sub:isW?RD.sub:RD.csub,boxH:isW?RD.box:0,
+      here:hereName,nextLabel:sum?'Klar':`Nästa: ${r===0?(isC?'Problemet':'Riktning'):(isC?'Sammanställning':'Var du börjar')}`,
+      mapTf:`translate(${M/2-z*cx}px, ${M/2-z*cy}px) scale(${z})`,inv:1/z,zoomed:!!zoomed,zoomName:D0&&p0!=null?R[0].dirs[p0].short:'',
+      quads:[{n:'Nischbyrå',l:'25%',t:'22%'},{n:'Vertikal produkt',l:'75%',t:'22%'},{n:'Generalistbyrå',l:'25%',t:'78%'},{n:'Plattform',l:'75%',t:'78%'}],
+      trailD:pts.length>1?'M'+pts.map(px).join('L'):'',destD,actD,lands:landsOut,wps:wps.map(w=>pc(w)),dests,...{duL:pc(pos).l,duT:pc(pos).t},
+      pW:isW,pWText:r===0?'Kartan rör sig först när Boggel har läst det du skrivit. Varje sak Boggel hör drar dig åt sitt håll.':`Du står vid ${R[0].dirs[p0]?R[0].dirs[p0].short.toLowerCase():''}. Kartan har zoomat in, så nu syns även små förflyttningar.`,
+      pR:isR,pRKick:last&&isR?(readDone?'DIN POSITION EFTER DET DU SKREV':`${last.n} · ${last.f.cat.toUpperCase()}`):'BOGGEL LÄSER…',pRNote:isR&&last?(readDone?RD.synth:last.f.note):'',pRMv:isR&&last&&!readDone?mv[last.id]:'',
+      pC:isC&&!c.going&&!act,pA:isC&&!!act,actT:act?act.t:'',actWhy:act?act.why:'',actPlus:act?act.plus:'',actMinus:act?act.minus:'',
+      pS:sum,route:wps.map((w,i)=>({l:w.l,arrow:i<wps.length-1?'→':''}))});
+  }
+
+  vc(){
+    const X=this.common('c'),{c,r,sum,isW,isR,readDone,choosing,rej}=X,o=X.pub;
+    const ROW=146;
+    const ord=[...o.dirs].sort((a,b)=>b.score-a.score||a.i-b.i);
+    const dirs=o.dirs.map(d=>({...d,top:ord.indexOf(d)*ROW}));
+    const treadFor=rr=>{const RD=R[rr],d=RD.dirs[c.picks[rr]],fo=findSegs(c.texts[rr],RD.finds).order.map(i=>RD.finds[i].id);
+      const q=d.src.find(id=>fo.includes(id)&&!(c.rej[rr]||{})[id]);
+      return{indent:rr*36,name:rr===0?'Dina tankar → Riktning':'Problemet',choice:d.t,quote:q?RD.finds.find(f=>f.id===q).p:'det du berättade'};};
+    const treads=[];if(r>=1||sum)treads.push(treadFor(0));if(sum)treads.push(treadFor(1));
+    const p0=c.picks[0],p1=c.picks[1];
+    const ghost0=r===0&&choosing&&c.hover!=null&&p0==null?c.hover:(r===0&&c.sel!=null&&p0==null?c.sel:null);
+    const ghost1=r===1&&choosing&&c.hover!=null&&p1==null?c.hover:(r===1&&c.sel!=null&&p1==null?c.sel:null);
+    const s1=p0!=null?R[0].dirs[p0].t:(ghost0!=null?R[0].dirs[ghost0].t:'');
+    const s2=p1!=null?lc(R[1].dirs[p1].t):(ghost1!=null?lc(R[1].dirs[ghost1].t):'');
+    const gs=(conf,g)=>conf?{col:INK,fs:'normal',ul:'100%',bb:'2px solid transparent'}:{col:'#8A8172',fs:'italic',ul:'0%',bb:'2px dashed #BDB3A0'};
+    const a1=gs(p0!=null,ghost0),a2=gs(p1!=null,ghost1);
+    const stepsDone=o.steps;
+    const kicker=choosing?`STEG ${R[r].cstep+1} AV 6 · ${STEPS[R[r].cstep].toUpperCase()}`:o.kicker;
+    return pre('c',{...o,kicker,dirs,listH:ROW*3,showText:isW||isR,chooseOpen:choosing&&!c.going,showNotes:(isR||X.isC)&&!c.going,
+      treads,indent:sum?72:r*36,mIntro:R[r].intro,liveLabel:o.live.length?'NOTERAT MEDAN DU SKRIVER':'Inget noterat än',
+      stepLabel:o.stepLabel,
+      noIdea:!s1,hasS1:!!s1,hasS2:!!s2,s1,s2,s1Col:a1.col,s1Fs:a1.fs,s1Ul:a1.ul,s1Bb:a1.bb,s2Col:a2.col,s2Fs:a2.fs,s2Ul:a2.ul,s2Bb:a2.bb});
+  }
+
+  renderVals(){return{...this.va(),...this.vb(),...this.vc()};}
+}
+</script>
+</body>
+</html>

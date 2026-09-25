@@ -8,3 +8,4 @@ När informationen behövs, läs:
 - `docs/architecture.md` – teknisk arkitektur
 - `docs/roadmap.md` – planerade funktioner
 - `docs/decisions.md` – viktiga tekniska beslut
+- `design-reference/HANDOFF.md` – designöverlämning och visuellt facit för frontend. Läs innan du gör något frontendarbete.
