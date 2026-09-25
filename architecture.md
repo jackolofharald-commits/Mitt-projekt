@@ -2,19 +2,26 @@
 
 ## Tech stack
 
-Utgångspunkten är draften byggd i Lovable (flöde + färdig visuell design), exporterad via Lovables GitHub-integration till en riktig, redigerbar kodbas (React/Tailwind + Supabase-konfiguration). Claude Code bygger vidare på denna kodbas — den återskapar inte gränssnittet från beskrivning.
+Den tekniska utgångspunkten är kodbasen som exporterades från Lovable via GitHub (React/Tailwind + Supabase-konfiguration). Claude Code bygger vidare på den tekniskt. Den visuella designen kommer däremot inte längre från Lovable-exporten, utan från två godkända prototyper framtagna i Claude Design, som ligger i design-reference/. Se Frontend nedan och design-reference/HANDOFF.md.
 
 ## Frontend
+React/Tailwind, i den befintliga kodbasen.
 
-React/Tailwind, från Lovable-exporten.
+Visuellt facit är prototyperna i design-reference/, inte Lovable-exporten.
 
-Den visuella designen (färger, former, layout) är färdig och medvetet framtagen för att kännas snygg, välkomnande och för att få användare att stanna kvar genom hela vägledningen. Den befintliga Lovable-kodbasen är facit för visuell stil.
+design-reference/kompass/prototyp.html: Kompass-läget, koncept "Kompassen lyssnar"
+design-reference/skarp/prototyp.html: Skärp-läget, koncept "Kartan"
 
-- Bygg vidare på och återanvänd befintliga komponenter, färger och stilar.
-- Föreslå eller gör inte om designen från grunden, även om en "bättre" lösning känns tillgänglig.
-- Det är okej att förbättra eller utöka styling när nya vyer/steg behöver det (t.ex. Kompass-läget, nya sektioner i backloggen) — men i samma visuella språk som redan finns.
-- Om något i den visuella implementationen behöver ändras av tekniska skäl (t.ex. prestanda, tillgänglighet): fråga eller flagga det innan det görs, istället för att bara skriva över det.
+Läs design-reference/HANDOFF.md innan du rör frontend. Där står hur prototyperna körs, vad koncepten innebär och i vilken ordning arbetet ska göras.
 
+Prototyperna är facit för layout, typografi, färger, animationer, övergångar och interaktioner. Designen är medvetet framtagen för att kännas varm och genomtänkt och för att hålla kvar användaren genom hela vägledningen.
+
+Återskapa prototyperna troget. Förbättra eller gör inte om designen på eget initiativ, även om en "bättre" lösning känns tillgänglig.
+Befintliga komponenter och stilar från Lovable-exporten får återanvändas tekniskt där de passar, men deras utseende ska följa prototyperna. Där Lovable-stilen och prototyperna skiljer sig åt gäller prototyperna.
+Bygg det gemensamma (typografi, färgtokens, understrykningar, romber, stegindikator, rörelser) som ett delat designsystem som båda lägena använder, översatt till Tailwind-konfiguration och återanvändbara komponenter.
+Prototyperna gäller för design och upplevelse, men flödets steg och avslutningsmallen styrs av CLAUDE.md. Prototyperna visar ett förkortat flöde med påhittat innehåll.
+Nya vyer eller steg som inte finns i prototyperna ska byggas i samma visuella språk.
+Om något i prototyperna inte går att bygga som det är, eller behöver ändras av tekniska skäl (t.ex. prestanda, tillgänglighet): fråga eller flagga det innan det görs, istället för att bara avvika.
 ## Backend
 
 Två separata AI-roller, inte en enda AI:
