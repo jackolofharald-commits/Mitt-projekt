@@ -4,7 +4,7 @@ Viktiga beslut som redan är fattade och bekräftade — utgångspunkter för fo
 
 ## Visuell design bevaras, byggs inte om
 
-Den befintliga Lovable-kodbasen är facit för visuell stil, inte textbeskrivningar av produkten. Designen är ett medvetet beslut framtaget för att kännas snygg och välkomnande, inte en placeholder. Styling kan förbättras/utökas för nya vyer, men i samma visuella språk. Tekniska ändringar av visuell implementation ska flaggas/diskuteras innan de görs.
+Prototyperna i `design-reference/` (se `design-reference/HANDOFF.md`) är facit för visuell stil, inte textbeskrivningar av produkten och inte den ursprungliga Lovable-exporten. Designen är ett medvetet beslut framtaget för att kännas snygg och välkomnande, inte en placeholder. Styling kan förbättras/utökas för nya vyer, men i samma visuella språk som prototyperna. Tekniska ändringar av visuell implementation ska flaggas/diskuteras innan de görs.
 
 ## Styrt flöde, inte fri chatt
 
