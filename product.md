@@ -26,7 +26,7 @@ Avslutningen har alltid samma struktur, och innehåller aldrig påhittade siffro
 2. Kort beskrivning
 3. "Så passar den dig" (kopplat till förutsättningar-steget)
 4. Vad som gör den särskiljbar (kopplat till konkurrent- och unikt-stegen)
-5. Svaga punkter / obevisade antaganden — ärligt, konkret
+5. Svaga punkter / obevisade antaganden — ärligt, konkret. Antalet är inte fast: verktyget listar precis så många genuint svaga punkter som det faktiskt hittar (en om det bara finns en, fem om det finns fem), aldrig fler för att fylla ut och aldrig färre genom att slå ihop distinkta svagheter.
 6. Exakt två konkreta nästa steg för att testa idén i verkligheten
 
 ## Funktioner
