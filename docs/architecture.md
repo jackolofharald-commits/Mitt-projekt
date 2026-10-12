@@ -27,9 +27,11 @@ Om något i prototyperna inte går att bygga som det är, eller behöver ändras
 Två separata AI-roller, inte en enda AI:
 
 - **Research-lager** (Perplexity el. motsvarande): hämtar live marknadsdata, konkurrenter, branschsignaler vid behov.
-- **Kärn-AI** (Claude API): tar emot användarens input + researchresultat + systemprompt + ev. kunskapsbas-utdrag, gör själva resonemanget och genererar frågor/förslag/slutbeskrivning.
+- **Kärn-AI**: tar emot användarens input + researchresultat + systemprompt + ev. kunskapsbas-utdrag, gör själva resonemanget och genererar frågor/förslag/slutbeskrivning.
 
-Claude Code bygger applikationskoden runt Claude API:et (prompthantering, orkestrering av anrop, strukturering av svar) — det handlar om att koda ett smart applikationslager, inte om att träna en egen modell.
+Kärn-AI:t är leverantörsoberoende i kod (`AI_PROVIDER`/`AI_API_KEY`/`AI_MODEL`, samma princip som research-lagrets abstraktion nedan) — byte av leverantör/modell är en konfigurationsändring, aldrig en kodändring. Körs i dag mot OpenRouter (ett OpenAI-kompatibelt API) med en gratis Gemma-modell som huvudmodell och en reservmodell som provas automatiskt vid timeout/fel. Anthropics Claude API är ett färdigkopplat alternativ i samma abstraktion (`AI_PROVIDER=anthropic`), men inte det som faktiskt är konfigurerat. Saknas `AI_API_KEY` körs en mock-adapter (inga externa anrop, ingen kostnad). Se README för samtliga miljövariabler.
+
+Claude Code bygger applikationskoden runt det här lagret (prompthantering, orkestrering av anrop, strukturering av svar) — det handlar om att koda ett smart applikationslager, inte om att träna en egen modell eller vara låst till en specifik leverantör.
 
 Vikt läggs på **samtalsdesign i systemprompten** (följdfrågor, reflektion av mönster användaren inte själv uttalat, undvik generiska svar) snarare än en fristående "psykologikunskapsbas" — det är interaktionsdesignen, inte en dokumentsamling, som skapar upplevelsen av att verkligen bli förstådd.
 
@@ -41,4 +43,4 @@ Supabase, konfigurerad via Lovable-exporten.
 
 - Abstraktionslager mot researchleverantören (inte hårdkodat mot Perplexity specifikt), så att leverantör kan bytas ut.
 - Cachning av återanvändbar research över användare (t.ex. 24–48h) för breda ämnen, istället för att fråga på nytt varje session — annars blir kostnaden per session onödigt hög.
-- Claude API-anrop hanterar prompthantering, orkestrering och strukturering av svar i kärnflödet.
+- Kärn-AI-anrop (se Backend ovan, leverantörsoberoende) hanterar prompthantering, orkestrering och strukturering av svar i kärnflödet.

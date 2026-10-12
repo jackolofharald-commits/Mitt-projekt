@@ -3,9 +3,10 @@
 Ersätter helt det gamla Skärp-flödet (Riktning → Dina förutsättningar →
 Problem → Målgrupp → Konkurrenter → Unikt → Affärsmodell → fast
 avslutningsmall). Det gamla finns kvar i git-historiken. Denna fil är
-källan CLAUDE.md pekar till för Skärp-läget; `product.md`, `decisions.md`,
-`roadmap.md` och `design-reference/HANDOFF.md` är uppdaterade så att de
-pekar hit i stället för att beskriva det gamla flödet.
+källan CLAUDE.md pekar till för Skärp-läget; `docs/product.md`,
+`docs/decisions.md`, `docs/roadmap.md` och `design-reference/HANDOFF.md`
+är uppdaterade så att de pekar hit i stället för att beskriva det gamla
+flödet.
 
 Kompass-läget, designen, API-/AI-lagret (OpenRouter, reservkedjan, tålig
 JSON-tolkning, timeouts, Perplexity-providern, research-pipelinen, cachen,
@@ -567,22 +568,28 @@ som ytterligare en `{step, answer}`-post, utan schemaändring i
 Supabase. Säg till om du vill att jag förbereder en databaskolumn redan
 nu.
 
-### 8.11 Pre-existerande dokument-inkonsekvenser (inte en del av denna
-uppgift, flaggas ändå)
+### 8.11 Pre-existerande dokument-inkonsekvenser — ÅTGÄRDADE i fas 2
 
-- `CLAUDE.md` pekar på `docs/product.md` m.fl., men filerna ligger i
-  repots ROT (`product.md`, inte `docs/product.md`) — en äldre
-  path-förskjutning, inte orsakad av detta arbete. Jag har lagt den nya
-  filen på den path CLAUDE.md FAKTISKT anger (`docs/skarp-flode.md`) för
-  konsekvens, men rört inte de andra filernas placering. Säg till om du
-  vill att jag flyttar `product.md`/`architecture.md`/`roadmap.md`/
-  `decisions.md` in i `docs/` också, så CLAUDE.md:s paths stämmer
-  överallt.
-- `architecture.md` beskriver kärn-AI:t som "Claude API", men den
+Båda flaggades här i fas 1 och är bekräftade av dig (svar punkt 11,
+"ja, fixa dem — rent dokumentation"):
+
+- `product.md`/`architecture.md`/`roadmap.md`/`decisions.md` låg i
+  repots ROT trots att CLAUDE.md pekar på `docs/`-prefixade paths — en
+  äldre path-förskjutning, inte orsakad av detta arbete. Flyttade (med
+  `git mv`, historiken bevarad) till `docs/product.md`,
+  `docs/architecture.md`, `docs/roadmap.md`, `docs/decisions.md`. Alla
+  interna korsreferenser mellan dokumenten (inklusive i det här
+  dokumentet och i `design-reference/HANDOFF.md`) är uppdaterade till
+  de nya paths.
+- `architecture.md` beskrev kärn-AI:t som "Claude API", men den
   faktiska implementationen (sedan tidigare arbete) kör OpenRouter/
-  Gemma via ett OpenAI-kompatibelt lager. Detta rör varken Skärp-flödet
-  eller AI-lagrets funktion, så jag har INTE ändrat det — men flaggar
-  det eftersom det är felaktigt dokumenterat.
+  Gemma via ett OpenAI-kompatibelt lager (`AI_PROVIDER=openai-compatible`,
+  se README/.env.example i gxy652fxr), med Anthropics Claude API som
+  ett alternativt, färdigkopplat men ej aktiverat val i samma
+  abstraktion. Omskrivet i `docs/architecture.md` för att beskriva det
+  leverantörsoberoende lagret korrekt; samma stale beskrivning fanns
+  även i `docs/decisions.md` ("Två separata AI-roller") och är rättad
+  där också.
 
 ## 9. Implementationsplan (fas 2)
 

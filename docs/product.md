@@ -33,7 +33,7 @@ Genom hela Kompass-flödet används styrda menyval (inte fri chatt), men med ett
 
 ## Framtida funktioner
 
-Se `roadmap.md` för fullständig prioritetsordning och detaljer. I korthet (extern research är redan klart, se roadmap.md):
+Se `docs/roadmap.md` för fullständig prioritetsordning och detaljer. I korthet (extern research är redan klart, se docs/roadmap.md):
 
 - Fri "babbel"-startpunkt innan det guidade menyflödet
 - Förgreningsfråga i början av flödet: "helt ny verksamhet" vs. "ny idé inom befintligt företag"

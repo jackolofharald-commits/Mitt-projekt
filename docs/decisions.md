@@ -27,7 +27,7 @@ eller namn gäller där också. Se `docs/skarp-flode.md`.
 
 ## Två separata AI-roller
 
-Research-lager (marknadsdata) och kärn-AI (resonemang, Claude API) hålls isär som två roller, inte en enda AI som gör allt.
+Research-lager (marknadsdata) och kärn-AI (resonemang, leverantörsoberoende — se `docs/architecture.md`) hålls isär som två roller, inte en enda AI som gör allt.
 
 ## Research-arkitektur: leverantörsoberoende + cachning
 
