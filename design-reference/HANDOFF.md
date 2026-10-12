@@ -40,7 +40,7 @@ Prototypfilerna är inte appkod och ska inte importeras eller byggas vidare på 
 ## Viktigt att känna till innan du bygger
 
 1. **Skärp-prototypen visar Kompass-lägets innehåll.** Alla koncept i Design-rundan togs fram med Kompass-flödet (fritext först). För Skärp-läget ska du använda 2b:s visuella koncept, kartan och interaktionerna, men anpassat till Skärp-lägets flöde, där användaren redan har en idé. Fundera på vad kartans axlar och punkter representerar när utgångspunkten är en befintlig idé, och föreslå det för oss innan du bygger.
-2. **Stegen i prototyperna är förkortade.** Prototyperna visar Dina tankar → Riktning → Problemet → Förutsättningar → Konkurrenter → Sammanställning. Det riktiga flödet och den fasta avslutningsmallen står i CLAUDE.md och gäller. Designen ska bära det riktiga flödet, inte tvärtom.
+2. **Stegen i prototyperna är förkortade.** Prototyperna visar Dina tankar → Riktning → Problemet → Förutsättningar → Konkurrenter → Sammanställning. Det riktiga flödet skiljer sig mellan lägena: Kompass-lägets flöde och avslutningsmall står i `product.md`/`decisions.md` (via CLAUDE.md), oförändrat. Skärp-lägets flöde har sedan byggts om till ett helt annat flöde — tio steg, ingen fast menyflödes-avslutningsmall utan ett "slutkort och test" — specificerat i `docs/skarp-flode.md` (via CLAUDE.md). Designen ska bära det riktiga flödet, inte tvärtom.
 3. **Innehållet är påhittat.** Exempeltexter, fynd, riktningar och sammanställning är hårdkodade i prototyperna. I appen kommer de från kärn-AI:t och research-lagret enligt CLAUDE.md.
 4. **Tidigare designkällor är ersatta.** Där CLAUDE.md säger att Lovable-skissens design ska bevaras gäller nu dessa prototyper för design och upplevelse.
 

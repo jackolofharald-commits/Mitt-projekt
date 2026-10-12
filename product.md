@@ -12,34 +12,29 @@ Ett AI-drivet vägledningsverktyg — inte en idégenerator, inte en fri chatt. 
 
 ## Hur produkten fungerar
 
-Kärnflödet är validerat genom två Lovable-tester och går i denna ordning:
+**Skärp-läget** (för den som redan har en affärsidé) följer ett tio-
+stegsflöde där AI:n fungerar som en tankemotor snarare än en idémaskin —
+den frågar, speglar och utmanar i stället för att föreslå färdiga idéer,
+och användaren skriver först i de steg där det spelar roll. Fullständig
+specifikation, inklusive avslutningens "slutkort och test" (som ersätter
+den tidigare fasta sex-punktsmallen): `docs/skarp-flode.md`.
+
+**Kompass-läget** (för den som ännu inte har en idé) följer fortfarande
+kärnflödet nedan, validerat genom två Lovable-tester:
 
 **Riktning → Dina förutsättningar → Problem → Målgrupp → Konkurrenter & liknande lösningar → Vad gör den unik → Affärsmodell → [fast avslutning]**
 
-Genom hela flödet används styrda menyval (inte fri chatt), men med ett fritextfält ("eget svar") som override där användaren vill avvika.
-
-### Fast avslutningsmall
-
-Avslutningen har alltid samma struktur, och innehåller aldrig påhittade siffror eller namn:
-
-1. Idén i en mening
-2. Kort beskrivning
-3. "Så passar den dig" (kopplat till förutsättningar-steget)
-4. Vad som gör den särskiljbar (kopplat till konkurrent- och unikt-stegen)
-5. Svaga punkter / obevisade antaganden — ärligt, konkret. Antalet är inte fast: verktyget listar precis så många genuint svaga punkter som det faktiskt hittar (en om det bara finns en, fem om det finns fem), aldrig fler för att fylla ut och aldrig färre genom att slå ihop distinkta svagheter.
-6. Exakt två konkreta nästa steg för att testa idén i verkligheten
+Genom hela Kompass-flödet används styrda menyval (inte fri chatt), men med ett fritextfält ("eget svar") som override där användaren vill avvika. Avslutningen följer samma fasta sex-punktsmall som tidigare (idén i en mening, kort beskrivning, "så passar den dig", vad som gör den särskiljbar, svaga punkter/obevisade antaganden, konkreta nästa steg) — ändras inte av Skärp-lägets ombyggnad.
 
 ## Funktioner
 
-- Styrt frågeflöde genom de sju kärnstegen ovan
-- Fritextfält som override i varje steg för eget svar
-- Fast, konsekvent avslutningsmall vid slutet av varje session
+- Kompass-läget: styrt frågeflöde genom de sju kärnstegen ovan, med fritextfält som override i varje steg, och samma fasta sex-punktsavslutning vid slutet av varje session.
+- Skärp-läget: ett tiostegsflöde där AI:n frågar och speglar i stället för att föreslå färdiga idéer, som slutar i ett strukturerat slutkort och ett verklighetstest i stället för den gamla sex-punktsmallen. Se `docs/skarp-flode.md`.
 
 ## Framtida funktioner
 
-Se `roadmap.md` för fullständig prioritetsordning och detaljer. I korthet:
+Se `roadmap.md` för fullständig prioritetsordning och detaljer. I korthet (extern research är redan klart, se roadmap.md):
 
-- Extern research (Perplexity) kopplad in i konkurrent- och problemstegen
 - Fri "babbel"-startpunkt innan det guidade menyflödet
 - Förgreningsfråga i början av flödet: "helt ny verksamhet" vs. "ny idé inom befintligt företag"
 - Egen produktfas: återkommande "innovationsstöd"-version för befintliga företag (prenumerationsmodell)

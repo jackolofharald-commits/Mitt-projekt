@@ -8,11 +8,22 @@ Prototyperna i `design-reference/` (se `design-reference/HANDOFF.md`) är facit 
 
 ## Styrt flöde, inte fri chatt
 
-Produkten positioneras medvetet som "styrd metod framför fri chatt". Menyval styr flödet genom hela vägledningen, med fritext som override — inte en öppen chattupplevelse.
+Produkten positioneras medvetet som "styrd metod framför fri chatt" — en öppen chattupplevelse är det INTE, i något läge.
 
-## Fast avslutningsmall
+I Kompass-läget betyder det fortfarande menyval med fritext som override, som tidigare.
 
-Slutresultatet av varje session följer alltid samma sex-punktsstruktur (idé, beskrivning, passform, särskiljbarhet, svaga punkter, nästa steg) och innehåller aldrig påhittade siffror eller namn.
+I Skärp-läget betyder det sedan flödesombyggnaden i stället: användaren skriver fritt FÖRST i de steg där det spelar roll ("Du först"), och AI-genererade förslag/alternativ visas efteråt eller via en uttrycklig flyktväg ("Jag vet inte — visa förslag") — fortfarande ett fast, stegvis flöde genom tio namngivna steg, bara med en annan turordning mellan AI och användare än Kompass. Se `docs/skarp-flode.md`, princip 2.
+
+## Fast avslutningsmall (Kompass-läget)
+
+Kompass-lägets slutresultat följer alltid samma sex-punktsstruktur (idé, beskrivning, passform, särskiljbarhet, svaga punkter, nästa steg) och innehåller aldrig påhittade siffror eller namn.
+
+Skärp-läget har en EGEN avslutning sedan Skärp-flödet byggdes om: ett
+"slutkort och test" (idé i en mening, problemram, kunden i situationen,
+mekanism, det unika, affärsgrund, en sexfaktorig idéstyrka-profil utan
+totalsumma, svagaste antagandet och stoppregeln, ett testkort, tre
+frågor till rådgivaren). Samma princip om att aldrig hitta på siffror
+eller namn gäller där också. Se `docs/skarp-flode.md`.
 
 ## Två separata AI-roller
 
