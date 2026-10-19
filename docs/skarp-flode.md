@@ -12,57 +12,78 @@ Kompass-läget, designen, API-/AI-lagret (OpenRouter, reservkedjan, tålig
 JSON-tolkning, timeouts, Perplexity-providern, research-pipelinen, cachen,
 loggningen) och affärsmodellen berörs INTE av detta dokument.
 
-Status: fas 1 (specifikation + plan), väntar på godkännande innan kod
-skrivs. Byggs i repot `gxy652fxr` (skarp.functions.ts, ai/schemas.ts,
-routes/skarp.tsx m.fl.) — se "Implementationsplan" nedan.
+Status: fas 3 — alla tio steg är ombyggda, i repot `gxy652fxr`
+(`src/lib/skarp/`, `src/components/skarp/`, `src/routes/skarp.tsx`).
+**§0 gäller.** §1–§10 beskriver fas 1–2 och står kvar som historik; där
+de krockar med §0 gäller §0.
 
-## 0. Fas 3 — upplevelse och konstruktion (steg 1–3 ombyggda, steg 4–10 följer)
+## 0. Fas 3 — upplevelse och konstruktion (alla tio steg ombyggda)
 
 Fas 2 fungerade tekniskt men upplevdes som en promptad AI-chatt och ett
-förhör. Fas 3 bygger om upplevelse, konstruktion, ton och design;
-stegens syfte och ordning (§7) ligger kvar. Steg 1–3 är ombyggda som
-provexemplar, med välkomnandet, idékartan och det första
-insiktsögonblicket. Steg 4–10 behåller tills vidare sin fas 2-logik
-(§5, §7) och byggs om på samma sätt efter användarens godkännande.
+förhör. Fas 3 bygger om upplevelse, konstruktion, ton och design i alla
+tio steg; stegens syfte och ordning (§7) ligger kvar. Steg 1–3 byggdes
+först som provexemplar, med välkomnandet, idékartan och det första
+insiktsögonblicket. Steg 4–10 är, efter användarens godkännande,
+ombyggda på samma sätt, med insikter även efter steg 6 och i slutkortet.
 
-**Den här sektionen ersätter §7 steg 1–3 nedan**, och för de stegen även
-§5:s planera/sammanställ-mönster. Den avgör också §8.1 och ändrar §1
-punkt 2/§8.2 (se 0.4 och 0.8). Kartan och romben (§6), Kompass-läget och
-AI-/research-lagret är orörda.
+**Den här sektionen ersätter §5 och §7 helt** — planera/sammanställ-
+mönstret finns inte längre, och §7 står kvar som historik. Den avgör
+också §8.1, §8.3, §8.5, §8.6 och §8.7 och ändrar §1 punkt 2/§8.2 (se
+0.4, 0.8 och 0.11). §1–§4 gäller i sak där §0 inte säger annat. Kartan
+och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
 
 ### 0.1 Arbetsyta, inte chattlogg
 
-- Ett steg i taget i fokus: kicker (t.ex. "STEG 1 AV 10 · DET HÄR HÖRDE
-  JAG"), frågan som rubrik, en rad om varför vi frågar, sedan svarsytan
-  (`StepScreen` + `AnswerComposer`). Ingen scrollande logg av frågor och
-  svar, inga chattbubblor.
+- Ett steg i taget i fokus: kicker "Steg n av 10 · <namn>" (t.ex. "STEG
+  1 AV 10 · DET HÄR HÖRDE JAG"), ev. en lead (speglingen av förra
+  svaret, 0.5), frågan som rubrik, en rad om varför vi frågar, sedan
+  svarsytan (`StepScreen` + `AnswerComposer`). Medan Boggel arbetar står
+  "· Boggel läser …" i kickern, på en följdfråga "· om du vill" (0.3).
+  Ingen scrollande logg av frågor och svar, inga chattbubblor — inte
+  heller efter slutkortet (0.11).
 - Det användaren redan sagt syns som innehåll i idékartan (0.2), inte
   som historik. Railen visar under kartan en notisrad (senaste
   speglingen + kartrörelsen i ord via `mapMoveNote`, "flyttar dig mot …
-  och mot …") och idékartan, i stället för `HeardLog`.
+  och mot …") och idékartan, i stället för `HeardLog`. I slutkortet
+  zoomas kartan ut.
 - Steg x av 10 och ungefär hur lång tid som är kvar står i headern
   (`SkarpProgress`: tio segment, "ca N min kvar", "Nästa: …"). Tiden
-  kommer från `STEP_MINUTES` i `progress.ts` (2, 2, 2, 1,5, 1,5, 1,5,
-  1,5, 1, 1, 1 — totalt 15 minuter).
+  kommer från `STEP_MINUTES` i `progress.ts` (2, 2, 1,5, 1,5, 1,5, 1,5,
+  1,5, 1, 1, 1,5 — totalt 15 minuter; slutkortet tar längst att vänta
+  in och läsa).
 - Vid väntan: `ThinkingLine` — små romber som fylls i tur och ordning och
   korta texter om vad som händer (byts var 2,6 s och stannar på den
   sista; efter 12 s läggs "Det tar lite längre än vanligt — jag är kvar."
-  till). Aldrig en tom skärm. Fel visas lugnt i `FocusError` ("Svaret
-  kom inte fram.") med "Försök igen"; det användaren skrivit ligger kvar.
+  till). Den första texten citerar början av användarens svar (`Läser
+  "…"`) där det finns ett; texterna för steg 4–10 står i 0.9. Aldrig en
+  tom skärm. Fel visas lugnt i `FocusError` ("Svaret kom inte fram.")
+  med "Försök igen"; det användaren skrivit ligger kvar.
 
 ### 0.2 Idékartan
 
-- Nio fält (`IDEA_MAP_FIELDS` i `types.ts`): Idén, Du, Kunden och
-  situationen, Problemet, Problemramen, Verkligheten, Kärnan, Det unika
-  och affären, Att testa. Ligger i railen på desktop och som hopfällbar
-  rad på mobil — helt skild från kartan och romben.
-- Varje fält fylls efter sitt steg med en kort formulering på
-  användarens egna ord (i den här rundan `ideaShort`, `duShort`,
-  `kundShort`), med det ordagranna citatet guldmarkerat och en diskret
-  ursprungsetikett (0.8). Kartrörelsen står i notisraden under kartan,
-  inte i fälten. Ifyllnaden ska kännas som en belöning: fältet blinkar
-  guld, romben poppar och "{n} av 9" räknas upp. Vid en följdfråga
-  fylls fältet preliminärt (streckad romb) och slutgiltigt efter svaret.
+- Nio fält (`IDEA_MAP_FIELDS` i `types.ts`). Ligger i railen på desktop
+  och som hopfällbar rad på mobil — helt skild från kartan och romben.
+- Varje fält fylls efter sitt steg med en kort formulering som bygger på
+  användarens egna ord, med det ordagranna citatet guldmarkerat och en
+  diskret ursprungsetikett (0.8):
+
+| Fält | Steg | Fylls med |
+| --- | --- | --- |
+| Idén | 1 | `ideaShort` |
+| Du | 2 | `duShort` |
+| Kunden och situationen | 3 | `kundShort` |
+| Problemet | 4 | `problemShort` |
+| Problemramen | 5 | den valda ramen (egen/omskriven = "Dina ord") |
+| Verkligheten | 6 | `realityShort` |
+| Kärnan | 7 | den valda kärnan (egen/omskriven = "Dina ord") |
+| Det unika och affären | 8 | `uniqueShort` |
+| Att testa | 9 | första saken värd att testa + "Stoppregel: …" |
+
+- Kartrörelsen står i notisraden under kartan, inte i fälten.
+  Ifyllnaden ska kännas som en belöning: fältet blinkar guld, romben
+  poppar och "{n} av 9" räknas upp. Vid en följdfråga fylls fältet
+  preliminärt (streckad romb) och slutgiltigt efter svaret. "Att testa"
+  fylls direkt när stoppregeln är skriven, med stoppregeln som citat.
 - Användaren kan klicka på ett fyllt fält och rätta det. Rättelserna
   sparas i `ctx.ideaMap` (BARA användarens rättelser) och går med i
   varje anrop som ett `IDÉKARTAN`-block som gäller före äldre detaljer.
@@ -74,43 +95,99 @@ AI-/research-lagret är orörda.
 - Varje steg har EN huvudfråga: en mening (högst 12 ord, ett "?") plus
   en kort rad om varför vi frågar (högst 14 ord). Frågan väljs efter vad
   som SAKNAS i idén och tidigare svar, aldrig ur en fast lista, och
-  genereras i föregående stegs anrop: `readIdea` ger steg 2:s fråga,
-  `answerWhyYou` ger steg 3:s. Steg 4 planeras tills vidare av
-  `planProblemQuestions` (fas 2).
+  genereras i föregående stegs anrop:
+
+| Steg | Frågan kommer från |
+| --- | --- |
+| 2 | `readIdea` |
+| 3 | `answerWhyYou` |
+| 4 | `answerCustomer` (`nextQuestion`) |
+| 5 | `answerProblem` (`frameQuestion`, öppen fråga) |
+| 6 | `buildReality` (`question`, byggd på det som hittades) |
+| 7 | `answerReality` (`mechanismQuestion`, öppen fråga) |
+| 8 | `proposeMechanisms` (`nextQuestion`) |
+| 9 | `skepticAssessment` (`stopQuestion`, stoppregeln) |
+
+- I steg 6 och 9 står frågan under det AI:n visat, som en andra fråga på
+  samma skärm (`QuestionBlock`, kicker "DIN TUR").
 - Högst en följdfråga, och bara när svaret inte säger NÅGOT om stegets
-  kärna (steg 2: varför just du; steg 3: vem och i vilken situation).
-  Ett kort svar, en etikett eller ett valt förslag är alltid fullgott.
-  När följdfrågan är besvarad tvingar servern `needsFollowUp = false`.
-- Ersätter §5:s planera/sammanställ-mönster för steg 1–3: `mirrorIdea`,
-  `planWhyYouQuestions`, `synthesizePersonprofil`,
-  `planCustomerQuestions` och `synthesizeSituation` är borttagna.
-  Anrop nu: steg 1 = `initSkarpMap` + `readIdea` (+1 per rättelse),
-  steg 2 = `answerWhyYou` (+1 vid följdfråga), steg 3 =
-  `answerCustomer` (+1 vid följdfråga) + `findInsight`.
-- Varje anrop efter steg 1 får hela kontexten (`contextBlock`, som även
-  steg 4–10 använder): personprofilen plus tre nya block — tidigare
-  frågor och svar ordagrant (märkta "(valt förslag)" när svaret var ett
-  klickat förslag), idékartans rättelser och insikterna med användarens
-  reaktion — med instruktionen att bygga vidare på dem och aldrig fråga
-  om något som redan är besvarat.
+  kärna (steg 2: varför just du; steg 3: vem och i vilken situation;
+  steg 4: problemet; steg 6: verkligheten; steg 8: det huvudfrågan
+  frågade om). Ett kort svar, en etikett eller ett valt förslag är
+  alltid fullgott. Följdfrågan visas med "· om du vill" och har alltid
+  "Gå vidare utan →", som använder det preliminära resultatet. När den
+  är besvarad tvingar servern `needsFollowUp = false`. Valen i steg 5/7
+  och stoppregeln har ingen följdfråga.
+- Inget steg planerar längre flera frågor (§5 är ersatt). Anrop per steg:
+  steg 1 = `initSkarpMap` + `readIdea` (+1 per rättelse), steg 2 =
+  `answerWhyYou`, steg 3 = `answerCustomer` + `findInsight`, steg 4 =
+  `answerProblem`, steg 5 = `reframeProblem`, steg 6 = `buildReality` +
+  `mapCompetitors`, sedan `answerReality` + `findInsight`, steg 7 =
+  `proposeMechanisms`, steg 8 = `answerUnique`, steg 9 =
+  `skepticAssessment` (stoppregeln kräver inget anrop), steg 10 =
+  `closingSummary` + `closingAssessment` + `findInsight`; +1 vid
+  följdfråga i steg 2, 3, 4, 6 och 8. Utan följdfrågor och rättelser
+  blir det omkring 17 AI-anrop per session.
+- Varje anrop efter steg 1 får hela kontexten (`contextBlock`) och
+  stegets fråga och svar (`qaBlock`): personprofilen, tidigare frågor
+  och svar ordagrant (märkta "(valt förslag)" när svaret var ett klickat
+  förslag), idékartans rättelser, insikterna med användarens reaktion
+  och efter hand problemkartan, ramen, "Det här hittade vi ute i
+  världen", kärnan, det unika och affären, sakerna värda att testa och
+  slutkortet — med instruktionen att bygga vidare på dem och aldrig
+  fråga om något som redan är besvarat.
 
 ### 0.4 Svara genom att klicka eller skriva
 
-- 2–4 klickbara förslag i jag-form (högst 12 ord), byggda på det
-  användaren redan skrivit, i olika vinklar och utan påhittade fakta om
-  användaren. Visas som vägval-rader (inga pill-chips) under rubriken
-  "Klicka, ändra eller skriv fritt — korta svar räcker". Ett klick
-  lägger förslaget som en rad i textrutan, där det kan ändras.
+- 2–4 klickbara förslag i jag-form (högst 12 ord), byggda ENBART på det
+  användaren redan skrivit eller valt, i olika vinklar och utan
+  påhittade siffror, namn, årtal, titlar eller erfarenheter. Visas som
+  vägval-rader (inga pill-chips) under rubriken "Klicka, ändra eller
+  skriv fritt — korta svar räcker". Ett klick lägger förslaget som en
+  rad i textrutan, där det kan ändras.
 - Svarets källa sparas i `ctx.answers[].source`: `eget`, `forslag` eller
-  `blandat`.
+  `blandat`. Ett klickat förslag är Boggels text ordagrant och räknas
+  aldrig som "dina ord" (0.8).
 - "Skriv själv först" (förslagen dolda tills användaren skrivit något
   eller klickat "Jag vet inte – visa förslag") gäller BARA steg 1, 5 och
   7. I steg 1 är det skrivstartare ("Kör du fast? Börja en mening så
   här": t.ex. "Vem vill du hjälpa?"), inte AI-förslag — Boggel hittar
   fortfarande inte på idéer — och de visas bara när användaren ber om
-  dem, så att de inte blir en checklista bredvid huvudfrågan. Övriga
-  steg med förslag visar dem direkt (i den här rundan steg 2 och 3).
-  Ersätter §1 punkt 2:s och §8.2:s fördelning av "Du först".
+  dem, så att de inte blir en checklista bredvid huvudfrågan. I steg 5
+  och 7 har frågan inga förslag (`SkarpOpenQuestion`): AI:ns alternativ
+  hämtas först när användaren skrivit sin egen formulering — de ska då
+  vara verkliga alternativ till den, inte omskrivningar — eller klickat
+  "Jag vet inte – visa förslag" (anropet utan egen text). Länken syns
+  bara medan textrutan är tom, så ett klick kastar aldrig bort det
+  användaren skrivit. Övriga steg visar förslagen direkt: 2, 3, 4, 6, 8
+  och stoppregeln i 9. Ersätter §1 punkt 2:s och §8.2:s fördelning av
+  "Du först".
+- **Valskärmen i steg 5 och 7** (`ChoiceList`): rubriken "Så kan
+  problemet ramas in." med raden "Varje ram bygger på det du skrev — ju
+  fler av dina ord, desto närmare dig." (steg 7: "Så kan kärnan se ut."
+  och "Varje väg bygger på …"). Överst "BYGGER PÅ DINA ORD": de
+  ordagranna citat ur användarens texter som alternativen bygger på,
+  numrerade med romber (blocket utelämnas om det inte finns några).
+  Sedan en rad per alternativ:
+  användarens egen formulering först ("DIN EGEN", "Dina ord"; förvald
+  när den finns), därefter A–C med typetikett (ramtyp/tankeoperation i
+  vardagsord, `labels.ts`), rubriken (högst 10 ord), citatnumren och
+  närheten — tre romber + "Nära dig" (2–3 citat), "En bit bort" (1)
+  eller "Längre bort" (0). Närheten räknas i kod av hur många citat som
+  verifierats i användarens texter, aldrig av AI:n. Ett valt alternativ
+  får sina citat guldmarkerade (övriga dämpas) och öppnar under raden:
+  varför det passar, "TALAR FÖR", "TÄNK PÅ" och citaten. Åtgärder:
+  "Välj den här →" (egen: "Behåll min →"), "Skriv om med egna ord"
+  (förifylld text att justera, "Använd min version →") och "Titta på de
+  andra".
+- Valet görs utan nytt AI-anrop. Varje alternativ har med sig sin egen
+  spegling och kartrörelse, och den egna formuleringen sin (`own`), så
+  romben flyttar sig efter det faktiska valet (avgör §8.3); typetiketten
+  står i en egen rad, inte i texten (avgör §8.5). Ett AI-alternativ blir
+  `ctx.frame`/`ctx.mechanism` med ursprung `ai_tolkning` och sparas
+  INTE i `ctx.answers`; en egen eller omskriven formulering blir
+  `anvandare` och sparas i `ctx.answers` (`eget` resp. `blandat`). Egen
+  formulering utan `own` ger ingen spegling och ingen rörelse.
 
 ### 0.5 Välkomnande och spegling
 
@@ -129,39 +206,62 @@ AI-/research-lagret är orörda.
   bara användarens egna ord), gå vidare ("Stämmer, vidare →") eller
   rätta ("Inte riktigt — jag menar …"), vilket kör `readIdea` igen med
   rättelsen.
-- **Steg 2–3:** efter varje svar en spegling på EN mening
-  (`reflection`) — ett påstående med användarens egna ord, aldrig en
-  fråga, aldrig beröm. Den inleder nästa skärm och står, med
-  kartrörelsen i ord, i notisraden under kartan; idékartan fylls
-  synligt.
+- **Steg 2–9:** efter varje svar en spegling på EN mening (`reflection`,
+  högst 25 ord) — ett påstående med användarens egna ord
+  (`reflectionQuote`, 2–6 ord, kontrolleras i kod), aldrig en fråga,
+  aldrig beröm, aldrig inledd med "Du säger", "Du skrev" eller "Det
+  låter". Den blir lead på nästa skärm och står, med kartrörelsen i ord,
+  i notisraden under kartan; idékartan fylls synligt. I steg 5 och 7 är
+  det det valda alternativets spegling (eller `own.reflection`).
+  Stoppregeln speglas av `closingSummary` (`stopRuleReflection`), som
+  lead på slutkortet. Efter en insiktsskärm (före steg 4 och 7) har
+  nästa skärm ingen lead — speglingen stod redan över insikten.
 - `ctx.mirror` byggs fortfarande av noteringarna (per `kind`), så steg
   4–10 får samma underlag som i fas 2.
 
 ### 0.6 Insiktsögonblick
 
-- Tre ställen: efter steg 3 (byggt nu), efter steg 6 (med researchen)
-  och i slutkortet (de två senare i nästa runda).
+- Tre ögonblick (`InsightMoment`): `efter-kunden` (efter steg 3),
+  `efter-verkligheten` (efter steg 6) och `slutkort` (i slutkortet).
 - `findInsight` (Syntetiseraren, starkare modellnivå) hittar EN konkret
-  koppling, motsägelse eller ett mönster mellan minst två saker
-  användaren skrivit, helst från olika steg: 1–2 meningar om vad det
-  betyder för idén, med användarens ord inom citattecken. Aldrig
-  allmänna råd som skulle passa vilken idé som helst ("prata med
-  kunder", "validera tidigt").
-- Visas som en egen skärm (`InsightCard`): insikten stort, citaten den
-  bygger på med stegetikett, och raden "Det här kan du ta med till din
-  rådgivare." Användaren svarar "Stämmer" eller "Inte riktigt" (med
-  valfri rättelse); reaktionen sparas i `ctx.insights` och följer med i
-  alla senare anrop.
-- `findInsight` startas parallellt med steg 3:s anrop så att väntan
-  efteråt blir kort; ett nytt försök med samma svar återanvänder samma
-  anrop. Hittas ingen insikt (eller anropet fallerar) är det inget fel:
+  koppling, motsägelse eller ett mönster i det användaren skrivit, helst
+  mellan olika steg: 1–2 meningar (högst 45 ord) om vad det betyder för
+  idén, med användarens ord inom citattecken. Aldrig allmänna råd som
+  skulle passa vilken idé som helst ("prata med kunder", "validera
+  tidigt"). Efter steg 6 kopplar den användarens ord till det som
+  hittades ute i världen (t.ex. att ett alternativ redan tar betalt,
+  eller att det användaren beskrivit som unikt redan finns); i
+  slutkortet lyfter den det viktigaste mönstret eller den viktigaste
+  motsägelsen i hela sessionen, som användaren troligen inte sett.
+- Citaten (1–2) måste stå ordagrant i användarens egna texter — idén,
+  svaren och idékartans rättelser, från vilket av de nio stegen som
+  helst. Ett klickat förslag och Boggels egna texter räknas aldrig.
+  `finding` är namnet på det alternativ insikten bygger på, ordagrant ur
+  "Det här hittade vi ute i världen"; det matchas mot `ctx.evidenceMap`
+  enligt namnregeln (0.10) och får då sin länk, annars null (alltid null
+  efter steg 3).
+- Efter steg 3 och 6 visas insikten som en egen skärm (`InsightCard`,
+  kicker "Steg 3 av 10"/"Steg 6 av 10" + "En koppling i det du
+  skrivit", "Två saker som drar isär" eller "Ett mönster"): insikten
+  stort, citaten den bygger på med stegetikett, efter steg 6 ev. en rad
+  "Hittat på nätet" med länk, och raden "Det här kan du ta med till din
+  rådgivare." I slutkortet står den direkt efter "Det som är starkt"
+  (0.11). Användaren svarar "Stämmer" eller "Inte riktigt" (med valfri
+  rättelse); reaktionen sparas i `ctx.insights` och följer med i alla
+  senare anrop.
+- `findInsight` startas parallellt med stegets eget anrop
+  (`answerCustomer`, `answerReality`, slutkortets två anrop) så att
+  väntan blir kort; ett nytt försök med samma svar återanvänder samma
+  anrop. Hittas ingen
+  insikt (eller anropet fallerar) är det inget fel: efter steg 3 och 6
   en lugn rad ("hellre ingen än en gissning") med "Vidare till steg 4 →"
-  och "Leta en gång till". Insikten blockerar aldrig flödet.
+  resp. "Vidare till steg 7 →" och "Leta en gång till"; i slutkortet
+  utelämnas den. Insikten blockerar aldrig flödet.
 
 ### 0.7 Ton och mjuk kontroll
 
-- `BOGGELS_ROST` (`roles.ts`) monteras efter rollen i de fyra nya
-  anropen och går före rollbeskrivningen där de krockar: du-tilltal,
+- `BOGGELS_ROST` (`roles.ts`) monteras efter rollen i alla stegens anrop
+  (0.12) och går före rollbeskrivningen där de krockar: du-tilltal,
   korta meningar, inga utropstecken eller emojis, utgå alltid från något
   användaren skrivit, visa kunskap genom att sätta ord på det som bär
   eller skaver i just den här idén. Be aldrig om ett exempel bara för
@@ -176,63 +276,354 @@ AI-/research-lagret är orörda.
 - Promptexemplen gäller medvetet en ANNAN idé (pensionerade hantverkare
   som lär ut reparationer) så att modellen kopierar formen, inte
   innehållet.
+- Hitta aldrig på siffror, marknadsstorlekar, namn eller källor. Namn på
+  alternativ och konkurrenter får BARA komma från research-underlaget
+  (0.10).
 - `generateSkarp` (`validators.ts`): ovanpå den hårda valideringen
   (`validateNoPlaceholders`) kontrolleras längd, en mening, frågetecken
-  och förbjudna fraser; vid problem körs EN rättande runda. Efter sista
-  rundan används svaret ändå och efterbearbetas (trimmas till hela
-  meningar, citat som inte hittas nollas) — mock-läget och en envis
-  modell blockerar aldrig flödet.
+  och förbjudna fraser (på allt användaren ser); vid problem körs EN
+  rättande runda. Efter sista rundan används svaret ändå och
+  efterbearbetas (trimmas till hela meningar, citat och namn som inte
+  hittas nollas) — mock-läget och en envis modell blockerar aldrig
+  flödet.
 
 ### 0.8 Evidensmärkning
 
-- Etiketterna är synliga men diskreta (`ORIGIN_LABELS` i `render.ts`):
-  "Dina ord" (`anvandare`), "Boggels tolkning" (`ai_tolkning`),
-  "Hittat på nätet" (`extern_kalla`). Avgör §8.1.
+- Etiketterna är synliga men diskreta (`ORIGIN_LABELS` i `render.ts`),
+  avgör §8.1:
+  - "Dina ord" (`anvandare`): citaten i idékartan, en egen eller
+    omskriven ram/kärna, citaten bakom alternativen i steg 5/7, det
+    starka i slutkortet och stoppregeln.
+  - "Boggels tolkning" (`ai_tolkning`): idékartans korta formuleringar
+    och en vald AI-ram/-kärna, vad alternativen betyder (`demandNote`),
+    "Om kunden inte gör något", "Det vi inte vet än", "Saker värda att
+    testa", idén i en mening, "Så står idén nu" och "Ditt första test".
+  - "Hittat på nätet" (`extern_kalla`): alternativen i steg 6, och de
+    alternativ som en insikt, en sak värd att testa eller varningen från
+    steg 8 nämner — länken kommer alltid från research-fyndet.
 - Citat som visas som användarens ord (noteringar, `*Quote`-fälten,
-  insiktens citat) kontrolleras i kod: de behålls bara om de står
+  insiktens citat, alternativens citat, det starka i slutkortet,
+  Skeptikerns `quote`) kontrolleras i kod: de behålls bara om de står
   ordagrant i användarens text (`findQuoteSpan`/`findQuoteInSources` i
   `text.ts` — tål skiftläge, blanksteg och citattecken, returnerar
   originalets exakta delsträng). Annars visas ingen markering.
+- "Dina ord" är BARA text användaren själv skrivit: idén, svaren och
+  idékartans rättelser (`userSources` i `choice.ts`). Ett klickat
+  förslag (`source: "forslag"`) räknas aldrig, inte heller i insikterna.
 
-### 0.9 Nya anrop och scheman — var de bor
+### 0.9 Steg 4–10, steg för steg
 
-Alla i repot `gxy652fxr`, under `src/lib/skarp/`:
+Samma konstruktion som steg 1–3 (0.3–0.5). "Lead" är speglingen överst
+på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
+
+#### Steg 4 — Utvidga problemet
+
+- **Fråga:** `answerCustomer`s `nextQuestion` — den vinkel som saknas
+  (varför det är ett problem, vad som orsakar det, vem mer som påverkas,
+  vad som händer före/efter, vilket större mål som ligger bakom). Ingen
+  lead — insikten var förra skärmen.
+- **Vem går först:** användaren, med förslagen synliga direkt.
+- **Anrop:** `answerProblem` (+1 vid följdfråga). Väntan: `Läser "…"`,
+  "Ser vad problemet hänger ihop med …", "Förbereder nästa fråga …".
+  Anropet skriver också steg 5:s fråga.
+- **Sparas:** `ctx.problemMap` (orsaker, fler berörda, konsekvenser,
+  större mål — bara det som framgår, tomma listor är ok) och svaret som
+  `problemet`.
+- **Idékartan:** Problemet ← `problemShort` (högst 15 ord).
+
+#### Steg 5 — Välj problemram
+
+- **Fråga:** `frameQuestion`, med `answerProblem`s spegling som lead. Den
+  ber om en OMFORMULERING av samma problem utan lösningen (inte en ny
+  beskrivning — användaren har redan beskrivit det två gånger) och
+  nämner lösningen som ska lämnas utanför med användarens ord. För en
+  annan idé: "Hur låter problemet om kursen inte fanns?"
+- **Vem går först:** användaren (skriv själv först, 0.4).
+- **Anrop:** `reframeProblem`, med eller utan `ownFrame`: 2–3
+  lösningsneutrala ramar (ingen teknik, produkt eller affärsmodell) av
+  typen orsak, aktör, system, abstraktion eller motsats ("Orsaken
+  bakom", "Från någon annans håll", "Hela kedjan", "Ett steg upp",
+  "Tvärtom"), var och en med varför den passar, talar för, tänk på (ett
+  ärligt antagande), citat, spegling och kartrörelse. Väntan: `Läser
+  "…"`, "Letar andra sätt att se samma problem …".
+- **Val:** valskärmen (0.4), lead = `own.reflection` om den finns, den
+  egna ramen förvald.
+- **Sparas:** `ctx.frame` (+ svaret som `problemram` när ramen är egen
+  eller omskriven).
+- **Idékartan:** Problemramen ← den valda ramen.
+
+#### Steg 6 — Verkligheten
+
+- **Skärm:** lead = den valda ramens spegling, rubriken "Det här hittade
+  vi ute i världen." (ingen why-rad) och alternativen (0.10), sedan
+  stegets fråga i `QuestionBlock` med förslag.
+- **Vem går först:** AI:n (researchen), sedan användaren.
+- **Anrop:** `buildReality` + `mapCompetitors` (oförändrad) parallellt.
+  Väntan: "Kollar vad som redan finns där ute …", "Sorterar det vi
+  hittade …", "Ser vad det betyder för din idé …". `buildReality` ger
+  också stegets fråga, som utgår från det som hittades och användarens
+  egna ord (vad som skiljer sig, vad som överraskar, vad kunden gör i
+  dag). Vid svar: `answerReality` (+1 vid följdfråga) och parallellt
+  `findInsight("efter-verkligheten")`. Väntan: `Läser "…"`, "Letar efter
+  något du kanske inte sett …". `answerReality` skriver också steg 7:s
+  fråga.
+- **Sparas:** `ctx.evidenceMap` DIREKT när `buildReality` kommer tillbaka
+  (alternativen med `what` och `sourceUrl`, `doNothing`, `gaps`,
+  `demandNote`, `reaction: ""`), så att `answerReality` och insikten ser
+  alternativen; när svaret är klart blir det `reaction` och sparas som
+  `verkligheten`. Konkurrentkartan som förut (§6).
+- **Idékartan:** Verkligheten ← `realityShort` (vad verkligheten säger
+  om idén, högst 18 ord, knutet till det som hittades).
+- **Sedan:** insikt 2 (0.6), med `answerReality`s spegling som lead.
+
+#### Steg 7 — Lösningskärnan
+
+- **Fråga:** `mechanismQuestion` — "om du tar bort alla funktioner, vad
+  är kärnan i hur din lösning fungerar?" anpassad till idén. Ingen lead
+  — insikten var förra skärmen.
+- **Vem går först:** användaren (skriv själv först, 0.4).
+- **Anrop:** `proposeMechanisms`, med eller utan `ownMechanism`: 2–3
+  kärnor, var och en en namngiven tankeoperation ("Ta bort ett steg",
+  "Byt betalare", "Gör det manuellt först", "Förebygg i stället för att
+  laga", "Hämta från en annan bransch", "Utgå från ett extremfall") med
+  en rubrik som är en princip för HUR det fungerar — aldrig en
+  funktionslista eller en färdig produkt — och samma fält som i steg 5.
+  Väntan: `Läser "…"`, "Prövar andra sätt att få det att fungera …".
+  Anropet skriver också steg 8:s fråga: det som saknas MEST av vad som
+  gör kombinationen ovanlig och värdefull, vem som betalar och första
+  vägen till kunderna. Den förutsätter inte vilket alternativ som väljs,
+  och förslagen bygger på personprofilen, svaren och det som hittades —
+  aldrig "ingen annan gör det".
+- **Val:** valskärmen (0.4), lead = `own.reflection` om den finns, den
+  egna kärnan förvald.
+- **Sparas:** `ctx.mechanism` (+ svaret som `mekanism` när kärnan är
+  egen eller omskriven).
+- **Idékartan:** Kärnan ← den valda kärnan.
+
+#### Steg 8 — Det unika och affären
+
+- **Fråga:** `proposeMechanisms`s `nextQuestion`, med den valda kärnans
+  spegling som lead.
+- **Vem går först:** användaren, med förslagen synliga direkt.
+- **Anrop:** `answerUnique` (+1 vid följdfråga). Väntan: `Läser "…"`,
+  "Jämför med det vi hittade ute i världen …". Unikt = en ovanlig,
+  värdefull KOMBINATION, inte "ingen annan gör det" (§1 punkt 5).
+- **Sparas:** `ctx.uniqueAndBusiness`: `uniqueCombination` (en–två
+  meningar med användarens ord), `conflictWarning` och `anvandare`,
+  `kopare`, `betalare`, `forstaKanal` — bara det svaren och underlaget
+  säger, annars null (aldrig "okänt"). `conflictWarning` är EN mening om
+  att något användaren pekar ut som unikt redan görs av ett alternativ
+  ute i världen; den behålls bara om den nämner ett alternativ enligt
+  namnregeln (0.10) och får då dess länk (`conflictFinding`). Svaret
+  sparas som `unikt-affar`.
+- **Idékartan:** Det unika och affären ← `uniqueShort` (högst 15 ord).
+
+#### Steg 9 — Skeptikern
+
+- **Skärm:** lead = `answerUnique`s spegling, rubriken "Saker värda att
+  testa." med raden "Det här är det som avgör om idén håller — inget av
+  det är ett nej.", ev. varningen från steg 8, punkterna
+  (`TestList`) och sist stoppregeln i `QuestionBlock` med förslag.
+- **Vem går först:** AI:n (Skeptikern), sedan användaren med
+  stoppregeln.
+- **Anrop:** `skepticAssessment` — fortfarande ett eget, isolerat anrop.
+  Väntan: "Skeptikern läser igenom allt du skrivit …", "Väljer det som
+  är mest värt att testa …". 1–3 punkter av de viktigaste typerna ("Det
+  som måste stämma", "Det som talar emot", "Varför ingen redan löst
+  det", "Lätt att kopiera", "Behövs tekniken?"): en rak mening om vad
+  som MÅSTE stämma eller talar emot, med användarens ord där det går
+  (`quote`, kontrollerat i kod), och EN mening om det enklaste,
+  billigaste sättet att ta reda på det inom några dagar — ett test,
+  ingen lösning, inga påhittade siffror. Nämner en punkt ett alternativ
+  ute i världen får den dess länk. Ingen positiv sammanfattning.
+  `stopQuestion` ("Vad skulle få dig att byta riktning eller lägga ner?"
+  anpassad till idén) har förslag byggda på punkterna, utan siffror —
+  tröskeln lämnas till användaren. Stoppregeln kräver inget eget anrop.
+- **Sparas:** `ctx.skeptic` (`concerns` med typ, punkt, test och citat;
+  `stopRule` med användarens ord) och stoppregeln som `skeptikern`.
+- **Idékartan:** Att testa ← den första saken värd att testa och
+  "Stoppregel: …", direkt när stoppregeln är skriven.
+
+#### Steg 10 — Slutkort och test
+
+- **Skärm:** lead = `stopRuleReflection`, rubriken "Här har du hamnat.",
+  slutkortet (0.11) och följdfrågorna; kartan zoomas ut.
+- **Vem går först:** AI:n (Syntetiseraren), enbart från insamlat
+  material.
+- **Anrop:** `closingSummary` + `closingAssessment` +
+  `findInsight("slutkort")` parallellt; kortet visas så fort alla tre är
+  klara, och `finishSkarpSession` sparar det sedan en gång i
+  bakgrunden. Väntan: "Samlar ihop det som är starkt …", "Ser var idén
+  står i dag …", "Skriver frågor till din rådgivare …".
+- **Sparas:** `ctx.closing` (idén i en mening, områdena, första testets
+  hypotes), så att följdfrågorna vet vad kortet sa, och slutkortets text
+  (0.11).
+
+### 0.10 Det här hittade vi ute i världen
+
+- Researchen körs oförändrad en gång per session, i bakgrunden direkt
+  efter steg 3 (`triggerCompetitorResearch`, ämnet `konkurrenter`,
+  frågan från `buildCompetitorQuery(idé, situationsmening)`), så att
+  steg 4–5 ger den tid. Rättar användaren "Kunden och situationen" i
+  idékartan före steg 6 får researchen sitt enda omtag (högst två
+  körningar totalt, som tidigare vid "Redigera kunden"). Därefter byts
+  situationsmeningen — som också är research-frågan — inte längre, så
+  steg 6 träffar cachen; rättelsen når ändå alla anrop via `ctx.ideaMap`.
+- `buildReality` läser resultatet med EXAKT samma fråga (cacheträff).
+  Det används sedan i steg 6, 8 och 9, i insikterna och i slutkortet,
+  via kontextblocket "DET HÄR HITTADE VI UTE I VÄRLDEN" — de enda namn
+  AI:n får nämna.
+- `RealityView` visar högst 6 alternativ, de direkta först, som stiger
+  in ett i taget. Varje rad: namnet ordagrant ur underlaget, "SAMMA SAK" (direkt: samma
+  problem, liknande sätt) eller "ANNAT SÄTT" (indirekt: annat sätt eller
+  näraliggande problem), EN mening om vad det är eller gör — bara från
+  underlaget, inga siffror som inte står där — och länken "Hittat på
+  nätet ↗". Länken kommer alltid från research-fyndet, aldrig från AI:n;
+  ett alternativ vars namn inte matchar något fynd räknas som påhittat
+  och tas bort. Dubbletter tas bort på normaliserat namn (flera
+  alternativ får dela länk).
+- Finns direkta alternativ följer EN mening om vad det betyder
+  (`demandNote`, "Boggels tolkning"): att andra redan tar betalt för att
+  lösa det kan betyda att det finns efterfrågan, och vad som då skiljer
+  användarens idé. Därefter "OM KUNDEN INTE GÖR NÅGOT" (`doNothing`, med
+  användarens ord om dagens lösning) och "DET VI INTE VET ÄN" (0–3
+  luckor), båda "Boggels tolkning".
+- Hittas inget körs anropet ändå: inga alternativ, en lugn rad ("Vi
+  hittade inget på nätet som liknar din idé. Det kan betyda en lucka —
+  eller att kunderna löser det på ett annat sätt.") och en fråga om vad
+  kunden gör i dag.
+- **Namnregeln** (insikternas `finding`, steg 8:s varning, steg 9:s
+  punkter): båda namnen normaliseras (`normalizeForMatch`), namn kortare
+  än 3 tecken ignoreras, och namnet måste stå som hela ord — aldrig som
+  ren delsträng ("Go" matchar inte "goda"). Tomt namn = ingen träff.
+  Utan träff ingen länk, och i steg 8 ingen varning.
+
+### 0.11 Slutkortet
+
+Inga sifferbetyg, staplar eller procent. `ClosingCard` visar, i den här
+ordningen (en del utan innehåll utelämnas):
+
+1. **"Här har du hamnat."** — idén i EN mening som går att säga högt
+   (`ideaOneLiner`, "Boggels tolkning"), med användarens ord
+   guldmarkerade om de står i meningen.
+2. **Det som är starkt** — 1–3 saker som är starka i idén: fakta om idén
+   som användarens egna ord visar, aldrig beröm av personen, var och en
+   med ett ordagrant citat ("Dina ord"). En styrka utan verifierat citat
+   tas bort; blir listan tom står det första området med nivån Starkt
+   eller På god väg här i stället.
+3. **Insikten** (0.6), om en hittats — belöningen, direkt efter det
+   starka, med "Stämmer"/"Inte riktigt" och "Noterat." när användaren
+   svarat.
+4. **Så står idén nu** ("Boggels tolkning") — de sex områdena (Problemet,
+   Du som grundare, Lösningens skillnad, Genomförbarhet, Affären, Hur
+   snabbt du kan lära dig), det starka först, var och en med en nivå:
+   **Starkt** (bara när underlaget tydligt visar det), **På god väg**
+   eller **Behöver mer underlag** (mest antaganden), och EN mening om
+   nästa steg som nämner något konkret ur användarens ord och inte
+   upprepar en sak värd att testa. Vad bedömningen bygger på visas bara
+   vid "Behöver mer underlag".
+5. **Din idé, del för del** — idékartans fyllda fält i stegordning med
+   ursprung, sist "Använder · Köper · Betalar · Första kanal" (det som
+   saknas: "Inte klart än").
+6. **Saker värda att testa** ("Boggels tolkning") — Skeptikerns punkter
+   med test och ev. länk, ev. varningen från steg 8 och "DIN STOPPREGEL"
+   ("Dina ord").
+7. **Ditt första test** ("Boggels tolkning") — den FÖRSTA saken värd att
+   testa utvecklad till ett konkret test, inget nytt: Hypotes, Så testar
+   du, Det räknas som bevis (knutet till stoppregeln om den finns), Inom
+   48 timmar.
+8. **Det här kan du ta med till din rådgivare** — exakt tre frågor,
+   grundade i det som fortfarande är osäkert.
+9. **"Kopiera slutkortet"** och "Börja om". Kopian är markdown som
+   byggs i klienten (`renderClosingCardMarkdown`, en ren funktion) av
+   det som visas, inklusive användarens svar på insikten.
+   `finishSkarpSession` sparar texten med `saveSession` (`resultText`,
+   oförändrad signatur) när det finns ett klient-id.
+
+Under kortet: **Fråga Boggel om idén** (`FollowupDialog`,
+`askSkarpFollowup` oförändrad) — följdfrågor och invändningar som Boggel
+svarar kort på. Bara den senaste frågan och svaret syns; tidigare ligger
+hopfällda under "Tidigare frågor (n)". Ingen chattlogg.
+
+Avgör §8.6 (steg 10 är två anrop — sammanfattning och bedömning — plus
+insikten) och §8.7 (slutkortet visas i `ClosingCard`, inte i
+`ResultReport`, som är Kompass-lägets och orörd).
+
+### 0.12 Anrop och scheman — var de bor
+
+Alla i repot `gxy652fxr`, under `src/lib/skarp/`. Prompten monteras
+likadant överallt: `SKARP_BASE` + roll + `BOGGELS_ROST` (steg 6 och 8
+har ingen roll).
 
 | Anrop | Fil | `schemaName` / schema | Roll |
 | --- | --- | --- | --- |
 | `readIdea` | `step1-idea.ts` | `skarp_read_idea` / `ReadIdeaSchema` | Spegeln |
 | `answerWhyYou` | `step2-why.ts` | `skarp_why_you` / `WhyYouResultSchema` | Intervjuaren |
 | `answerCustomer` | `step3-customer.ts` | `skarp_customer` / `CustomerResultSchema` | Intervjuaren |
-| `findInsight` | `insight.ts` | `skarp_insight` / `InsightSchema` | Syntetiseraren |
+| `answerProblem` | `step4-problem.ts` | `skarp_problem` / `ProblemResultSchema` | Intervjuaren |
+| `reframeProblem` | `step5-reframe.ts` | `skarp_reframe` / `ReframeResultSchema` | Omformuleraren\* |
+| `buildReality` | `step6-reality.ts` | `skarp_reality` / `RealityResultSchema` | – |
+| `answerReality` | `step6-reality.ts` | `skarp_reality_answer` / `RealityAnswerSchema` | – |
+| `proposeMechanisms` | `step7-mechanism.ts` | `skarp_mechanism` / `MechanismResultSchema` | Linsen |
+| `answerUnique` | `step8-unique.ts` | `skarp_unique` / `UniqueResultSchema` | – |
+| `skepticAssessment` | `step9-skeptic.ts` | `skarp_skeptic` / `SkepticResultSchema` | Skeptikern\* |
+| `closingSummary` | `step10-closing.ts` | `skarp_closing_summary` / `ClosingSummarySchema` | Syntetiseraren\* |
+| `closingAssessment` | `step10-closing.ts` | `skarp_closing_assessment` / `ClosingAssessmentSchema` | Syntetiseraren\* |
+| `findInsight` | `insight.ts` | `skarp_insight` / `InsightSchema` | Syntetiseraren\* |
 
+\* Starkare modellnivå (`modelTier: "strong"`).
+
+- Oförändrade: `initSkarpMap` (kartans axlar), `triggerCompetitorResearch`
+  (`research.ts`, inget AI-anrop), `mapCompetitors` (`step6-reality.ts`,
+  konkurrentkartan) och `askSkarpFollowup` (`step10-closing.ts`,
+  följdfrågorna efter slutkortet). `finishSkarpSession`
+  (`step10-closing.ts`) är inget AI-anrop; den sparar slutkortets text.
 - Varje fil exporterar en testbar `*Logic`-funktion och en
-  `createServerFn`-wrapper; allt exporteras via `index.ts`.
-  `initSkarpMap` är oförändrad.
+  `createServerFn`-wrapper; allt exporteras via `index.ts`. Indata:
+  svarsstegen (2, 3, 4, 6-svaret, 8) tar `{ context, main, followUp? }`;
+  `reframeProblem`/`proposeMechanisms` tar `{ context, ownFrame? }`
+  resp. `{ context, ownMechanism? }`; `buildReality`,
+  `skepticAssessment`, `closingSummary` och `closingAssessment` tar
+  `{ context }`; `findInsight` tar `{ context, moment }`.
+- Borttaget i fas 3: `mirrorIdea`, `planWhyYouQuestions`,
+  `synthesizePersonprofil`, `planCustomerQuestions`,
+  `synthesizeSituation`, `planProblemQuestions`, `synthesizeProblemMap`,
+  `buildEvidenceMap`, `checkUniqueAndBusiness`,
+  `synthesizeClosingCardPart1`/`Part2`, `KEEP_OWN_FRAME_MOVE`,
+  `KEEP_OWN_MECHANISM_MOVE`, `reframeToSuggestion`,
+  `mechanismToSuggestion`, de gamla siffer- och säkerhetsetiketterna i
+  `render.ts`, filerna `interview.ts` och `suggestions.ts` och
+  komponenten `EvidenceCard`. `reframeProblem`, `proposeMechanisms` och
+  `skepticAssessment` har kvar sina namn men är omskrivna.
 - Scheman: `schemas.ts` (Skärp-ägda; `src/lib/ai/schemas.ts` är orörd).
   Visad prosa trunkeras aldrig i schemat — korthet styrs av prompt, mjuk
   kontroll och efterbearbetning.
-- Steg 3: situationens sju slotar är nu `string | null` (en del som inte
+- Steg 3: situationens sju slotar är `string | null` (en del som inte
   går att utläsa blir null). `renderSituationSentence` bygger
   mallmeningen när alla sju finns, annars visas `kundShort`.
-- Kontext: `SkarpContextSchema` har nya valfria fält `answers`,
-  `ideaMap` och `insights`.
+- Kontext (`SkarpContextSchema`): `answers` (steg-id:n `ide`,
+  `varfor-du`, `kunden`, `problemet`, `problemram`, `verkligheten`,
+  `mekanism`, `unikt-affar`, `skeptikern`), `ideaMap`, `insights`, och
+  för steg 4–10 `problemMap`, `frame`, `evidenceMap` (med `what`,
+  `sourceUrl` och `demandNote`), `mechanism`, `uniqueAndBusiness`,
+  `skeptic` (`concerns` med test och citat) och `closing`.
 - Hjälpare: `text.ts` (citatmatchning, meningsdelning och -trimning),
-  `validators.ts` (`generateSkarp`, `cleanQuestion`, förbjudna fraser),
-  `progress.ts` (tid kvar), `map-note.ts` (kartrörelsen i ord),
-  `roles.ts` (`BOGGELS_ROST`).
+  `validators.ts` (`generateSkarp`, `cleanQuestion`, `settleFollowUp`,
+  `verifiedQuote`, förbjudna fraser), `choice.ts` (`settleChoiceOptions`,
+  `settleOwnChoice`, `userSources`), `labels.ts` (svenska etiketter för
+  ramtyper, tankeoperationer, Skeptikerns typer, områden och nivåer —
+  alltid i kod, aldrig av AI:n), `render.ts` (`renderSituationSentence`,
+  `ORIGIN_LABELS`, `renderClosingCardMarkdown`), `progress.ts` (tid
+  kvar), `map-note.ts` (kartrörelsen i ord), `roles.ts` (`BOGGELS_ROST`).
 - UI: `src/components/skarp/` (`SkarpProgress`, `StepScreen`,
   `AnswerComposer`, `IdeaReadView`, `InsightCard`, `IdeaMap`,
-  `ThinkingLine`, `FocusError`, ändrad `SkarpRail`), delade primitiver
-  enligt prototypen i `src/components/shared/boggel-ui.tsx`
-  (`PrimaryButton`, `TextButton`, `Kicker`, `NumberRomb`, `Highlight`,
-  `GoldDash`, `LinedPaper`) och nya guldtoner/markeringar i
-  `src/styles.css`. Visuellt facit: `design-reference/skarp/prototyp.html`.
-- Researchen körs oförändrad en gång per session, efter steg 3. Rättar
-  användaren "Kunden och situationen" i idékartan före steg 6 får
-  researchen sitt enda omtag (högst två körningar totalt, som tidigare
-  vid "Redigera kunden"). Därefter byts situationsmeningen — som också
-  är research-frågan — inte längre, så steg 6 träffar cachen; rättelsen
-  når ändå alla anrop via `ctx.ideaMap`.
+  `ThinkingLine`, `FocusError`, `SkarpRail`, och för steg 4–10
+  `ChoiceList`, `RealityView`, `QuestionBlock`, `TestList`,
+  `ClosingCard`, `FollowupDialog`), delade primitiver enligt prototypen
+  i `src/components/shared/boggel-ui.tsx` (`PrimaryButton`,
+  `TextButton`, `Kicker`, `NumberRomb`, `Highlight`, `GoldDash`,
+  `LinedPaper`) och guldtonerna/markeringarna i `src/styles.css`.
+  Visuellt facit: `design-reference/skarp/prototyp.html`.
 
 ## 1. Principerna, kort
 
@@ -349,6 +740,10 @@ type Personprofil = {
 
 ## 5. Övergripande AI-arkitektur per steg
 
+**Historik (fas 2) — helt ersatt av §0.3.** Inget steg planerar längre
+flera frågor eller sammanställer dem i ett andra anrop: varje steg har en
+huvudfråga från föregående stegs anrop och högst en följdfråga.
+
 Två mönster, beroende på om steget är en enskild fråga eller en liten
 intervju med flera delfrågor:
 
@@ -396,6 +791,11 @@ Fortsätter fungera EXAKT som i dag (begränsning 4), oförändrad mekanism:
   samma huvud→reserv→uppdelning-logik, samma panel.
 
 ## 7. Flödet, steg för steg
+
+**Historik (fas 2) — helt ersatt av §0.** Står kvar för att visa
+varifrån stegens syfte och ordning kommer; frågor, scheman, anrop och
+skärmar nedan gäller inte längre (steg 1–3: §0.1–0.8, steg 4–10: §0.9–0.11,
+anropen: §0.12).
 
 Alla scheman nedan är skisser (fältnamn/typer) för fas 2 — exakta
 `.min()`/`.max()`-gränser sätts vid implementation men ändras inte i

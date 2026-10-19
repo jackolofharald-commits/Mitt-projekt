@@ -19,11 +19,14 @@ I Skärp-läget betyder det sedan flödesombyggnaden i stället: användaren skr
 Kompass-lägets slutresultat följer alltid samma sex-punktsstruktur (idé, beskrivning, passform, särskiljbarhet, svaga punkter, nästa steg) och innehåller aldrig påhittade siffror eller namn.
 
 Skärp-läget har en EGEN avslutning sedan Skärp-flödet byggdes om: ett
-"slutkort och test" (idé i en mening, problemram, kunden i situationen,
-mekanism, det unika, affärsgrund, en sexfaktorig idéstyrka-profil utan
-totalsumma, svagaste antagandet och stoppregeln, ett testkort, tre
-frågor till rådgivaren). Samma princip om att aldrig hitta på siffror
-eller namn gäller där också. Se `docs/skarp-flode.md`.
+slutkort utan sifferbetyg (fas 3): idén i en mening, det som är starkt
+(med användarens egna ord) först, en eventuell insikt, en nivå per
+område — "Starkt", "På god väg" eller "Behöver mer underlag" — med en
+mening om nästa steg, idén del för del (idékartans nio fält och
+affärsgrunden), "Saker värda att testa" med stoppregeln, ett första test
+och tre frågor att ta med till rådgivaren. Samma princip om att aldrig
+hitta på siffror eller namn gäller där också. Se §0 i
+`docs/skarp-flode.md`.
 
 ## Två separata AI-roller
 
