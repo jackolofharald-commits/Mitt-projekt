@@ -47,8 +47,8 @@ AI-/research-lagret är orörda.
 - Vid väntan: `ThinkingLine` — små romber som fylls i tur och ordning och
   korta texter om vad som händer (byts var 2,6 s och stannar på den
   sista; efter 12 s läggs "Det tar lite längre än vanligt — jag är kvar."
-  till). Aldrig en tom skärm. Fel visas lugnt i `FocusError` ("Det där
-  tog en omväg.") med "Försök igen".
+  till). Aldrig en tom skärm. Fel visas lugnt i `FocusError` ("Svaret
+  kom inte fram.") med "Försök igen"; det användaren skrivit ligger kvar.
 
 ### 0.2 Idékartan
 
@@ -58,15 +58,16 @@ AI-/research-lagret är orörda.
   rad på mobil — helt skild från kartan och romben.
 - Varje fält fylls efter sitt steg med en kort formulering på
   användarens egna ord (i den här rundan `ideaShort`, `duShort`,
-  `kundShort`), med det ordagranna citatet guldmarkerat, en diskret
-  ursprungsetikett (0.8) och ev. kartrörelse ("→ …"). Ifyllnaden ska
-  kännas som en belöning: fältet blinkar guld, romben poppar och
-  "{n} av 9" räknas upp.
+  `kundShort`), med det ordagranna citatet guldmarkerat och en diskret
+  ursprungsetikett (0.8). Kartrörelsen står i notisraden under kartan,
+  inte i fälten. Ifyllnaden ska kännas som en belöning: fältet blinkar
+  guld, romben poppar och "{n} av 9" räknas upp. Vid en följdfråga
+  fylls fältet preliminärt (streckad romb) och slutgiltigt efter svaret.
 - Användaren kan klicka på ett fyllt fält och rätta det. Rättelserna
   sparas i `ctx.ideaMap` (BARA användarens rättelser) och går med i
   varje anrop som ett `IDÉKARTAN`-block som gäller före äldre detaljer.
-- Insikterna (0.6) listas under "INSIKTER"; en avvisad insikt visas
-  överstruken.
+- Insikterna (0.6) listas under "INSIKTER"; en ny insikt lyser upp och
+  scrollas fram som ett nyss ifyllt fält, en avvisad visas överstruken.
 
 ### 0.3 En huvudfråga per steg, högst en följdfråga
 
@@ -104,28 +105,34 @@ AI-/research-lagret är orörda.
   `blandat`.
 - "Skriv själv först" (förslagen dolda tills användaren skrivit något
   eller klickat "Jag vet inte – visa förslag") gäller BARA steg 1, 5 och
-  7. I steg 1 är det skrivstartare (t.ex. "Vem vill du hjälpa?"), inte
-  AI-förslag — Boggel hittar fortfarande inte på idéer. Övriga steg med
-  förslag visar dem direkt (i den här rundan steg 2 och 3). Ersätter §1
-  punkt 2:s och §8.2:s fördelning av "Du först".
+  7. I steg 1 är det skrivstartare ("Kör du fast? Börja en mening så
+  här": t.ex. "Vem vill du hjälpa?"), inte AI-förslag — Boggel hittar
+  fortfarande inte på idéer — och de visas bara när användaren ber om
+  dem, så att de inte blir en checklista bredvid huvudfrågan. Övriga
+  steg med förslag visar dem direkt (i den här rundan steg 2 och 3).
+  Ersätter §1 punkt 2:s och §8.2:s fördelning av "Du först".
 
 ### 0.5 Välkomnande och spegling
 
-- **Steg 1, "Det här hörde jag":** `readIdea` returnerar `welcome` — EN
-  mening (högst 30 ord) som visar att Boggel förstått vad som bär idén,
-  utan hälsningsfras och beröm — följd av den fasta tidsmeningen från
-  `welcomeTimeSentence()` ("Vi tar tio korta steg, ungefär 15 minuter.
-  Sen har du en tydlig bild av idén och vad du ska testa först — något
-  att ta med till din rådgivare."). Idétexten visas på linjerat papper
-  där 2–5 noteringar avslöjas en i taget: citatet guldmarkeras och
-  numreras, och raden säger DU VET / DU TROR / DU HOPPAS
-  (`fakta`/`tolkning`/`hopp`) plus vad det betyder. Användaren kan
-  markera en notering "stämmer inte", gå vidare ("Stämmer, vidare →")
-  eller rätta ("Inte riktigt — jag menar …"), vilket kör `readIdea` igen
-  med rättelsen.
+- **Steg 1, "Det här hörde jag":** välkomnandet är ett stycke på högst
+  två meningar överst: `readIdea`s `welcome` — EN mening (högst 30 ord)
+  som visar att Boggel förstått vad som bär idén, utan hälsningsfras och
+  beröm — följd av den fasta meningen från `welcomeTimeSentence()` ("Vi
+  tar tio korta steg, ungefär 15 minuter, så har du en tydlig bild av
+  idén och vad du ska testa först — något att ta med till din
+  rådgivare."). Idétexten visas på linjerat papper där 2–5 noteringar
+  avslöjas en i taget: citatet guldmarkeras och numreras, och raden
+  säger DU VET / DU TROR / DU HOPPAS (`fakta`/`tolkning`/`hopp`) plus
+  vad det betyder. Sist "Kort sagt: {ideaShort}" — det som hamnar i
+  idékartan. Användaren kan markera en notering "stämmer inte" (den
+  faller bort ur `ctx.mirror` men sparas inte som ett svar — där står
+  bara användarens egna ord), gå vidare ("Stämmer, vidare →") eller
+  rätta ("Inte riktigt — jag menar …"), vilket kör `readIdea` igen med
+  rättelsen.
 - **Steg 2–3:** efter varje svar en spegling på EN mening
   (`reflection`) — ett påstående med användarens egna ord, aldrig en
-  fråga, aldrig beröm — plus kartrörelsen i ord, och idékartan fylls
+  fråga, aldrig beröm. Den inleder nästa skärm och står, med
+  kartrörelsen i ord, i notisraden under kartan; idékartan fylls
   synligt.
 - `ctx.mirror` byggs fortfarande av noteringarna (per `kind`), så steg
   4–10 får samma underlag som i fas 2.
@@ -145,13 +152,21 @@ AI-/research-lagret är orörda.
   rådgivare." Användaren svarar "Stämmer" eller "Inte riktigt" (med
   valfri rättelse); reaktionen sparas i `ctx.insights` och följer med i
   alla senare anrop.
+- `findInsight` startas parallellt med steg 3:s anrop så att väntan
+  efteråt blir kort; ett nytt försök med samma svar återanvänder samma
+  anrop. Hittas ingen insikt (eller anropet fallerar) är det inget fel:
+  en lugn rad ("hellre ingen än en gissning") med "Vidare till steg 4 →"
+  och "Leta en gång till". Insikten blockerar aldrig flödet.
 
 ### 0.7 Ton och mjuk kontroll
 
 - `BOGGELS_ROST` (`roles.ts`) monteras efter rollen i de fyra nya
-  anropen: du-tilltal, korta meningar, inga utropstecken eller emojis,
-  utgå alltid från något användaren skrivit, visa kunskap genom att
-  sätta ord på det som bär eller skaver i just den här idén. Förbjudet
+  anropen och går före rollbeskrivningen där de krockar: du-tilltal,
+  korta meningar, inga utropstecken eller emojis, utgå alltid från något
+  användaren skrivit, visa kunskap genom att sätta ord på det som bär
+  eller skaver i just den här idén. Be aldrig om ett exempel bara för
+  att ett svar är kort (Intervjuarens äldre regel) och fråga aldrig om
+  Boggel förstått rätt (Spegelns). Förbjudet
   bl.a.: "Det är en intressant idé", "Bra fråga", "Låt oss utforska",
   "Det finns många faktorer att tänka på", "Vilken spännande …", "Det
   låter som …". Inget beröm.
@@ -212,7 +227,12 @@ Alla i repot `gxy652fxr`, under `src/lib/skarp/`:
   (`PrimaryButton`, `TextButton`, `Kicker`, `NumberRomb`, `Highlight`,
   `GoldDash`, `LinedPaper`) och nya guldtoner/markeringar i
   `src/styles.css`. Visuellt facit: `design-reference/skarp/prototyp.html`.
-- Researchen körs oförändrad en gång per session, efter steg 3.
+- Researchen körs oförändrad en gång per session, efter steg 3. Rättar
+  användaren "Kunden och situationen" i idékartan före steg 6 får
+  researchen sitt enda omtag (högst två körningar totalt, som tidigare
+  vid "Redigera kunden"). Därefter byts situationsmeningen — som också
+  är research-frågan — inte längre, så steg 6 träffar cachen; rättelsen
+  når ändå alla anrop via `ctx.ideaMap`.
 
 ## 1. Principerna, kort
 
