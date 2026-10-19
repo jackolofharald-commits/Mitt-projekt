@@ -16,6 +16,204 @@ Status: fas 1 (specifikation + plan), väntar på godkännande innan kod
 skrivs. Byggs i repot `gxy652fxr` (skarp.functions.ts, ai/schemas.ts,
 routes/skarp.tsx m.fl.) — se "Implementationsplan" nedan.
 
+## 0. Fas 3 — upplevelse och konstruktion (steg 1–3 ombyggda, steg 4–10 följer)
+
+Fas 2 fungerade tekniskt men upplevdes som en promptad AI-chatt och ett
+förhör. Fas 3 bygger om upplevelse, konstruktion, ton och design;
+stegens syfte och ordning (§7) ligger kvar. Steg 1–3 är ombyggda som
+provexemplar, med välkomnandet, idékartan och det första
+insiktsögonblicket. Steg 4–10 behåller tills vidare sin fas 2-logik
+(§5, §7) och byggs om på samma sätt efter användarens godkännande.
+
+**Den här sektionen ersätter §7 steg 1–3 nedan**, och för de stegen även
+§5:s planera/sammanställ-mönster. Den avgör också §8.1 och ändrar §1
+punkt 2/§8.2 (se 0.4 och 0.8). Kartan och romben (§6), Kompass-läget och
+AI-/research-lagret är orörda.
+
+### 0.1 Arbetsyta, inte chattlogg
+
+- Ett steg i taget i fokus: kicker (t.ex. "STEG 1 AV 10 · DET HÄR HÖRDE
+  JAG"), frågan som rubrik, en rad om varför vi frågar, sedan svarsytan
+  (`StepScreen` + `AnswerComposer`). Ingen scrollande logg av frågor och
+  svar, inga chattbubblor.
+- Det användaren redan sagt syns som innehåll i idékartan (0.2), inte
+  som historik. Railen visar under kartan en notisrad (senaste
+  speglingen + kartrörelsen i ord via `mapMoveNote`, "flyttar dig mot …
+  och mot …") och idékartan, i stället för `HeardLog`.
+- Steg x av 10 och ungefär hur lång tid som är kvar står i headern
+  (`SkarpProgress`: tio segment, "ca N min kvar", "Nästa: …"). Tiden
+  kommer från `STEP_MINUTES` i `progress.ts` (2, 2, 2, 1,5, 1,5, 1,5,
+  1,5, 1, 1, 1 — totalt 15 minuter).
+- Vid väntan: `ThinkingLine` — små romber som fylls i tur och ordning och
+  korta texter om vad som händer (byts var 2,6 s och stannar på den
+  sista; efter 12 s läggs "Det tar lite längre än vanligt — jag är kvar."
+  till). Aldrig en tom skärm. Fel visas lugnt i `FocusError` ("Det där
+  tog en omväg.") med "Försök igen".
+
+### 0.2 Idékartan
+
+- Nio fält (`IDEA_MAP_FIELDS` i `types.ts`): Idén, Du, Kunden och
+  situationen, Problemet, Problemramen, Verkligheten, Kärnan, Det unika
+  och affären, Att testa. Ligger i railen på desktop och som hopfällbar
+  rad på mobil — helt skild från kartan och romben.
+- Varje fält fylls efter sitt steg med en kort formulering på
+  användarens egna ord (i den här rundan `ideaShort`, `duShort`,
+  `kundShort`), med det ordagranna citatet guldmarkerat, en diskret
+  ursprungsetikett (0.8) och ev. kartrörelse ("→ …"). Ifyllnaden ska
+  kännas som en belöning: fältet blinkar guld, romben poppar och
+  "{n} av 9" räknas upp.
+- Användaren kan klicka på ett fyllt fält och rätta det. Rättelserna
+  sparas i `ctx.ideaMap` (BARA användarens rättelser) och går med i
+  varje anrop som ett `IDÉKARTAN`-block som gäller före äldre detaljer.
+- Insikterna (0.6) listas under "INSIKTER"; en avvisad insikt visas
+  överstruken.
+
+### 0.3 En huvudfråga per steg, högst en följdfråga
+
+- Varje steg har EN huvudfråga: en mening (högst 12 ord, ett "?") plus
+  en kort rad om varför vi frågar (högst 14 ord). Frågan väljs efter vad
+  som SAKNAS i idén och tidigare svar, aldrig ur en fast lista, och
+  genereras i föregående stegs anrop: `readIdea` ger steg 2:s fråga,
+  `answerWhyYou` ger steg 3:s. Steg 4 planeras tills vidare av
+  `planProblemQuestions` (fas 2).
+- Högst en följdfråga, och bara när svaret inte säger NÅGOT om stegets
+  kärna (steg 2: varför just du; steg 3: vem och i vilken situation).
+  Ett kort svar, en etikett eller ett valt förslag är alltid fullgott.
+  När följdfrågan är besvarad tvingar servern `needsFollowUp = false`.
+- Ersätter §5:s planera/sammanställ-mönster för steg 1–3: `mirrorIdea`,
+  `planWhyYouQuestions`, `synthesizePersonprofil`,
+  `planCustomerQuestions` och `synthesizeSituation` är borttagna.
+  Anrop nu: steg 1 = `initSkarpMap` + `readIdea` (+1 per rättelse),
+  steg 2 = `answerWhyYou` (+1 vid följdfråga), steg 3 =
+  `answerCustomer` (+1 vid följdfråga) + `findInsight`.
+- Varje anrop efter steg 1 får hela kontexten (`contextBlock`, som även
+  steg 4–10 använder): personprofilen plus tre nya block — tidigare
+  frågor och svar ordagrant (märkta "(valt förslag)" när svaret var ett
+  klickat förslag), idékartans rättelser och insikterna med användarens
+  reaktion — med instruktionen att bygga vidare på dem och aldrig fråga
+  om något som redan är besvarat.
+
+### 0.4 Svara genom att klicka eller skriva
+
+- 2–4 klickbara förslag i jag-form (högst 12 ord), byggda på det
+  användaren redan skrivit, i olika vinklar och utan påhittade fakta om
+  användaren. Visas som vägval-rader (inga pill-chips) under rubriken
+  "Klicka, ändra eller skriv fritt — korta svar räcker". Ett klick
+  lägger förslaget som en rad i textrutan, där det kan ändras.
+- Svarets källa sparas i `ctx.answers[].source`: `eget`, `forslag` eller
+  `blandat`.
+- "Skriv själv först" (förslagen dolda tills användaren skrivit något
+  eller klickat "Jag vet inte – visa förslag") gäller BARA steg 1, 5 och
+  7. I steg 1 är det skrivstartare (t.ex. "Vem vill du hjälpa?"), inte
+  AI-förslag — Boggel hittar fortfarande inte på idéer. Övriga steg med
+  förslag visar dem direkt (i den här rundan steg 2 och 3). Ersätter §1
+  punkt 2:s och §8.2:s fördelning av "Du först".
+
+### 0.5 Välkomnande och spegling
+
+- **Steg 1, "Det här hörde jag":** `readIdea` returnerar `welcome` — EN
+  mening (högst 30 ord) som visar att Boggel förstått vad som bär idén,
+  utan hälsningsfras och beröm — följd av den fasta tidsmeningen från
+  `welcomeTimeSentence()` ("Vi tar tio korta steg, ungefär 15 minuter.
+  Sen har du en tydlig bild av idén och vad du ska testa först — något
+  att ta med till din rådgivare."). Idétexten visas på linjerat papper
+  där 2–5 noteringar avslöjas en i taget: citatet guldmarkeras och
+  numreras, och raden säger DU VET / DU TROR / DU HOPPAS
+  (`fakta`/`tolkning`/`hopp`) plus vad det betyder. Användaren kan
+  markera en notering "stämmer inte", gå vidare ("Stämmer, vidare →")
+  eller rätta ("Inte riktigt — jag menar …"), vilket kör `readIdea` igen
+  med rättelsen.
+- **Steg 2–3:** efter varje svar en spegling på EN mening
+  (`reflection`) — ett påstående med användarens egna ord, aldrig en
+  fråga, aldrig beröm — plus kartrörelsen i ord, och idékartan fylls
+  synligt.
+- `ctx.mirror` byggs fortfarande av noteringarna (per `kind`), så steg
+  4–10 får samma underlag som i fas 2.
+
+### 0.6 Insiktsögonblick
+
+- Tre ställen: efter steg 3 (byggt nu), efter steg 6 (med researchen)
+  och i slutkortet (de två senare i nästa runda).
+- `findInsight` (Syntetiseraren, starkare modellnivå) hittar EN konkret
+  koppling, motsägelse eller ett mönster mellan minst två saker
+  användaren skrivit, helst från olika steg: 1–2 meningar om vad det
+  betyder för idén, med användarens ord inom citattecken. Aldrig
+  allmänna råd som skulle passa vilken idé som helst ("prata med
+  kunder", "validera tidigt").
+- Visas som en egen skärm (`InsightCard`): insikten stort, citaten den
+  bygger på med stegetikett, och raden "Det här kan du ta med till din
+  rådgivare." Användaren svarar "Stämmer" eller "Inte riktigt" (med
+  valfri rättelse); reaktionen sparas i `ctx.insights` och följer med i
+  alla senare anrop.
+
+### 0.7 Ton och mjuk kontroll
+
+- `BOGGELS_ROST` (`roles.ts`) monteras efter rollen i de fyra nya
+  anropen: du-tilltal, korta meningar, inga utropstecken eller emojis,
+  utgå alltid från något användaren skrivit, visa kunskap genom att
+  sätta ord på det som bär eller skaver i just den här idén. Förbjudet
+  bl.a.: "Det är en intressant idé", "Bra fråga", "Låt oss utforska",
+  "Det finns många faktorer att tänka på", "Vilken spännande …", "Det
+  låter som …". Inget beröm.
+- `SKARP_BASE`s ton: varm, kunnig, konkret — som en erfaren
+  affärsrådgivare. Boggel ersätter inte användarens rådgivare; den
+  hjälper användaren att tänka klarare och komma förberedd.
+- Promptexemplen gäller medvetet en ANNAN idé (pensionerade hantverkare
+  som lär ut reparationer) så att modellen kopierar formen, inte
+  innehållet.
+- `generateSkarp` (`validators.ts`): ovanpå den hårda valideringen
+  (`validateNoPlaceholders`) kontrolleras längd, en mening, frågetecken
+  och förbjudna fraser; vid problem körs EN rättande runda. Efter sista
+  rundan används svaret ändå och efterbearbetas (trimmas till hela
+  meningar, citat som inte hittas nollas) — mock-läget och en envis
+  modell blockerar aldrig flödet.
+
+### 0.8 Evidensmärkning
+
+- Etiketterna är synliga men diskreta (`ORIGIN_LABELS` i `render.ts`):
+  "Dina ord" (`anvandare`), "Boggels tolkning" (`ai_tolkning`),
+  "Hittat på nätet" (`extern_kalla`). Avgör §8.1.
+- Citat som visas som användarens ord (noteringar, `*Quote`-fälten,
+  insiktens citat) kontrolleras i kod: de behålls bara om de står
+  ordagrant i användarens text (`findQuoteSpan`/`findQuoteInSources` i
+  `text.ts` — tål skiftläge, blanksteg och citattecken, returnerar
+  originalets exakta delsträng). Annars visas ingen markering.
+
+### 0.9 Nya anrop och scheman — var de bor
+
+Alla i repot `gxy652fxr`, under `src/lib/skarp/`:
+
+| Anrop | Fil | `schemaName` / schema | Roll |
+| --- | --- | --- | --- |
+| `readIdea` | `step1-idea.ts` | `skarp_read_idea` / `ReadIdeaSchema` | Spegeln |
+| `answerWhyYou` | `step2-why.ts` | `skarp_why_you` / `WhyYouResultSchema` | Intervjuaren |
+| `answerCustomer` | `step3-customer.ts` | `skarp_customer` / `CustomerResultSchema` | Intervjuaren |
+| `findInsight` | `insight.ts` | `skarp_insight` / `InsightSchema` | Syntetiseraren |
+
+- Varje fil exporterar en testbar `*Logic`-funktion och en
+  `createServerFn`-wrapper; allt exporteras via `index.ts`.
+  `initSkarpMap` är oförändrad.
+- Scheman: `schemas.ts` (Skärp-ägda; `src/lib/ai/schemas.ts` är orörd).
+  Visad prosa trunkeras aldrig i schemat — korthet styrs av prompt, mjuk
+  kontroll och efterbearbetning.
+- Steg 3: situationens sju slotar är nu `string | null` (en del som inte
+  går att utläsa blir null). `renderSituationSentence` bygger
+  mallmeningen när alla sju finns, annars visas `kundShort`.
+- Kontext: `SkarpContextSchema` har nya valfria fält `answers`,
+  `ideaMap` och `insights`.
+- Hjälpare: `text.ts` (citatmatchning, meningsdelning och -trimning),
+  `validators.ts` (`generateSkarp`, `cleanQuestion`, förbjudna fraser),
+  `progress.ts` (tid kvar), `map-note.ts` (kartrörelsen i ord),
+  `roles.ts` (`BOGGELS_ROST`).
+- UI: `src/components/skarp/` (`SkarpProgress`, `StepScreen`,
+  `AnswerComposer`, `IdeaReadView`, `InsightCard`, `IdeaMap`,
+  `ThinkingLine`, `FocusError`, ändrad `SkarpRail`), delade primitiver
+  enligt prototypen i `src/components/shared/boggel-ui.tsx`
+  (`PrimaryButton`, `TextButton`, `Kicker`, `NumberRomb`, `Highlight`,
+  `GoldDash`, `LinedPaper`) och nya guldtoner/markeringar i
+  `src/styles.css`. Visuellt facit: `design-reference/skarp/prototyp.html`.
+- Researchen körs oförändrad en gång per session, efter steg 3.
+
 ## 1. Principerna, kort
 
 Boggel i Skärp-läget ska vara en tankemotor, inte en idémaskin: gräva fram

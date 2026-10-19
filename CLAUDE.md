@@ -28,6 +28,13 @@ Lösningskärnan → Det unika och affären → Skeptikern → Slutkort och
 test), bygger en personprofil i steg 2 som följer med genom resten av
 sessionen, och märker varje påstående i slutkortet med sitt ursprung
 (användarens egna ord, AI:ns tolkning, eller extern källa med länk).
+Sedan fas 3 (steg 1–3 ombyggda, 4–10 följer) är Skärp en arbetsyta med
+ett steg i fokus i stället för en chattlogg: det användaren sagt växer
+fram i en idékarta med nio fält i railen (klickbara för att rätta), och
+Boggel lyfter insiktsögonblick — en konkret koppling, motsägelse eller
+ett mönster i användarens egna ord — efter steg 3 (och, när steg 4–10
+är ombyggda, efter steg 6 och i slutkortet; se §0 i
+`docs/skarp-flode.md`).
 Fullständig specifikation: `docs/skarp-flode.md`.
 
 Kompass-läget är oförändrat och beskrivs inte här.
