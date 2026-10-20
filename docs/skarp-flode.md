@@ -83,7 +83,10 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   Ifyllnaden ska kännas som en belöning: fältet blinkar guld, romben
   poppar och "{n} av 9" räknas upp. Vid en följdfråga fylls fältet
   preliminärt (streckad romb) och slutgiltigt efter svaret. "Att testa"
-  fylls direkt när stoppregeln är skriven, med stoppregeln som citat.
+  fylls direkt när stoppregeln är skriven (inte tidigare), med
+  stoppregeln som citat — bara när användaren skrivit den själv. Ett
+  klickat förslag blir inget citat och märks "Boggels tolkning" i
+  slutkortet.
 - Användaren kan klicka på ett fyllt fält och rätta det. Rättelserna
   sparas i `ctx.ideaMap` (BARA användarens rättelser) och går med i
   varje anrop som ett `IDÉKARTAN`-block som gäller före äldre detaljer.
@@ -349,12 +352,15 @@ på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
 - **Val:** valskärmen (0.4), lead = `own.reflection` om den finns, den
   egna ramen förvald.
 - **Sparas:** `ctx.frame` (+ svaret som `problemram` när ramen är egen
-  eller omskriven).
+  eller omskriven) — först när steg 6 är klart att visa. Misslyckas
+  steg 6 sparas inget, kartan står still och valet kan göras om, så
+  inget sparas eller flyttas två gånger.
 - **Idékartan:** Problemramen ← den valda ramen.
 
 #### Steg 6 — Verkligheten
 
-- **Skärm:** lead = den valda ramens spegling, rubriken "Det här hittade
+- **Skärm:** lead = den valda ramens spegling (ingen när den egna ramen
+  behölls — den speglingen var redan valskärmens lead), rubriken "Det här hittade
   vi ute i världen." (ingen why-rad) och alternativen (0.10), sedan
   stegets fråga i `QuestionBlock` med förslag.
 - **Vem går först:** AI:n (researchen), sedan användaren.
@@ -403,7 +409,8 @@ på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
 #### Steg 8 — Det unika och affären
 
 - **Fråga:** `proposeMechanisms`s `nextQuestion`, med den valda kärnans
-  spegling som lead.
+  spegling som lead (ingen när den egna kärnan behölls — den speglingen
+  var redan valskärmens lead).
 - **Vem går först:** användaren, med förslagen synliga direkt.
 - **Anrop:** `answerUnique` (+1 vid följdfråga). Väntan: `Läser "…"`,
   "Jämför med det vi hittade ute i världen …". Unikt = en ovanlig,
@@ -415,7 +422,9 @@ på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
   att något användaren pekar ut som unikt redan görs av ett alternativ
   ute i världen; den behålls bara om den nämner ett alternativ enligt
   namnregeln (0.10) och får då dess länk (`conflictFinding`). Svaret
-  sparas som `unikt-affar`.
+  sparas som `unikt-affar`. Allt det här sparas först när steg 9 är
+  klart att visa; misslyckas steg 9 återanvänds svaret på steg 8 (inget
+  nytt anrop) när användaren försöker igen.
 - **Idékartan:** Det unika och affären ← `uniqueShort` (högst 15 ord).
 
 #### Steg 9 — Skeptikern
@@ -440,7 +449,9 @@ på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
   anpassad till idén) har förslag byggda på punkterna, utan siffror —
   tröskeln lämnas till användaren. Stoppregeln kräver inget eget anrop.
 - **Sparas:** `ctx.skeptic` (`concerns` med typ, punkt, test och citat;
-  `stopRule` med användarens ord) och stoppregeln som `skeptikern`.
+  `stopRule` och `stopRuleSource` — "forslag" när ett förslag klickats
+  utan ändring, och då kallas orden aldrig användarens egna) och
+  stoppregeln som `skeptikern`.
 - **Idékartan:** Att testa ← den första saken värd att testa och
   "Stoppregel: …", direkt när stoppregeln är skriven.
 
@@ -515,8 +526,8 @@ ordningen (en del utan innehåll utelämnas):
    starka, med "Stämmer"/"Inte riktigt" och "Noterat." när användaren
    svarat.
 4. **Så står idén nu** ("Boggels tolkning") — de sex områdena (Problemet,
-   Du som grundare, Lösningens skillnad, Genomförbarhet, Affären, Hur
-   snabbt du kan lära dig), det starka först, var och en med en nivå:
+   Du som grundare, Det som skiljer lösningen, Genomförbarhet, Affären,
+   Hur snabbt du kan testa), det starka först, var och en med en nivå:
    **Starkt** (bara när underlaget tydligt visar det), **På god väg**
    eller **Behöver mer underlag** (mest antaganden), och EN mening om
    nästa steg som nämner något konkret ur användarens ord och inte
@@ -538,7 +549,9 @@ ordningen (en del utan innehåll utelämnas):
    byggs i klienten (`renderClosingCardMarkdown`, en ren funktion) av
    det som visas, inklusive användarens svar på insikten.
    `finishSkarpSession` sparar texten med `saveSession` (`resultText`,
-   oförändrad signatur) när det finns ett klient-id.
+   oförändrad signatur) när det finns ett klient-id — en gång, när kortet
+   först visas, så den sparade texten saknar svaret på insikten (det
+   finns i kopian och i `ctx.insights`).
 
 Under kortet: **Fråga Boggel om idén** (`FollowupDialog`,
 `askSkarpFollowup` oförändrad) — följdfrågor och invändningar som Boggel
