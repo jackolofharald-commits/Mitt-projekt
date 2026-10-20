@@ -88,7 +88,8 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   klickat förslag blir inget citat och märks "Boggels tolkning" i
   slutkortet.
 - Användaren kan klicka på ett fyllt fält och rätta det. Rättelserna
-  sparas i `ctx.ideaMap` (BARA användarens rättelser) och går med i
+  sparas i `ctx.ideaMap` (BARA användarens rättelser — sparas texten
+  oförändrad är det ingen rättelse, och fältet behåller sin märkning) och går med i
   varje anrop som ett `IDÉKARTAN`-block som gäller före äldre detaljer.
 - Insikterna (0.6) listas under "INSIKTER"; en ny insikt lyser upp och
   scrollas fram som ett nyss ifyllt fält, en avvisad visas överstruken.
@@ -352,10 +353,11 @@ på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
   "…"`, "Letar andra sätt att se samma problem …".
 - **Val:** valskärmen (0.4), lead = `own.reflection` om den finns, den
   egna ramen förvald.
-- **Sparas:** `ctx.frame` (+ svaret som `problemram` när ramen är egen
-  eller omskriven) — först när steg 6 är klart att visa. Misslyckas
-  steg 6 sparas inget, kartan står still och valet kan göras om, så
-  inget sparas eller flyttas två gånger.
+- **Sparas:** en egen ram sparas som `problemram` (`eget`) redan när den
+  skickas, före valskärmen. `ctx.frame` och en omskrivning (som
+  `problemram`, `blandat`) sparas först när steg 6 är klart att visa.
+  Misslyckas steg 6 sparas inget av det, kartan står still och valet
+  kan göras om, så inget sparas eller flyttas två gånger.
 - **Idékartan:** Problemramen ← den valda ramen.
 
 #### Steg 6 — Verkligheten
