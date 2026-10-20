@@ -296,7 +296,8 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   avgör §8.1:
   - "Dina ord" (`anvandare`): citaten i idékartan, en egen eller
     omskriven ram/kärna, citaten bakom alternativen i steg 5/7, det
-    starka i slutkortet och stoppregeln.
+    starka i slutkortet och stoppregeln när användaren skrivit den
+    själv (ett klickat förslag utan ändring är "Boggels tolkning").
   - "Boggels tolkning" (`ai_tolkning`): idékartans korta formuleringar
     och en vald AI-ram/-kärna, vad alternativen betyder (`demandNote`),
     "Om kunden inte gör något", "Det vi inte vet än", "Saker värda att
@@ -493,6 +494,13 @@ på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
   ett alternativ vars namn inte matchar något fynd räknas som påhittat
   och tas bort. Dubbletter tas bort på normaliserat namn (flera
   alternativ får dela länk).
+- Ett namn AI:n skrivit i någon runda men som inte visas (påhittat,
+  borttaget i rättelserundan eller utanför de sex) får inte stå kvar i
+  frågan, förslagen, `demandNote`, luckorna eller `doNothing` — utom
+  när användaren själv skrivit namnet. Rättelserundan ber om det; står
+  det ändå kvar tas förslaget, luckan eller raden bort, och nämner
+  frågan namnet (eller finns fynd men inget alternativ kvar) blir den
+  neutral: "Vad gör kunden i dag i stället?".
 - Finns direkta alternativ följer EN mening om vad det betyder
   (`demandNote`, "Boggels tolkning"): att andra redan tar betalt för att
   lösa det kan betyda att det finns efterfrågan, och vad som då skiljer
@@ -538,7 +546,8 @@ ordningen (en del utan innehåll utelämnas):
    saknas: "Inte klart än").
 6. **Saker värda att testa** ("Boggels tolkning") — Skeptikerns punkter
    med test och ev. länk, ev. varningen från steg 8 och "DIN STOPPREGEL"
-   ("Dina ord").
+   ("Dina ord" när användaren skrivit den, "Boggels tolkning" när ett
+   förslag klickats utan ändring).
 7. **Ditt första test** ("Boggels tolkning") — den FÖRSTA saken värd att
    testa utvecklad till ett konkret test, inget nytt: Hypotes, Så testar
    du, Det räknas som bevis (knutet till stoppregeln om den finns), Inom
