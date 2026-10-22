@@ -133,8 +133,12 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   frågade om) — eller när svaret vilar stegets mest avgörande punkt på
   en åsikt eller plan ("de gillade det", "vi ska"): då EN följdfråga som
   prövar just det. Aldrig för att svaret är kort; ett kort svar, en
-  etikett eller ett valt förslag är alltid fullgott. Följdfrågan har
-  samma format som huvudfrågan men visar inget perspektiv, visas med
+  etikett eller ett valt förslag är alltid fullgott, och ett ärligt "vet
+  inte än" på en fråga som bad grundaren ta reda på eller räkna på något
+  är just det frågan skulle visa — ingen följdfråga då. Följdfrågan har
+  samma format som huvudfrågan, med samma förslagsregel (jag-form, bara
+  det användaren skrivit, ett ärligt "vet inte än" när något är öppet),
+  men visar inget perspektiv, visas med
   "· om du vill" och har alltid
   "Gå vidare utan →", som använder det preliminära resultatet. När den
   är besvarad tvingar servern `needsFollowUp = false`. Valen i steg 5/7
@@ -907,7 +911,9 @@ deterministisk kod — inget AI-anrop. Samma indata ger samma verktyg i
 samma ordning, så flödestest och eval kan jämföra körningar rakt av.
 
 - **Vilka får vara med:** verktyget gäller slotten; har profilen typer
-  måste verktyget gälla "alla" eller någon av dem; det är inte uteslutet
+  måste verktyget gälla "alla" eller någon av dem — utan profil (steg 1,
+  eller om klassificeringen misslyckats) kräver ett typbundet verktyg
+  två egna signaler i användarens ord; det är inte uteslutet
   (taget av ett tidigare fält i samma block, eller av det samtidiga
   anropets fält när det gäller en insikt); och det är inte det senast
   visade perspektivet (`ctx.lenses`).
@@ -979,10 +985,11 @@ Blocket, i ordning:
    och avgörande inom stegets frågefält, gärna i det senaste svaret; gör
    ett verkligt perspektivskifte med ETT av fältets verktyg, byggt på
    användarens egna ord, och skriv dess id i `lens` — säg aldrig
-   verktygets eller ramverkets namn; kan grundaren svara direkt ur
-   minnet är frågan för säker — fråga det hen måste ta reda på, räkna på
-   eller tänka om; ankaret i användarens ord står i SAMMA mening som
-   frågan. Alternativen i steg 5/7 får inget id per alternativ, men minst
+   verktygets eller ramverkets namn; kan grundaren svara med något hen
+   redan sagt, en åsikt eller en färdig pitch är frågan för säker —
+   fråga det hen måste ta reda på, räkna på eller tänka om (en fråga om
+   en konkret händelse som grundaren ännu inte beskrivit räknas som
+   skarp); ankaret i användarens ord står i SAMMA mening som frågan. Alternativen i steg 5/7 får inget id per alternativ, men minst
    ett ska vara något en kunnig grundare inte redan har övervägt.
    Skeptikerns punkter tar det mest osäkra och avgörande först, även det
    som redan sagts. Insikten använder verktygen och fallgroparna som
@@ -1046,8 +1053,10 @@ Gemensamma rader i `sharp.ts`, samma i alla steg:
 - **Etiketten** är verktygets `perspective`, satt i kod på servern och
   bara när modellens `lens` är ett av fältets erbjudna verktyg — annars
   ingen etikett. Huvudfrågor och de öppna frågorna i steg 5/7: stegets
-  kicker "Steg n av 10 · <namn> · <perspektiv>" (medan Boggel arbetar
-  ersätter "Boggel läser …" hela suffixet). Steg 6:s fråga och
+  kicker "Steg n av 10 · <namn> · <perspektiv>". Med ett perspektiv står
+  raden kvar medan Boggel arbetar (väntraden vid knappen visar redan
+  det, och en kortare rad skulle få skärmen att hoppa på mobil); utan
+  perspektiv ersätter "Boggel läser …" suffixet som förut. Steg 6:s fråga och
   stoppfrågan i steg 9: bara i `QuestionBlock`s kicker, "Din tur ·
   <perspektiv>"; stegets kicker är som förut. Följdfrågor visar aldrig
   något perspektiv ("· om du vill").
@@ -1069,7 +1078,9 @@ Gemensamma rader i `sharp.ts`, samma i alla steg:
   sagt", byggd av befintliga delar: `Kicker` med etiketten (eller "Ett
   annat sätt att se det"), romben och stycket som tidssatsen använder,
   och citatet markerat med `Highlight`. Den är ingen notering: ingen
-  siffra, inget "stämmer inte", inte med i `ctx.mirror`.
+  siffra, inget "stämmer inte", inte med i `ctx.mirror`. Den avslutas
+  med samma tunna linje som noteringarna, så att "Kort sagt" börjar en
+  ny grupp.
 
 #### Rösten
 
@@ -1107,8 +1118,8 @@ Gemensamma rader i `sharp.ts`, samma i alla steg:
 I `validators.ts`. Underlaget per anrop kommer från `sharpChecks`
 (`sharp.ts`): samma användartexter som blocket valde verktyg på, namnen
 under "Det här hittade vi ute i världen" (i steg 6 även fyndens titlar
-innan de hamnat i kontexten), fältens verktygsetiketter och blockets och
-röstens exempel. Kontrollerna är få och precisa, så att andelen rättande
+och utdrag innan de hamnat i kontexten), fältens verktygsetiketter och
+blockets och röstens exempel. Kontrollerna är få och precisa, så att andelen rättande
 rundor inte stiger märkbart; ett problem i taget, och fortfarande högst
 EN rättande runda (0.7).
 
@@ -1119,16 +1130,21 @@ EN rättande runda (0.7).
   "de flesta grundare", "många grundare", "studier visar", "forskning
   visar" och "statistiskt". "Jag har sett" och "i min erfarenhet" är
   bara förbjudna i Boggels egen röst — i förslagen (användarens
-  jag-form) är de vanliga svar.
+  jag-form) är de vanliga svar, och en insikt, spegling eller vinkel
+  som citerar användaren ordagrant får återge dem.
 - **Ärlighet** (`honestyProblem`): (a) statistik — "de flesta",
   "majoriteten av", "procent", "vanligaste orsaken", "oftast" eller
-  "30 %"/"3 av 4", utom när det är användarens egna ord som citeras;
-  (b) ett namn med versal (inte först i en mening, inte en tillåten
-  förkortning som AI, IT, HR, VD, EU, CE, GDPR, LOU, B2B, B2C, SaaS,
-  API, ROT eller RUT) som varken står i användarens text, bland namnen
-  ute i världen eller i en verktygsetikett ("'X' har användaren inte
-  nämnt — skriv 'en större aktör' …"); (c) en siffra som inte står i
-  användarens text och inte är 1, 2, 3, 10 eller 100. Gäller varje
+  "30 %"/"3 av 4", utom när det är användarens egna ord som citeras
+  (båda talen står i hens text, med siffror eller bokstäver); (b) ett
+  namn med versal (inte först i en mening, inte en tillåten förkortning
+  som AI, IT, HR, VD, EU, CE, GDPR, LOU, B2B, B2C, SaaS, API, ROT eller
+  RUT) som varken står i användarens text eller bland namnen ute i
+  världen ("'X' har användaren inte nämnt — skriv 'en större aktör'
+  …"); (c) en siffra som inte står i användarens text — med siffror
+  eller bokstäver, "12" räknas när hen skrev "tolv" — och inte är 1, 2,
+  3, 10 eller 100. En erbjuden verktygsetikett som står i sin helhet i
+  texten ("dag 30") tas bort före kontrollen; etikettens enskilda ord
+  och tal släpper aldrig igenom något på annat ställe. Gäller varje
   visad fråga och why (huvud- och följdfråga), vinkeln, Skeptikerns
   punkt och test, insikten, slutkortets `next` och rådgivarfrågorna.
 - **Verktygs-id** (`lensProblem`): en huvudfråga (`nextQuestion`,
@@ -1144,7 +1160,8 @@ EN rättande runda (0.7).
   som platta.
 - **Avskrivet exempel** (`copiedExampleProblem`): fyra ord i följd ur
   blockets platta och skarpa exempel eller `VOICE_EXAMPLES`, med minst
-  två innehållsord som inte alla står i användarens egen text. Gäller
+  två innehållsord som inte alla står i användarens egen text (böjningar
+  räknas: "månaden" när hen skrev "månad"). Gäller
   visade frågor och why, Skeptikerns punkter och insikten.
 - **Blind fläck** (`blindSpotProblem`): `blind_flack` kräver `gap`, och
   området får inte stå i profilens `stated` eller i `derivedCoverage`
