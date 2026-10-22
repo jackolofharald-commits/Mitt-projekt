@@ -9,7 +9,8 @@ testtabellen bygger på `docs/rapport-affarsideer.md`.
 
 **Status:** evalen är byggd och prövad i `--mock` (alla fyra personerna,
 `--compare`, `--pairwise`, `--regrade` och baslinjeskriptet mot `2d61206`).
-**Riktiga körningar kräver `ANTHROPIC_API_KEY`** — ingen sådan körning är
+**Riktiga körningar kräver en Claude-nyckel** (`SKARP_EVAL_ANTHROPIC_API_KEY`,
+eller `ANTHROPIC_API_KEY`) — ingen sådan körning är
 gjord än, så resultattabellen nedan är tom.
 
 ## 1. Vad som mäts
@@ -45,7 +46,7 @@ Allt körs med `npx tsx` från repots rot. Inga `npm run`-skript behövs.
 | Vad | Kommando | Kostar |
 | --- | --- | --- |
 | Kunskapstestet (ren kod) | `npx tsx scripts/skarp-knowledge-test.ts` | – |
-| Flödestestet (mock) | `npx tsx scripts/skarp-flow-test.ts "<idé>"` | – |
+| Flödestestet (mock) | `npx tsx scripts/skarp-flow-test.ts --mock "<idé>"` | – |
 | Evalen, gratis | `npx tsx scripts/skarp-quality-eval.ts --mock --personas saas` | – |
 | Röktest | `npx tsx scripts/skarp-quality-eval.ts --smoke` | en persona, steg 1–3 och insikt 1 |
 | Baslinjen | `scripts/skarp-quality-baseline.sh [2d61206] [--holdout]` | fyra (fem) personer |
@@ -53,6 +54,14 @@ Allt körs med `npx tsx` från repots rot. Inga `npm run`-skript behövs.
 | Bedömarbrus | `npx tsx scripts/skarp-quality-eval.ts --regrade <körning>.json` | bara bedömaren |
 | Jämförelse | `npx tsx scripts/skarp-quality-eval.ts --compare <före>.json <efter>.json [--noise <brus>.json]` | – |
 | Parvis jämförelse | `… --compare <före>.json <efter>.json --pairwise` | bara bedömaren |
+
+Flödestestet utan `--mock` väljer leverantör precis som appen: med
+`ANTHROPIC_API_KEY` i skalet blir det en hel, riktig och betald
+Claude-session (plus Perplexity och Supabase om de variablerna finns) som
+aldrig hamnar i huvudboken. `SKARP_EVAL_ANTHROPIC_API_KEY` läser det inte. Som kontroll körs det därför alltid med `--mock`: flaggan tar
+bort `ANTHROPIC_API_KEY`, `AI_API_KEY`, `AI_BASE_URL`, `PERPLEXITY_*` och
+`SUPABASE_*` och sätter `AI_PROVIDER=mock` innan något under `src/` laddas,
+och räknas inte som en del av idétexten.
 
 Flaggor:
 
@@ -73,17 +82,37 @@ Flaggor:
 - `--persona-sees-suggestions` — variant där personan ser förslagen och får
   välja ett ordagrant (skickas då som `source: "forslag"`).
 
-Utan `ANTHROPIC_API_KEY` och utan `--mock` skriver skriptet vad som behövs
-och avslutas med kod 2 (likaså `--research live` utan
-`PERPLEXITY_API_KEY`). Budgetspärren och kravet på `--smoke` före den
-första hela körningen avslutar med kod 3, en vägrad jämförelse med kod 1.
+Nyckeln läses helst från `SKARP_EVAL_ANTHROPIC_API_KEY`, som går före
+`ANTHROPIC_API_KEY` och bara läses av evalen. Med ett eget namn plockas
+nyckeln inte upp av något annat i en molnsession som letar efter
+`ANTHROPIC_API_KEY`. Evalen kopierar den till `ANTHROPIC_API_KEY` i sin egen
+process innan något under `src/` laddas. I en molnsession läggs den in i
+miljöns inställningar (under Network secrets där det finns, annars som
+miljövariabel) och gäller från nästa session — klistra aldrig in den i
+chatten.
 
-Under en eval stängs Supabase av (alla `SUPABASE_*` tas bort ur miljön),
-och i `--mock` tas även `ANTHROPIC_API_KEY`, `AI_API_KEY` och
-`PERPLEXITY_*` bort och `AI_PROVIDER=mock` sätts — allt innan något under
-`src/` importeras. I `--mock` svarar mock-leverantören med platshållare,
-personan svarar med meningar ur sina egna fakta och bedömaren ger alla
-punkter 3: **siffrorna betyder ingenting**, men hela kedjan körs.
+Utan nyckel och utan `--mock` skriver skriptet vad som behövs
+och avslutas med kod 2 (likaså `--research live` utan
+`PERPLEXITY_API_KEY`). En riktig körning (även `--regrade` och
+`--pairwise`) börjar med en gratis nyckelkontroll (`GET /v1/models`, inga
+tokens): godtas inte nyckeln (401/403), eller går Claude inte att nå,
+avslutas skriptet med kod 2 innan något körs eller bokförs.
+Budgetspärren och kravet på `--smoke` före den första hela körningen
+avslutar med kod 3, en vägrad jämförelse med kod 1.
+Ctrl-C eller SIGTERM under en riktig körning (även `--regrade` och
+`--pairwise`) bokför det som hunnit kosta och avslutar med kod 130 (§7).
+
+Under en eval stängs Supabase av (alla `SUPABASE_*` tas bort ur miljön).
+OpenRouter-reserven stängs också av: `AI_API_KEY` och `AI_BASE_URL` tas
+bort, så att AI-lagrets kedja slutar vid Claude och Claude-reserven — ett
+svar från en annan leverantör loggas inte som `[ai-cost]`, prissätts inte
+och får aldrig bedömas som Boggels. En riktig körnings rubrik säger det. I
+`--mock` tas även `ANTHROPIC_API_KEY`, `SKARP_EVAL_ANTHROPIC_API_KEY` och
+`PERPLEXITY_*` bort och
+`AI_PROVIDER=mock` sätts. Allt detta görs innan något under `src/`
+importeras. I `--mock` svarar mock-leverantören med platshållare, personan
+svarar med meningar ur sina egna fakta och bedömaren ger alla punkter 3:
+**siffrorna betyder ingenting**, men hela kedjan körs.
 
 Varje körning skriver `eval-results/skarp-quality-<label>-<ÅÅÅÅMMDD-TTMM>`
 med `.json` (allt), `.md` (sammanfattningen), `.log` (alla loggrader,
@@ -155,6 +184,15 @@ att behålla den eller ta ett av Boggels alternativ. Insikterna efter steg
 appen. Det dolda (vilka fakta som avslöjades, vilken blind fläck som
 träffades) når aldrig Boggel eller bedömaren.
 
+Misslyckas ett simulatoranrop två gånger (fel modell-id, 429, timeout) blir
+det ett reservsvar: "Det vet jag inte än.", den egna formuleringen i steg 5
+och 7, eller "Stämmer" på en insikt — och ett sådant går inte att skilja
+från ett riktigt. Därför räknas misslyckade svar, val och reaktioner per
+persona. Antalet står på personans rad och i sammanfattningen, rapporten
+har en egen rad för det, och när simulatorn ger upp syns det direkt i
+terminalen. **Två eller fler i en persona gör körningen "ofullständig –
+jämförs inte"**, och `--compare` vägrar då jämföra den.
+
 ## 5. Bedömningen
 
 En separat, starkare modell (`claude-opus-5-5`) bedömer. Exakt två anrop
@@ -190,9 +228,13 @@ Per punkt, i den här ordningen: `motivering` (alltid, högst 20 ord),
 Ankarna i prompten är skrivna på en idé som inte används någon annanstans
 (en tjänst som sköter kontorsväxter åt små företag). Efteråt gäller:
 `redanBesvarad` → icke-uppenbar högst 2. Bedömaren får ett försök till på
-evalnivå; punkter utan betyg märks och räknas inte in. Prompten innehåller
-aldrig etiketter, commit, version eller "före/efter", och dess hash står i
-resultatfilen — `--compare` vägrar jämföra körningar med olika hash.
+evalnivå; punkter utan betyg märks och räknas inte in. Prompten ber om
+id:t utan hakparenteser, och evalen jämför ändå id:n utan hakparenteser,
+blanksteg och skiftläge — ett eko som `[SAAS-07]` räknas inte som ett
+saknat betyg (som annars hade kostat ett nytt bedömaranrop). Prompten
+innehåller aldrig etiketter, commit, version eller "före/efter", och dess
+hash står i resultatfilen — `--compare` vägrar jämföra körningar med
+olika hash.
 
 ## 6. Rapporten
 
@@ -217,14 +259,18 @@ resultatfilen — `--compare` vägrar jämföra körningar med olika hash.
   `ANTHROPIC_MODEL`, `AI_MODEL_STRONG`, `ANTHROPIC_FALLBACK_MODEL`,
   `ANTHROPIC_TIMEOUT_MS`, person- och bedömarmodell, bedömarens prompt-hash
   och research-läge — och vilken modell som faktiskt svarade på varje
-  Boggel-anrop (svar från reservmodellen flaggas).
+  Boggel-anrop (svar från reservmodellen flaggas). En tom variabel, som
+  `AI_MODEL_STRONG=` i `.env.example`, räknas som osatt precis som i
+  AI-lagret, så den starka nivån flaggas inte i onödan.
 
 `--compare` ger en tabell per steg för de fyra kriterierna, före → efter,
 och hur många personer som blev bättre i steget, bara på punkttyper som
 finns i båda körningarna (t.ex. räknas vinkeln inte mot baslinjen). Den
 vägrar om bedömarens hash, person- eller bedömarmodellen eller research-
 läget skiljer sig, om den ena körningen är mock och den andra inte, eller
-om en körning är "ofullständig" eller en `--smoke`.
+om en körning är "ofullständig" (en persona hoppades över eller avbröts,
+eller simulatorn misslyckades två gånger eller fler i en persona) eller en
+`--smoke`.
 `--pairwise` gör ett bedömaranrop per persona med alla stegpar; A och B
 lottas per par (fast frö, placeringen sparas) och frågan är "Vilken är
 skarpast för just den här grundaren: A, B eller lika?".
@@ -239,25 +285,59 @@ fyra kategorier: Boggel, personsimulatorn (`eval_persona_*`), bedömaren
 priset som tak och redovisas som "minst X, högst Y". Logiska Boggel-anrop
 (ett per `*Logic`-anrop) räknas av evalen själv och jämförs med taket ~25
 (`mapCompetitors` körs inte i evalen men räknas in). Uppmätt i `--mock`
-utan följdfrågor: 17 logiska anrop mot `2d61206`, 18 i nuvarande version
-(klassificeringen är det enda nya anropet; räknat blir det 23 med en
-följdfråga i vart och ett av de fem stegen som kan ha en, och 24 med
-dessutom en rättelse i steg 1). Flödestestet visar 17 i samma läge: utan
-research-fynd gör `mapCompetitors` inget AI-anrop, och flödestestet
-räknar bara anrop som faktiskt görs.
+utan följdfrågor: 17 logiska anrop mot `2d61206`, **18 i nuvarande
+version** (klassificeringen är det enda nya anropet). En följdfråga ger
+ett svarsanrop till, och i steg 3 och 6 startar routen — och evalen, som
+speglar den — dessutom om insikten med följdsvaret; det ersatta
+insiktsanropet väntas aldrig in men är gjort och räknas. Med en följdfråga
+i vart och ett av de fem stegen som kan ha en blir det därför **25 logiska
+anrop** i nuvarande version (fem svarsanrop och två omstartade insikter
+till; 24 mot `2d61206`), `mapCompetitors` inräknad, och **26 med dessutom
+en rättelse i steg 1** — alltså precis vid taket. Rapportens rad "Logiska
+anrop per session" räknar på samma sätt och visar per persona hur många
+följdfrågor och omstartade insikter som ingår (⚠ först över 25).
+Flödestestet visar 17 i läget utan följdfrågor: utan research-fynd gör
+`mapCompetitors` inget AI-anrop, och flödestestet räknar bara anrop som
+faktiskt görs.
 
 Varje riktig körning skrivs i `eval-results/ledger.jsonl` — även
 `--regrade` och `--pairwise`, som kontrollerar budgeten på samma sätt med
-en prognos för bara bedömaren. Före en körning räknas en prognos fram:
-den senaste hela körningens kostnad per persona (helst en utan
-uppspelade svar) × antal × 1,2; finns ingen, en `--smoke` uppräknad till
-en hel session × 1,2; annars försiktigt 1,2 USD per persona. Körningen
+en prognos för bara bedömaren. Raden skrivs preliminärt efter varje klar
+persona och ersätts av den slutliga (samma körnings-id), så att en krasch
+ändå lämnar ett spår utan att något räknas två gånger. Avbryts körningen
+— Ctrl-C, SIGTERM, ett fel — skrivs det som hunnit kosta med etiketten
+`<etikett> avbruten`, och vid en signal avslutas processen med kod 130.
+Varje rad har också trädets version (de nya delarna sedan `2d61206`,
+samma lista som i rapportens rubrik) och commit, antalet anrop per
+schemanamn och de logiska anropen per schemanamn. Preliminära och
+avbrutna rader räknas i totalen men är aldrig underlag för en prognos.
+
+Före en körning räknas en prognos fram: den senaste hela körningen **av
+samma version** (samma nya delar i trädet — en förbättringsrunda som bara
+ändrar antalet verktyg räknas som samma version; baslinjen `2d61206` med
+sina ungefär 1,7 × mindre prompter budgeterar alltså aldrig den nuvarande
+versionen), helst en utan uppspelade svar, × antal × 1,2. Finns ingen,
+används senaste uppmätta `--smoke` (helst av samma version) uppräknad
+till en hel session × 1,2: kostnaden per logiskt Boggel-anrop med mjuka
+rundor och schemaförsök inräknade, steg 4–10 (som röktestet inte når) som
+1,5 × medlet av de uppmätta, och bedömningen som hela del A plus del B ≈
+3,5 × röktestets del A. Annars försiktigt 1,2 USD per persona. Körningen
 startar inte om huvudboken plus prognosen överstiger `--budget-total`
 (standard 15 USD). `--max-usd` (standard prognosen × 1,3) kontrolleras
-före varje persona: en persona som inte hinner bli klar startas aldrig,
-och en körning som saknar en persona märks "ofullständig – jämförs
-inte". `--smoke` krävs före den första hela körningen och skriver ut
-uppmätt kostnad per anropstyp.
+före varje persona: det som redan kostat (även det pågående personer
+hunnit använda) plus det pågående personer har **kvar** av uppskattningen
+plus uppskattningen för den nya måste rymmas. En persona som inte hinner
+bli klar startas aldrig, och en körning som saknar en persona märks
+"ofullständig – jämförs inte".
+
+`--smoke` spärras mot sin egen uppskattning (ungefär en halv session,
+taket blir den × 1,3) och krävs före den första hela körningen. Det räknas
+bara som mätning om personan faktiskt kördes och minst ett Boggel-anrop
+gick fram — ett röktest som hoppade över sin persona eller där alla anrop
+misslyckades låser inte upp något, och en körning där varje persona
+hoppades över skriver ingen rad alls. Röktestet skriver ut uppmätt
+kostnad per anropstyp och per logiskt anrop och en prognos för en hel
+körning.
 
 `--record` sparar varje AI-svar under en nyckel (sha256 av modell, den
 starka modellen, modellnivå, schemanamn, systemprompt, cachebar prefix,
@@ -269,10 +349,11 @@ ny bedömning.
 ## 8. Iterationsprotokollet
 
 Körs när en nyckel finns. Före varje runda: kunskapstestet och
-flödestestet (mock) gröna.
+flödestestet med `--mock` gröna (utan flaggan blir flödestestet en betald
+Claude-session utanför huvudboken, se §2).
 
 1. `npx tsx scripts/skarp-knowledge-test.ts` och
-   `npx tsx scripts/skarp-flow-test.ts "<idé>"` (mock) gröna.
+   `npx tsx scripts/skarp-flow-test.ts --mock "<idé>"` gröna.
 2. `--smoke`.
 3. Baslinjen: `scripts/skarp-quality-baseline.sh` (`fore`, med
    `--holdout` om budgeten räcker).
@@ -295,7 +376,7 @@ Fylls i när riktiga körningar finns.
 
 | Körning | Datum | Commit | icke-uppenbar (90 % KI) | specifik (90 % KI) | Steg på NEJ | Kostnad | Kommentar |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| `fore` (2d61206) | – | – | – | – | – | – | inte körd (kräver `ANTHROPIC_API_KEY`) |
+| `fore` (2d61206) | – | – | – | – | – | – | inte körd (kräver en Claude-nyckel, §2) |
 | `efter` | – | – | – | – | – | – | inte körd |
 | Utanför träningen, före/efter | – | – | – | – | – | – | inte körd |
 
@@ -304,14 +385,17 @@ Bedömarbrus (SD): inte uppmätt.
 
 ### Kostnad per Boggel-session
 
+Logiska anrop räknas som i §7: `mapCompetitors` och omstartade insikter
+inräknade.
+
 | Version | Logiska anrop | Kostnad per session | Varav mjuka rundor |
 | --- | --- | --- | --- |
-| `2d61206` | 17 (mock, utan följdfrågor) | – | – |
-| nuvarande | 18 (mock, utan följdfrågor) | – | – |
+| `2d61206` | 17 (mock, utan följdfrågor); 24 med en följdfråga i alla fem stegen | – | – |
+| nuvarande | 18 (mock, utan följdfrågor); 25 med en följdfråga i alla fem stegen, 26 med en rättelse i steg 1 | – | – |
 
 ## 10. Det som saknas
 
-- **Riktiga körningar kräver `ANTHROPIC_API_KEY`.** Ingen sådan nyckel
+- **Riktiga körningar kräver en Claude-nyckel** (§2). Ingen sådan nyckel
   fanns där evalen byggdes, så röktestet, baslinjen, den nuvarande
   versionen och bedömarbruset är inte körda. Allt annat är prövat i
   `--mock`.
@@ -320,3 +404,8 @@ Bedömarbrus (SD): inte uppmätt.
   på det användaren skrivit — samma för före och efter.
 - Prisuppgiften för reservmodellen (`claude-haiku-4-5-20251001`) saknas i
   `src/lib/ai/log.server.ts`; svar från den redovisas som "minst X, högst Y".
+- Bara anrop med en `[ai-cost]`-rad prissätts. Ett försök som underkänns
+  av schemat eller avbryts av tidsgränsen kan vara debiterat men räknas
+  som $0 (det syns bara som ✗ i tabellen per anrop), så huvudboken kan
+  ligga något under det Anthropic faktiskt debiterar — lämna marginal mot
+  `--budget-total`.
