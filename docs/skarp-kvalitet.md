@@ -15,7 +15,13 @@ gjord än, så resultattabellen nedan är tom.
 ## 1. Vad som mäts
 
 Fyra simulerade grundare går igenom hela Skärp-flödet med samma anrop, i
-samma ordning och med samma kontext som `src/routes/skarp.tsx`. En separat
+samma ordning och med samma kontext som `src/routes/skarp.tsx` — utom
+konkurrentkartan (`mapCompetitors`, som bara ritar UI och räknas in i
+anropsbudgeten utan att köras) och sparandet av slutkortet
+(`finishSkarpSession`). Varje logiskt anrop har routens tidsgräns (60 s
+per steg, 45 s för en insikt, 20 s för klassificeringen); ett anrop som
+inte hinner eller fallerar räknas som en saknad punkt, och flödet går
+vidare med en reservfråga där routen hade visat "Försök igen". En separat
 bedömare sätter betyg på varje punkt Boggel visar. Huvudmåttet är
 medelvärdet av **icke-uppenbar** och **specifik** över målpunkterna, med
 ett bootstrap-intervall på 90 %.
@@ -41,7 +47,7 @@ Allt körs med `npx tsx` från repots rot. Inga `npm run`-skript behövs.
 | Kunskapstestet (ren kod) | `npx tsx scripts/skarp-knowledge-test.ts` | – |
 | Flödestestet (mock) | `npx tsx scripts/skarp-flow-test.ts "<idé>"` | – |
 | Evalen, gratis | `npx tsx scripts/skarp-quality-eval.ts --mock --personas saas` | – |
-| Röktest | `npx tsx scripts/skarp-quality-eval.ts --smoke` | en persona, steg 1–3 |
+| Röktest | `npx tsx scripts/skarp-quality-eval.ts --smoke` | en persona, steg 1–3 och insikt 1 |
 | Baslinjen | `scripts/skarp-quality-baseline.sh [2d61206] [--holdout]` | fyra (fem) personer |
 | Nuvarande version | `npx tsx scripts/skarp-quality-eval.ts --label efter [--holdout]` | fyra (fem) personer |
 | Bedömarbrus | `npx tsx scripts/skarp-quality-eval.ts --regrade <körning>.json` | bara bedömaren |
@@ -68,8 +74,9 @@ Flaggor:
   välja ett ordagrant (skickas då som `source: "forslag"`).
 
 Utan `ANTHROPIC_API_KEY` och utan `--mock` skriver skriptet vad som behövs
-och avslutas med kod 2. Budgetspärren och kravet på `--smoke` före den
-första hela körningen avslutar med kod 3.
+och avslutas med kod 2 (likaså `--research live` utan
+`PERPLEXITY_API_KEY`). Budgetspärren och kravet på `--smoke` före den
+första hela körningen avslutar med kod 3, en vägrad jämförelse med kod 1.
 
 Under en eval stängs Supabase av (alla `SUPABASE_*` tas bort ur miljön),
 och i `--mock` tas även `ANTHROPIC_API_KEY`, `AI_API_KEY` och
@@ -120,8 +127,8 @@ Alla förväntas klassas som `erfaren`. Varje persona har tre lager:
 - **Det grundaren vet men inte skrev** (8–12 saker): sådant en kunnig
   grundare redan har övervägt, med en hållning — även läroboksfrågorna för
   just den sortens idé. Avslöjas bara när en fråga ber om det, högst en sak
-  per svar. Bedömaren ser listan: en punkt som bara lockar fram något av
-  det får högst 3 på icke-uppenbar.
+  per svar. Bedömaren ser listan, och enligt dess regler (§5) får en punkt
+  som bara lockar fram något av det högst 3 på icke-uppenbar.
 - **Blinda fläckar** (3–5): verkliga andra ordningens saker grundaren inte
   har tänkt på. Det är dem en skarp tankepartner ska hitta. Simulatorn
   känner igen när en fråga träffar en, och rapporten visar andelen per steg.
@@ -216,7 +223,8 @@ resultatfilen — `--compare` vägrar jämföra körningar med olika hash.
 och hur många personer som blev bättre i steget, bara på punkttyper som
 finns i båda körningarna (t.ex. räknas vinkeln inte mot baslinjen). Den
 vägrar om bedömarens hash, person- eller bedömarmodellen eller research-
-läget skiljer sig, om en körning är "ofullständig" eller en `--smoke`.
+läget skiljer sig, om den ena körningen är mock och den andra inte, eller
+om en körning är "ofullständig" eller en `--smoke`.
 `--pairwise` gör ett bedömaranrop per persona med alla stegpar; A och B
 lottas per par (fast frö, placeringen sparas) och frågan är "Vilken är
 skarpast för just den här grundaren: A, B eller lika?".
@@ -232,23 +240,31 @@ priset som tak och redovisas som "minst X, högst Y". Logiska Boggel-anrop
 (ett per `*Logic`-anrop) räknas av evalen själv och jämförs med taket ~25
 (`mapCompetitors` körs inte i evalen men räknas in). Uppmätt i `--mock`
 utan följdfrågor: 17 logiska anrop mot `2d61206`, 18 i nuvarande version
-(klassificeringen är det enda nya anropet).
+(klassificeringen är det enda nya anropet; räknat blir det 23 med en
+följdfråga i vart och ett av de fem stegen som kan ha en, och 24 med
+dessutom en rättelse i steg 1). Flödestestet visar 17 i samma läge: utan
+research-fynd gör `mapCompetitors` inget AI-anrop, och flödestestet
+räknar bara anrop som faktiskt görs.
 
-Varje riktig körning skrivs i `eval-results/ledger.jsonl`. Före en körning
-räknas en prognos fram — senast uppmätta kostnad per persona × antal × 1,2
-(första gången från `--smoke`, annars försiktigt 1,2 USD per persona) — och
-körningen startar inte om huvudboken plus prognosen överstiger
-`--budget-total` (standard 15 USD). `--max-usd` (standard prognosen × 1,3)
-kontrolleras före varje persona: en persona som inte hinner bli klar
-startas aldrig, och en körning som saknar en persona märks "ofullständig –
-jämförs inte". `--smoke` krävs före den första hela körningen och skriver
-ut uppmätt kostnad per anropstyp.
+Varje riktig körning skrivs i `eval-results/ledger.jsonl` — även
+`--regrade` och `--pairwise`, som kontrollerar budgeten på samma sätt med
+en prognos för bara bedömaren. Före en körning räknas en prognos fram:
+den senaste hela körningens kostnad per persona (helst en utan
+uppspelade svar) × antal × 1,2; finns ingen, en `--smoke` uppräknad till
+en hel session × 1,2; annars försiktigt 1,2 USD per persona. Körningen
+startar inte om huvudboken plus prognosen överstiger `--budget-total`
+(standard 15 USD). `--max-usd` (standard prognosen × 1,3) kontrolleras
+före varje persona: en persona som inte hinner bli klar startas aldrig,
+och en körning som saknar en persona märks "ofullständig – jämförs
+inte". `--smoke` krävs före den första hela körningen och skriver ut
+uppmätt kostnad per anropstyp.
 
-`--record` sparar varje AI-svar under en nyckel (sha256 av modell,
-modellnivå, schemanamn, systemprompt, cachebar prefix, meddelanden och
-schemats form). `--replay` lämnar tillbaka det sparade svaret för en
-identisk förfrågan (loggas `[eval-replay]`, $0, räknas för sig) och går
-live vid en miss. `--regrade` spelar aldrig upp — det är en ny bedömning.
+`--record` sparar varje AI-svar under en nyckel (sha256 av modell, den
+starka modellen, modellnivå, schemanamn, systemprompt, cachebar prefix,
+meddelanden och schemats form). `--replay` lämnar tillbaka det sparade
+svaret för en identisk förfrågan (loggas `[eval-replay]`, $0, räknas för
+sig) och går live vid en miss. `--regrade` spelar aldrig upp — det är en
+ny bedömning.
 
 ## 8. Iterationsprotokollet
 

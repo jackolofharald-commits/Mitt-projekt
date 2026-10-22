@@ -38,8 +38,21 @@ efter steg 6 och i slutkortet. Slutkortet har inga sifferbetyg: det
 börjar med det som är starkt, ger varje område "Starkt", "På god väg"
 eller "Behöver mer underlag" med en mening om nästa steg, och samlar
 "Saker värda att testa", ett första test och frågor att ta med till
-rådgivaren. Se §0 i `docs/skarp-flode.md`, som gäller före resten av
-dokumentet.
+rådgivaren. Sedan Skärpan (§0.13) tänker Boggel med en inbyggd
+kunskapsbas — tankeverktyg och kända fallgropar per idétyp, bara
+heuristiker och aldrig statistik — och väljer frågor efter
+informationsvärde för grundare som redan kan grunderna. Ett tyst
+klassificeringsanrop efter steg 1 (sessionens enda extra anrop: 18
+logiska anrop utan följdfrågor, tak ~25) bedömer idétyp, vad som redan
+är sagt (sagt är inte belagt), vad som är mest osäkert och avgörande och
+hur van användaren är, och vanlig kod väljer sedan deterministiskt
+vilka verktyg varje steg får i SKÄRPA-blocket. Varje huvudfråga är EN
+mening på högst 16 ord med ankaret i användarens egna ord och visar sitt
+perspektiv som en diskret etikett, nya mjuka kontroller stoppar
+statistik, påhittade namn och siffror, platta grundfrågor och
+avskrivna exempel, och kvalitetsevalen i `docs/skarp-kvalitet.md`
+mäter om det blir skarpare. Se §0 i `docs/skarp-flode.md`, som gäller
+före resten av dokumentet.
 Fullständig specifikation: `docs/skarp-flode.md`.
 
 Kompass-läget är oförändrat och beskrivs inte här.
