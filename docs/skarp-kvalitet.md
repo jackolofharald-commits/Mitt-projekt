@@ -76,11 +76,14 @@ Flaggor:
   `eval-results/cache/` (standard på för riktiga körningar).
   `--replay` spelar upp ett inspelat svar för en identisk förfrågan och går
   live vid en miss (standard i förbättringsrundor, se §8).
-- `--max-usd N` (standard prognosen × 1,3), `--budget-total 15`.
+- `--max-usd N` (standard prognosen × 1,3), `--budget-total 15`. Taket för
+  en körning är aldrig högre än det som återstår av `--budget-total` (§7).
 - `--out eval-results`, `--cache-dir <katalog>`, `--verbose` (visar
   AI-lagrets loggrader i terminalen; de hamnar alltid i körningens `.log`).
 - `--persona-sees-suggestions` — variant där personan ser förslagen och får
   välja ett ordagrant (skickas då som `source: "forslag"`).
+- `--mock` gör också `--compare … --pairwise` och `--regrade` gratis, även
+  för riktiga resultatfiler — svaren märks då MOCK och bokförs inte.
 
 Nyckeln läses helst från `SKARP_EVAL_ANTHROPIC_API_KEY`, som går före
 `ANTHROPIC_API_KEY` och bara läses av evalen. Med ett eget namn plockas
@@ -99,10 +102,14 @@ tokens): godtas inte nyckeln (401/403), eller går Claude inte att nå,
 avslutas skriptet med kod 2 innan något körs eller bokförs.
 Budgetspärren och kravet på `--smoke` före den första hela körningen
 avslutar med kod 3, en vägrad jämförelse med kod 1.
-Ctrl-C eller SIGTERM under en riktig körning (även `--regrade` och
-`--pairwise`) bokför det som hunnit kosta och avslutar med kod 130 (§7).
+Ctrl-C, SIGTERM eller SIGHUP (terminalen stängs) under en riktig körning
+(även `--regrade` och `--pairwise`) bokför det som hunnit kosta och
+avslutar med kod 130 (§7).
 
-Under en eval stängs Supabase av (alla `SUPABASE_*` tas bort ur miljön).
+Under en eval stängs Supabase av (alla `SUPABASE_*` tas bort ur miljön),
+och prisöverskrivningen `ANTHROPIC_PRICE_*_PER_MTOK` tas bort: den gäller
+alla modeller lika och skulle felprissätta bedömaren och personsimulatorn,
+så huvudboken prissätter alltid med priset per modell.
 OpenRouter-reserven stängs också av: `AI_API_KEY` och `AI_BASE_URL` tas
 bort, så att AI-lagrets kedja slutar vid Claude och Claude-reserven — ett
 svar från en annan leverantör loggas inte som `[ai-cost]`, prissätts inte
@@ -302,33 +309,53 @@ faktiskt görs.
 
 Varje riktig körning skrivs i `eval-results/ledger.jsonl` — även
 `--regrade` och `--pairwise`, som kontrollerar budgeten på samma sätt med
-en prognos för bara bedömaren. Raden skrivs preliminärt efter varje klar
-persona och ersätts av den slutliga (samma körnings-id), så att en krasch
-ändå lämnar ett spår utan att något räknas två gånger. Avbryts körningen
-— Ctrl-C, SIGTERM, ett fel — skrivs det som hunnit kosta med etiketten
+en prognos för bara bedömaren. Rader läggs bara till, filen skrivs aldrig
+om: under körningen en preliminär rad efter varje klar persona och
+löpande medan pengarna går åt (högst var tionde sekund), sedan den
+slutliga. Vid läsning gäller den senaste raden per körnings-id, så samma
+pengar räknas aldrig två gånger, och två körningar mot samma huvudbok kan
+inte skriva över varandras rader. Avbryts körningen — Ctrl-C, SIGTERM,
+SIGHUP, ett fel — skrivs det som hunnit kosta med etiketten
 `<etikett> avbruten`, och vid en signal avslutas processen med kod 130.
-Varje rad har också trädets version (de nya delarna sedan `2d61206`,
-samma lista som i rapportens rubrik) och commit, antalet anrop per
-schemanamn och de logiska anropen per schemanamn. Preliminära och
+Ett hårt avbrott som inte går att fånga (`kill -9`, strömavbrott) tappar
+högst de senaste ungefär tio sekundernas förbrukning. Innan den slutliga
+raden skrivs väntar körningen (högst två minuter) in AI-anrop som
+fortfarande pågår — ett anrop som runnerns tidsgräns slutat vänta på, eller
+en ersatt insikt, kostar ändå när det blir klart. Varje rad har också
+trädets version (de nya delarna sedan `2d61206`, samma lista som i
+rapportens rubrik) och commit, om körningen blev komplett, antalet anrop
+per schemanamn och de logiska anropen per schemanamn. Preliminära och
 avbrutna rader räknas i totalen men är aldrig underlag för en prognos.
 
-Före en körning räknas en prognos fram: den senaste hela körningen **av
-samma version** (samma nya delar i trädet — en förbättringsrunda som bara
-ändrar antalet verktyg räknas som samma version; baslinjen `2d61206` med
-sina ungefär 1,7 × mindre prompter budgeterar alltså aldrig den nuvarande
-versionen), helst en utan uppspelade svar, × antal × 1,2. Finns ingen,
-används senaste uppmätta `--smoke` (helst av samma version) uppräknad
-till en hel session × 1,2: kostnaden per logiskt Boggel-anrop med mjuka
-rundor och schemaförsök inräknade, steg 4–10 (som röktestet inte når) som
-1,5 × medlet av de uppmätta, och bedömningen som hela del A plus del B ≈
-3,5 × röktestets del A. Annars försiktigt 1,2 USD per persona. Körningen
-startar inte om huvudboken plus prognosen överstiger `--budget-total`
-(standard 15 USD). `--max-usd` (standard prognosen × 1,3) kontrolleras
-före varje persona: det som redan kostat (även det pågående personer
-hunnit använda) plus det pågående personer har **kvar** av uppskattningen
-plus uppskattningen för den nya måste rymmas. En persona som inte hinner
-bli klar startas aldrig, och en körning som saknar en persona märks
-"ofullständig – jämförs inte".
+Före en körning räknas en prognos fram: den senaste **kompletta** hela
+körningen **av samma version** (samma nya delar i trädet — en
+förbättringsrunda som bara ändrar antalet verktyg räknas som samma
+version; baslinjen `2d61206` med sina ungefär 1,7 × mindre prompter
+budgeterar alltså aldrig den nuvarande versionen), helst en utan
+uppspelade svar, × antal × 1,2. Finns ingen, används senaste uppmätta
+`--smoke` (helst av samma version) uppräknad till en hel session × 1,2:
+kostnaden per logiskt Boggel-anrop med mjuka rundor och schemaförsök
+inräknade, steg 4–10 (som röktestet inte når) som 1,5 × medlet av de
+uppmätta, och bedömningen som hela del A plus del B ≈ 3,5 × röktestets
+del A. Ett `--smoke` av en annan version ger aldrig mindre än 1,2 USD per
+persona. Annars försiktigt 1,2 USD per persona. En ofullständig körning
+(en persona hoppades över eller föll bort) är aldrig underlaget — men är
+den nyare än underlaget kan det den hann mäta per persona (× 1,2) bara
+höja prognosen, aldrig sänka den. Körningen startar inte om huvudboken
+plus prognosen överstiger `--budget-total` (standard 15 USD).
+
+Före varje persona — i en körning, i `--regrade` och i `--pairwise` —
+måste det som redan kostat (även det pågående personer hunnit använda),
+det pågående personer har **kvar** av uppskattningen och uppskattningen
+för den nya rymmas under både `--max-usd` (standard prognosen × 1,3) och
+det som återstår av `--budget-total`. Huvudboken läses om varje gång, så
+att en annan körning mot samma huvudbok räknas in. Uppskattningen är
+prognosen tills en persona är klar, sedan det uppmätta medlet. En persona
+som inte hinner bli klar startas aldrig; en körning som saknar en persona
+märks "ofullständig – jämförs inte", och en `--regrade` eller `--pairwise`
+som hoppade över någon säger det i sin sammanfattning. En `--regrade` av
+ett `--smoke` (bara del A för steg 1–3) är aldrig underlag för prognosen
+för en hel omräkning.
 
 `--smoke` spärras mot sin egen uppskattning (ungefär en halv session,
 taket blir den × 1,3) och krävs före den första hela körningen. Det räknas
