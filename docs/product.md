@@ -13,9 +13,12 @@ Ett AI-drivet vägledningsverktyg — inte en idégenerator, inte en fri chatt. 
 ## Hur produkten fungerar
 
 **Skärp-läget** (för den som redan har en affärsidé) följer ett tio-
-stegsflöde där AI:n fungerar som en tankemotor snarare än en idémaskin —
-den frågar, speglar och utmanar i stället för att föreslå färdiga idéer,
-och användaren skriver först i de steg där det spelar roll. Fullständig
+stegsflöde med grundprincipen "ge först, fråga sen": Boggel är en expert
+som tänker med användaren och efter varje svar tillför egna perspektiv,
+konkreta förslag, möjligheter och risker för idén — efter femton minuter
+ska användaren ha fått många nya vinklar hen inte hade innan. Frågorna
+är korta och sekundära. Användaren skriver själv först bara idén (steg 1)
+och sin egen problemram och kärna (steg 5 och 7). Fullständig
 specifikation, inklusive avslutningens "slutkort och test" (som ersätter
 den tidigare fasta sex-punktsmallen): `docs/skarp-flode.md`.
 

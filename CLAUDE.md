@@ -18,11 +18,20 @@ När informationen behövs, läs:
 ## Skärp-läget, kort
 
 Skärp-läget är INTE ett styrt menyflöde längre (det var det gamla
-flödet). Det är en tankemotor: AI:n frågar, speglar, strukturerar och
-utmanar — den skriver aldrig färdiga idéer eller säljtext åt användaren,
-och generell AI-input visas aldrig innan användaren själv skrivit något
-i de steg där det spelar roll ("Du först", med en flyktväg för den som
-kör fast). Flödet har tio steg (Din idé → Varför du → Kunden i
+flödet). Grundprincipen är GE FÖRST, FRÅGA SEN (§0.14 i
+`docs/skarp-flode.md`): Boggel är en expert som tänker MED användaren och
+tillför mer än användaren själv gör. Efter varje svar levererar Boggel
+ett eget bidrag på 2–4 korta punkter — perspektiv, konkreta förslag (en
+ny målgrupp, ett annat sätt att ta betalt, en positionering, en kil in på
+marknaden), möjligheter och risker — märkt "Boggels förslag". Bidraget är
+huvudinnehållet; frågan är kort, sekundär och handlar om idén (problem,
+kund, värde, skillnad mot alternativen, affär), aldrig om genomförandets
+logistik. Användaren skriver själv först BARA i steg 1 (idén) och i
+steg 5 och 7 (egen problemram och kärna) innan Boggels förslag visas.
+Den gamla principen — "tankemotor, inte idémaskin", "AI:n frågar,
+speglar, strukturerar och utmanar", "skriver aldrig färdiga idéer",
+"Du först" i alla steg — gäller INTE längre och ska inte återinföras.
+Flödet har tio steg (Din idé → Varför du → Kunden i
 situationen → Utvidga problemet → Välj problemram → Verkligheten →
 Lösningskärnan → Det unika och affären → Skeptikern → Slutkort och
 test), bygger en personprofil i steg 2 som följer med genom resten av
@@ -34,20 +43,24 @@ följdfråga, det användaren sagt växer fram i en idékarta med nio fält i
 railen (klickbara för att rätta), och Boggel lyfter insiktsögonblick —
 en konkret koppling, motsägelse eller ett mönster i användarens egna
 ord (efter steg 6 även i det som hittats ute i världen) — efter steg 3,
-efter steg 6 och i slutkortet. Slutkortet har inga sifferbetyg: det
+efter steg 6 och i slutkortet. I steg 6 analyserar Boggel efter
+användarens reaktion hur idén kan vinna mot de verkliga konkurrenterna
+i researchen (svagheter, missat segment, 2–3 positioneringar), och
+slutkortet samlar de bästa bidragen under "Perspektiv du fått av
+Boggel". Slutkortet har inga sifferbetyg: det
 börjar med det som är starkt, ger varje område "Starkt", "På god väg"
 eller "Behöver mer underlag" med en mening om nästa steg, och samlar
 "Saker värda att testa", ett första test och frågor att ta med till
 rådgivaren. Sedan Skärpan (§0.13) tänker Boggel med en inbyggd
-kunskapsbas — tankeverktyg och kända fallgropar per idétyp, bara
+kunskapsbas — som sedan §0.14 i första hand formar bidragen, inte bara frågorna — tankeverktyg och kända fallgropar per idétyp, bara
 heuristiker och aldrig statistik — och väljer frågor efter
 informationsvärde för grundare som redan kan grunderna. Ett tyst
 klassificeringsanrop efter steg 1 (sessionens enda extra anrop: 18
 logiska anrop utan följdfrågor, tak ~25) bedömer idétyp, vad som redan
 är sagt (sagt är inte belagt), vad som är mest osäkert och avgörande och
 hur van användaren är, och vanlig kod väljer sedan deterministiskt
-vilka verktyg varje steg får i SKÄRPA-blocket. Varje huvudfråga är EN
-mening på högst 16 ord med ankaret i användarens egna ord och visar sitt
+vilka verktyg varje steg får i SKÄRPA-blocket. Varje fråga är EN
+mening på högst 15 ord, en sak, enkel svenska, med ankaret i användarens egna ord och visar sitt
 perspektiv som en diskret etikett, nya mjuka kontroller stoppar
 statistik, påhittade namn och siffror, platta grundfrågor och
 avskrivna exempel, och kvalitetsevalen i `docs/skarp-kvalitet.md`

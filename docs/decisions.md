@@ -12,7 +12,7 @@ Produkten positioneras medvetet som "styrd metod framför fri chatt" — en öpp
 
 I Kompass-läget betyder det fortfarande menyval med fritext som override, som tidigare.
 
-I Skärp-läget betyder det sedan flödesombyggnaden i stället: användaren skriver fritt FÖRST i de steg där det spelar roll ("Du först"), och AI-genererade förslag/alternativ visas efteråt eller via en uttrycklig flyktväg ("Jag vet inte — visa förslag") — fortfarande ett fast, stegvis flöde genom tio namngivna steg, bara med en annan turordning mellan AI och användare än Kompass. Se `docs/skarp-flode.md`, princip 2.
+I Skärp-läget är det fortfarande ett fast, stegvis flöde genom tio namngivna steg, men sedan "Ge först, fråga sen" (se nedan och §0.14 i `docs/skarp-flode.md`) levererar Boggel ett eget bidrag efter varje svar och frågar sedan. Användaren skriver själv först bara i steg 1 (idén) och i steg 5 och 7 (egen problemram och kärna), med flyktvägen "Jag vet inte — visa förslag" där.
 
 ## Fast avslutningsmall (Kompass-läget)
 
@@ -39,6 +39,32 @@ Abstraktionslager mot researchleverantören byggs istället för att hårdkoda m
 ## Samtalsdesign prioriteras över kunskapsbas
 
 Upplevelsen av att bli förstådd skapas genom interaktionsdesign i systemprompten (följdfrågor, reflektion av mönster), inte genom en fristående "psykologikunskapsbas".
+
+## Skärp: ge först, fråga sen (ersätter "tankemotor, inte idémaskin")
+
+Ett riktigt test visade att Boggel var för passiv: den frågade men
+tillförde nästan inget eget, fastnade i planens detaljer (vem som ska
+vara testperson) och vissa frågor var otydliga. Orsaken var
+grundregeln — "tankemotor, inte idémaskin", "AI:n frågar, speglar,
+strukturerar och utmanar", "skriver aldrig färdiga idéer", "användaren
+tänker först" — som gjorde att all kunskap bara blev frågor. Beslut:
+
+- **Ge först, fråga sen.** Efter varje svar levererar Boggel 2–4 korta
+  punkter (perspektiv, konkreta förslag, möjligheter, risker) i samma
+  anrop som redan bedömer svaret — inga nya AI-anrop. Bidraget är
+  huvudinnehållet; frågan är sekundär och låser upp nästa bidrag.
+- **Idén, inte planen.** Frågor och bidrag handlar om problem, kund,
+  värde, skillnad mot alternativen och affär. Genomförandets logistik
+  (vem som testar, när, rekrytering) hör bara hemma i slutkortets
+  testkort; en mjuk kontroll stoppar den i frågor och bidrag.
+- **Användaren först bara där det räknas:** steg 1 (idén) och steg 5
+  och 7 (egen problemram och kärna).
+- **Ärligheten står kvar:** bidragen märks "Boggels förslag", påstår
+  inga fakta utöver användarens svar och researchen, och insikterna
+  citerar fortfarande användarens ord. Steg 6:s positioneringar får bara
+  använda konkurrenter och fakta ur researchen.
+- Den gamla principen ska inte återinföras i prompter, roller eller
+  dokument.
 
 ## Skärpan: deterministiskt verktygsval, heuristiker och oberoende mätning
 

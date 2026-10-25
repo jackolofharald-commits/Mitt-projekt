@@ -16,8 +16,10 @@ Status: fas 3 — alla tio steg är ombyggda, i repot `gxy652fxr`
 (`src/lib/skarp/`, `src/components/skarp/`, `src/routes/skarp.tsx`).
 Ovanpå fas 3 ligger Skärpan (§0.13): en kunskapsbas av tankeverktyg,
 klassificeringen efter steg 1, det deterministiska verktygsvalet och den
-nya rösten. **§0 gäller.** §1–§10 beskriver fas 1–2 och står kvar som
-historik; där de krockar med §0 gäller §0.
+nya rösten. Över allt detta gäller sedan grundprincipen **Ge först,
+fråga sen (§0.14)**, som ersätter "tankemotor, inte idémaskin" överallt.
+**§0 gäller, och §0.14 går före resten av §0.** §1–§10 beskriver fas 1–2
+och står kvar som historik; där de krockar med §0 gäller §0.
 
 ## 0. Fas 3 — upplevelse och konstruktion (alla tio steg ombyggda)
 
@@ -104,10 +106,10 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
 
 ### 0.3 En huvudfråga per steg, högst en följdfråga
 
-- Varje steg har EN huvudfråga: EN mening (högst 16 ord och 130 tecken,
+- Varje steg har EN huvudfråga: EN mening (högst 15 ord och 130 tecken sedan §0.14,
   ett "?") med ankaret i användarens egna ord i samma mening, plus en
   kort rad om vad svaret AVGÖR för just den här idén (`why`, en mening,
-  högst 16 ord och 130 tecken — aldrig "det hjälper oss att förstå
+  högst 15 ord och 130 tecken — aldrig "det hjälper oss att förstå
   dig"). Frågan väljs efter informationsvärde inom stegets frågefält
   (0.13): det mest osäkra och avgörande, gärna i det senaste svaret, och
   aldrig något som redan står i idén eller svaren. Den väljs aldrig ur en
@@ -198,7 +200,7 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   bara medan textrutan är tom, så ett klick kastar aldrig bort det
   användaren skrivit. Övriga steg visar förslagen direkt: 2, 3, 4, 6, 8
   och stoppregeln i 9. Ersätter §1 punkt 2:s och §8.2:s fördelning av
-  "Du först".
+  "Du först" (se §0.14: användaren först bara i steg 1, 5 och 7).
 - **Valskärmen i steg 5 och 7** (`ChoiceList`): rubriken "Så kan
   problemet ramas in." med raden "Varje ram bygger på det du skrev — ju
   fler av dina ord, desto närmare dig." (steg 7: "Så kan kärnan se ut."
@@ -1124,7 +1126,7 @@ rundor inte stiger märkbart; ett problem i taget, och fortfarande högst
 EN rättande runda (0.7).
 
 - **Frågeformatet** (`questionProblem`): EN mening, exakt ett "?",
-  högst 16 ord och 130 tecken; `why` en mening, högst 16 ord och 130
+  högst 15 ord och 130 tecken (§0.14); `why` en mening, högst 15 ord och 130
   tecken.
 - **Förbjudna fraser**, utökade med "jag har sett", "i min erfarenhet",
   "de flesta grundare", "många grundare", "studier visar", "forskning
@@ -1183,20 +1185,91 @@ innehållsreglerna, importreglerna och urvalets egenskaper; flödestestet
 steg 2, profilens uppfriskning, perspektiven, vinkeln, de erbjudna
 verktygen och taket. Hur Skärpan mäts står i `docs/skarp-kvalitet.md`.
 
+### 0.14 Ge först, fråga sen (grundprincipen)
+
+Ett riktigt test visade att Boggel var för passiv: den ställde frågor men
+tillförde nästan inget eget, fastnade i detaljer om planen (t.ex. vem
+som ska vara testperson) i stället för idén, och vissa frågor var
+otydliga. Orsaken var den gamla grundregeln — "tankemotor, inte
+idémaskin", "AI:n frågar, speglar, strukturerar och utmanar", "skriver
+aldrig färdiga idéer åt användaren", "användaren tänker först" — som
+gjorde att all kunskap från kunskapsbasen bara blev frågor. **Den regeln
+gäller inte längre och ska inte återinföras** i prompter, roller eller
+dokument.
+
+**Ny princip:** Boggel är en expert som tänker MED användaren och
+tillför mer än användaren själv gör. Efter femton minuter ska användaren
+ha fått många nya perspektiv, vinklar och konkreta förslag på sin idé
+som hen inte hade innan.
+
+1. **Bidrag i varje steg.** Efter användarens svar levererar Boggel ett
+   eget bidrag (`contribution`) på 2–4 korta punkter: perspektiv,
+   förslag, möjligheter eller risker (`kind`: `perspektiv`, `forslag`,
+   `mojlighet`, `risk`; steg 6 även `positionering`), byggda på idén,
+   svaren, kunskapsbasens verktyg och researchen. Förslag får gärna vara
+   konkreta idéer — en ny målgrupp, ett annat sätt att ta betalt, en
+   positionering, en kil in på marknaden — och minst en punkt är ett
+   förslag. Bidraget är huvudinnehållet: det står överst på nästa skärm,
+   före frågan. Frågan är sekundär och används bara för att låsa upp
+   nästa bidrag.
+2. **Steg 6 — konkurrenterna.** Efter användarens reaktion analyserar
+   Boggel idén mot de verkliga konkurrenterna i researchen och föreslår
+   hur den kan vinna: var konkurrenterna är svaga, vilket segment de
+   missar och 2–3 möjliga positioneringar. Bara konkurrenter och fakta
+   ur researchen; finns inga, jämförs idén med det kunden gör i dag och
+   med att göra ingenting. Visas under rubriken "Så kan du vinna".
+3. **Idén, inte planen.** Frågor och bidrag handlar om idéns kärna:
+   problem, kund, värde, skillnad mot alternativen och affär — aldrig om
+   genomförandets logistik (vem som testar, när, hur testpersoner
+   rekryteras). Sådant hör bara hemma i slutkortets testkort.
+4. **Tydliga frågor.** Högst en fråga per skärm, en sak per fråga, enkel
+   svenska, högst 15 ord, ingen jargong.
+5. **Användaren först bara där det räknas:** steg 1 (idén) och steg 5
+   och 7, där användaren skriver sin egen problemram och kärna innan
+   Boggels förslag visas (med flyktvägen "Jag vet inte – visa förslag").
+   I alla andra steg ger Boggel sitt bidrag direkt efter svaret. Steg
+   4:s bidrag föreslår därför ingen problemram och ingen lösning.
+6. **Ärlighetsskydden står kvar.** Bidragen märks "Boggels förslag"
+   (samma diskreta ursprungsetikett som Boggels tolkning), påstår inga
+   fakta som inte finns i användarens svar eller researchen, och
+   insikterna citerar fortfarande användarens egna ord.
+7. **Slutkortet** samlar de bästa bidragen under "Perspektiv du fått av
+   Boggel": varje stegs första (starkaste) punkt, sedan andra, högst
+   åtta, i stegordning — så att användaren ser hur mycket nytt hen fått.
+
+**Konstruktion (`gxy652fxr`).** Inga nya AI-anrop: bidraget kommer i
+samma anrop som redan bedömer svaret — `readIdea` (steg 1),
+`answerWhyYou` (2), `answerCustomer` (3), `answerProblem` (4),
+`answerReality` (6) och `answerUnique` (8). Steg 5 och 7 är redan
+Boggels förslag efter användarens egen text, och steg 9:s punkter är
+risker med ett test. Schemat har fältet `contribution` (`schemas.ts`),
+prompten regeln `contributionRule` / `REALITY_CONTRIBUTION_RULE`
+(`sharp.ts`), och kunskapsblocket ger varje sådant anrop sina verktyg
+FÖRST för bidraget, i det besvarade stegets slot (`KNOWLEDGE_CALLS`,
+utan frågeexempel så att punkterna blir påståenden). Verktygen bakom ett
+visat bidrag läggs i `ctx.lenses`, så samma perspektiv inte återkommer,
+och punkterna i `ctx.contributions`, som senare steg ser ("Boggels
+tidigare bidrag — upprepa inte") och slutkortet samlar. Insikten på
+samma skärm får inte samma verktyg som bidraget. Den mjuka kontrollen
+(`sharpChecks().contribution`) kräver 2–4 punkter (steg 6: 3–5 med minst
+två positioneringar), minst ett förslag, påståenden i stället för frågor,
+inga förbjudna fraser, inga påhittade namn eller siffror, inga avskrivna
+exempel och ingen logistik (`planProblem`, som också gäller frågorna).
+Rollerna (`roles.ts`: `SKARP_BASE`, `FRAGESTIL`, Rådgivaren, Linsen,
+Skeptikern, `BOGGELS_ROST`) är omskrivna efter principen. Gränssnittet
+visar bidraget med befintliga komponenter (`ContributionList` ovanpå
+`TestList`) överst i `StepScreen` och under läsningen i steg 1.
+
 ## 1. Principerna, kort
 
-Boggel i Skärp-läget ska vara en tankemotor, inte en idémaskin: gräva fram
-användarens eget råmaterial (erfarenheter, irritationsmoment, kontakter,
-tillgångar) och strukturera det, inte skriva idéer eller säljtext åt
-användaren.
+> Ersatt av §0.14 där de krockar: punkt 1 och 2 nedan är den GAMLA
+> principen och står kvar bara som historik.
 
-1. **Tankemotor, inte idémaskin.** AI:n frågar, speglar, strukturerar,
-   utmanar — skriver aldrig färdiga idéer eller säljtext.
-2. **Människan först där det räknas.** I "Du först"-steg skriver
-   användaren sitt svar innan AI-förslag visas. Förslag visas efter att
-   användaren skrivit, eller om användaren väljer "Jag vet inte — visa
-   förslag" (flyktväg). I "AI först"-steg (sökning, strukturering,
-   kontroll) går AI:n först.
+1. **(Gammal, ersatt av §0.14.)** Tidigare: "tankemotor, inte
+   idémaskin". Nu: ge först, fråga sen — Boggel tillför egna
+   perspektiv, förslag, möjligheter och risker efter varje svar.
+2. **(Gammal, ersatt av §0.14.)** Tidigare: "Du först" i många steg. Nu:
+   användaren skriver själv först bara i steg 1, 5 och 7.
 3. **Personligt hela vägen.** En personprofil byggs i steg 2 och skickas
    med i varje AI-anrop från steg 3 och framåt.
 4. **Problem före lösning.** Problemet utforskas (steg 3–5) innan
@@ -1386,7 +1459,7 @@ steget om ingen rättelse behövs, +1 om en rättelse görs.
 Ingen flyktväg ("visa förslag") i detta steg — Boggel hittar inte på
 idéer, så det finns inget att föreslå när rutan är tom.
 
-### Steg 2 — Varför du (Du först, Intervjuaren)
+### Steg 2 — Varför du (Intervjuaren; ge först sedan §0.14)
 
 **Syfte:** bygga personprofilen.
 **Vem går först:** användaren, på varje delfråga.
@@ -1410,7 +1483,7 @@ inga extra AI-anrop för flyktvägen.
 
 **Sparas:** `Personprofil`.
 
-### Steg 3 — Kunden i situationen (Du först, Intervjuaren)
+### Steg 3 — Kunden i situationen (Intervjuaren; ge först sedan §0.14)
 
 **Syfte:** en situationssats.
 **Vem går först:** användaren.
@@ -1435,7 +1508,7 @@ meningen rätt på en gång.
 
 **Sparas:** situationssatsen (sju fält + den renderade meningen).
 
-### Steg 4 — Utvidga problemet (Du först, Intervjuaren)
+### Steg 4 — Utvidga problemet (Intervjuaren; ge först sedan §0.14)
 
 **Syfte:** problemkarta (orsaker, aktörer, konsekvenser, större mål).
 **Vem går först:** användaren.
@@ -1543,7 +1616,7 @@ BEFINTLIGA `SuggestionList`-komponenten, ingen ny komponent (se §8.5).
 
 **Sparas:** mekanismen (användarens egen, eller den valda/justerade).
 
-### Steg 8 — Det unika och affären (Du först, AI kontrollerar)
+### Steg 8 — Det unika och affären (AI kontrollerar; ge först sedan §0.14)
 
 **Syfte:** särskiljbarhet + affärsgrund, kontrollerat mot evidenskartan.
 **Vem går först:** användaren (beskriver kombinationen + svarar på
