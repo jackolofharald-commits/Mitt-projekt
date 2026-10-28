@@ -31,7 +31,7 @@ Prototypfilerna är inte appkod och ska inte importeras eller byggas vidare på 
 **Skärp-läget, 2b "Kartan".** Det användaren skriver flyttar dem. Varje understruken mening blir en punkt på kartan och drar positionen åt sitt håll, så användaren ser exakt hur svaren påverkar riktningen. Vägarna framåt utgår från där de står. Kartan zoomar in för varje steg och zoomar ut i sammanställningen, där hela spåret syns.
 
 **Gemensamt designspråk (gäller båda lägena):**
-- DM Serif Display är Boggels röst, Fira Sans är användarens, Fira Mono för etiketter och steg.
+- DM Serif Display är Boggels röst (i Skärp-läget heter verktyget Lindo, se §0.15 i `docs/skarp-flode.md`), Fira Sans är användarens, Fira Mono för etiketter och steg.
 - Gult (`#F4C530`) markerar bara det som är valt eller viktigt.
 - Streckad understrykning = Boggel har noterat något. Gul understrykning = Boggel har läst och förstått det.
 - Romben är en punkt i resan. Nålen (Kompass) eller positionen (Kartan) visar riktningen.

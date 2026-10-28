@@ -13,7 +13,8 @@ Ett AI-drivet vägledningsverktyg — inte en idégenerator, inte en fri chatt. 
 ## Hur produkten fungerar
 
 **Skärp-läget** (för den som redan har en affärsidé) följer ett tio-
-stegsflöde med grundprincipen "ge först, fråga sen": Boggel är en expert
+stegsflöde med grundprincipen "ge först, fråga sen": Lindo — Boggels
+AI-verktyg — är en expert
 som tänker med användaren och efter varje svar tillför egna perspektiv,
 konkreta förslag, möjligheter och risker för idén — efter femton minuter
 ska användaren ha fått många nya vinklar hen inte hade innan. Frågorna

@@ -23,11 +23,11 @@ anropsbudgeten utan att köras) och sparandet av slutkortet
 per steg, 45 s för en insikt, 20 s för klassificeringen); ett anrop som
 inte hinner eller fallerar räknas som en saknad punkt, och flödet går
 vidare med en reservfråga där routen hade visat "Försök igen". En separat
-bedömare sätter betyg på varje punkt Boggel visar. Huvudmåttet är
+bedömare sätter betyg på varje punkt Lindo visar. Huvudmåttet är
 medelvärdet av **icke-uppenbar** och **specifik** över målpunkterna, med
 ett bootstrap-intervall på 90 %.
 
-Målpunkterna är allt Boggel ställer eller påstår för att skärpa idén:
+Målpunkterna är allt Lindo ställer eller påstår för att skärpa idén:
 frågor och följdfrågor, steg 1:s vinkel, alternativen i steg 5 och 7,
 skeptikerns punkter (med test), insikterna, frågorna till rådgivaren och
 det första testet. Steg 1:s noteringar bedöms också men räknas inte in —
@@ -113,7 +113,7 @@ så huvudboken prissätter alltid med priset per modell.
 OpenRouter-reserven stängs också av: `AI_API_KEY` och `AI_BASE_URL` tas
 bort, så att AI-lagrets kedja slutar vid Claude och Claude-reserven — ett
 svar från en annan leverantör loggas inte som `[ai-cost]`, prissätts inte
-och får aldrig bedömas som Boggels. En riktig körnings rubrik säger det. I
+och får aldrig bedömas som Lindos. En riktig körnings rubrik säger det. I
 `--mock` tas även `ANTHROPIC_API_KEY`, `SKARP_EVAL_ANTHROPIC_API_KEY` och
 `PERPLEXITY_*` bort och
 `AI_PROVIDER=mock` sätts. Allt detta görs innan något under `src/`
@@ -177,7 +177,7 @@ branscher är överanpassning.
 ## 4. Simulatorn
 
 En billig modell (`claude-haiku-5-5`) spelar grundaren. Den ser personan,
-samtalet hittills (sina egna svar och Boggels frågor) och den aktuella
+samtalet hittills (sina egna svar och Lindos frågor) och den aktuella
 frågan med "varför" — aldrig förslagen (utom med
 `--persona-sees-suggestions`). Den svarar med 1–4 meningar, högst 400
 tecken: det den vet, en hållning, eller ärligt "Det vet jag inte än." /
@@ -186,10 +186,10 @@ och hittar inte på nya fakta. Träffar en fråga en blind fläck säger den
 att det inte är genomtänkt och ger sin magkänsla.
 
 I steg 5 och 7 skriver personan sin egen ram/kärna först och väljer sedan
-att behålla den eller ta ett av Boggels alternativ. Insikterna efter steg
+att behålla den eller ta ett av Lindos alternativ. Insikterna efter steg
 3 och 6 får "Stämmer" eller "Inte riktigt" med en rättelse, precis som i
 appen. Det dolda (vilka fakta som avslöjades, vilken blind fläck som
-träffades) når aldrig Boggel eller bedömaren.
+träffades) når aldrig Lindo eller bedömaren.
 
 Misslyckas ett simulatoranrop två gånger (fel modell-id, 429, timeout) blir
 det ett reservsvar: "Det vet jag inte än.", den egna formuleringen i steg 5
@@ -266,7 +266,7 @@ olika hash.
   `ANTHROPIC_MODEL`, `AI_MODEL_STRONG`, `ANTHROPIC_FALLBACK_MODEL`,
   `ANTHROPIC_TIMEOUT_MS`, person- och bedömarmodell, bedömarens prompt-hash
   och research-läge — och vilken modell som faktiskt svarade på varje
-  Boggel-anrop (svar från reservmodellen flaggas). En tom variabel, som
+  Lindo-anrop (svar från reservmodellen flaggas). En tom variabel, som
   `AI_MODEL_STRONG=` i `.env.example`, räknas som osatt precis som i
   AI-lagret, så den starka nivån flaggas inte i onödan.
 
@@ -287,9 +287,9 @@ skarpast för just den här grundaren: A, B eller lika?".
 Varje persona körs i en egen `AsyncLocalStorage`, och AI-lagrets egna
 loggrader (`[ai-cost]`, `[research] … kostnad`, `[ai] ✗`, reservraderna
 och `[skarp] … mjuk kontroll runda`) räknas per persona och schemanamn i
-fyra kategorier: Boggel, personsimulatorn (`eval_persona_*`), bedömaren
+fyra kategorier: Lindo, personsimulatorn (`eval_persona_*`), bedömaren
 (`eval_grade*`) och research. Okända priser räknas med det högsta kända
-priset som tak och redovisas som "minst X, högst Y". Logiska Boggel-anrop
+priset som tak och redovisas som "minst X, högst Y". Logiska Lindo-anrop
 (ett per `*Logic`-anrop) räknas av evalen själv och jämförs med taket ~25
 (`mapCompetitors` körs inte i evalen men räknas in). Uppmätt i `--mock`
 utan följdfrågor: 17 logiska anrop mot `2d61206`, **18 i nuvarande
@@ -334,7 +334,7 @@ version; baslinjen `2d61206` med sina ungefär 1,7 × mindre prompter
 budgeterar alltså aldrig den nuvarande versionen), helst en utan
 uppspelade svar, × antal × 1,2. Finns ingen, används senaste uppmätta
 `--smoke` (helst av samma version) uppräknad till en hel session × 1,2:
-kostnaden per logiskt Boggel-anrop med mjuka rundor och schemaförsök
+kostnaden per logiskt Lindo-anrop med mjuka rundor och schemaförsök
 inräknade, steg 4–10 (som röktestet inte når) som 1,5 × medlet av de
 uppmätta, och bedömningen som hela del A plus del B ≈ 3,5 × röktestets
 del A. Ett `--smoke` av en annan version ger aldrig mindre än 1,2 USD per
@@ -359,7 +359,7 @@ för en hel omräkning.
 
 `--smoke` spärras mot sin egen uppskattning (ungefär en halv session,
 taket blir den × 1,3) och krävs före den första hela körningen. Det räknas
-bara som mätning om personan faktiskt kördes och minst ett Boggel-anrop
+bara som mätning om personan faktiskt kördes och minst ett Lindo-anrop
 gick fram — ett röktest som hoppade över sin persona eller där alla anrop
 misslyckades låser inte upp något, och en körning där varje persona
 hoppades över skriver ingen rad alls. Röktestet skriver ut uppmätt
@@ -395,7 +395,7 @@ Claude-session utanför huvudboken, se §2).
    NEJ, efter tre förbättringsrundor, eller när huvudboken inte rymmer en
    körning till (budgeten går före antalet rundor).
 8. Slutkörning med `--holdout`; för in före/efter (absolut och parvis) och
-   kostnaden per Boggel-session nedan.
+   kostnaden per Lindo-session nedan.
 
 ## 9. Resultat
 
@@ -410,7 +410,7 @@ Fylls i när riktiga körningar finns.
 Parvis jämförelse (vinst/oavgjort/förlust per steg): inte körd.
 Bedömarbrus (SD): inte uppmätt.
 
-### Kostnad per Boggel-session
+### Kostnad per Lindo-session
 
 Logiska anrop räknas som i §7: `mapCompetitors` och omstartade insikter
 inräknade.

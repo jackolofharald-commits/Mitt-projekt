@@ -17,8 +17,11 @@ Status: fas 3 — alla tio steg är ombyggda, i repot `gxy652fxr`
 Ovanpå fas 3 ligger Skärpan (§0.13): en kunskapsbas av tankeverktyg,
 klassificeringen efter steg 1, det deterministiska verktygsvalet och den
 nya rösten. Över allt detta gäller sedan grundprincipen **Ge först,
-fråga sen (§0.14)**, som ersätter "tankemotor, inte idémaskin" överallt.
-**§0 gäller, och §0.14 går före resten av §0.** §1–§10 beskriver fas 1–2
+fråga sen (§0.14)**, som ersätter "tankemotor, inte idémaskin" överallt,
+och **Lindo (§0.15)**: verktygets namn och person, nivå- och språkregeln,
+designen av förslagen, Lindos råd i steg 9 och gränssnittet (ingen klippt
+text, ingen sidscroll, kartan och att gå tillbaka).
+**§0 gäller, och §0.15 och §0.14 går före resten av §0.** §1–§10 beskriver fas 1–2
 och står kvar som historik; där de krockar med §0 gäller §0.
 
 ## 0. Fas 3 — upplevelse och konstruktion (alla tio steg ombyggda)
@@ -44,8 +47,8 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
 - Ett steg i taget i fokus: kicker "Steg n av 10 · <namn>" (t.ex. "STEG
   1 AV 10 · DET HÄR HÖRDE JAG"), ev. en lead (speglingen av förra
   svaret, 0.5), frågan som rubrik, en rad om varför vi frågar, sedan
-  svarsytan (`StepScreen` + `AnswerComposer`). Medan Boggel arbetar står
-  "· Boggel läser …" i kickern, på en följdfråga "· om du vill" (0.3),
+  svarsytan (`StepScreen` + `AnswerComposer`). Medan Lindo arbetar står
+  "· Lindo läser …" i kickern, på en följdfråga "· om du vill" (0.3),
   och på en huvudfråga som tar sitt perspektiv från ett tankeverktyg
   dess etikett (t.ex. "STEG 3 AV 10 · KUNDEN I SITUATIONEN · VEM SOM
   SKRIVER UNDER", 0.13).
@@ -95,7 +98,7 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   preliminärt (streckad romb) och slutgiltigt efter svaret. "Att testa"
   fylls direkt när stoppregeln är skriven (inte tidigare), med
   stoppregeln som citat — bara när användaren skrivit den själv. Ett
-  klickat förslag blir inget citat och märks "Boggels tolkning" i
+  klickat förslag blir inget citat och märks "Lindos tolkning" i
   slutkortet.
 - Användaren kan klicka på ett fyllt fält och rätta det. Rättelserna
   sparas i `ctx.ideaMap` (BARA användarens rättelser — sparas texten
@@ -124,7 +127,7 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
 | 6 | `buildReality` (`question`, byggd på det som hittades) |
 | 7 | `answerReality` (`mechanismQuestion`, öppen fråga) |
 | 8 | `proposeMechanisms` (`nextQuestion`) |
-| 9 | `skepticAssessment` (`stopQuestion`, stoppregeln) |
+| 9 | `councilAssessment` (`stopQuestion`, stoppregeln efter Lindos råd, 0.15) |
 
 - I steg 6 och 9 står frågan under det AI:n visat, som en andra fråga på
   samma skärm (`QuestionBlock`, kicker "DIN TUR", med perspektivet
@@ -152,7 +155,7 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   `answerProblem`, steg 5 = `reframeProblem`, steg 6 = `buildReality` +
   `mapCompetitors`, sedan `answerReality` + `findInsight`, steg 7 =
   `proposeMechanisms`, steg 8 = `answerUnique`, steg 9 =
-  `skepticAssessment` (stoppregeln kräver inget anrop), steg 10 =
+  `councilAssessment` (Lindos råd, 0.15; stoppregeln kräver inget anrop), steg 10 =
   `closingSummary` + `closingAssessment` + `findInsight`; +1 vid
   följdfråga i steg 2, 3, 4, 6 och 8. Utan följdfrågor och rättelser
   blir det 18 logiska AI-anrop per session (17 före Skärpan —
@@ -185,12 +188,12 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   skriv fritt — korta svar räcker". Ett klick lägger förslaget som en
   rad i textrutan, där det kan ändras.
 - Svarets källa sparas i `ctx.answers[].source`: `eget`, `forslag` eller
-  `blandat`. Ett klickat förslag är Boggels text ordagrant och räknas
+  `blandat`. Ett klickat förslag är Lindos text ordagrant och räknas
   aldrig som "dina ord" (0.8).
 - "Skriv själv först" (förslagen dolda tills användaren skrivit något
   eller klickat "Jag vet inte – visa förslag") gäller BARA steg 1, 5 och
   7. I steg 1 är det skrivstartare ("Kör du fast? Börja en mening så
-  här": t.ex. "Vem vill du hjälpa?"), inte AI-förslag — Boggel hittar
+  här": t.ex. "Vem vill du hjälpa?"), inte AI-förslag — Lindo hittar
   fortfarande inte på idéer — och de visas bara när användaren ber om
   dem, så att de inte blir en checklista bredvid huvudfrågan. I steg 5
   och 7 har frågan inga förslag (`SkarpOpenQuestion`): AI:ns alternativ
@@ -232,7 +235,7 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
 
 - **Steg 1, "Det här hörde jag":** välkomnandet är ett stycke på högst
   två meningar överst: `readIdea`s `welcome` — EN mening (högst 30 ord)
-  som visar att Boggel förstått vad som bär idén, utan hälsningsfras och
+  som visar att Lindo förstått vad som bär idén, utan hälsningsfras och
   beröm — följd av den fasta meningen från `welcomeTimeSentence()` ("Vi
   tar tio korta steg, ungefär 15 minuter, så har du en tydlig bild av
   idén och vad du ska testa först — något att ta med till din
@@ -290,7 +293,7 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   motsägelsen i hela sessionen, som användaren troligen inte sett.
 - Citaten (1–2) måste stå ordagrant i användarens egna texter — idén,
   svaren och idékartans rättelser, från vilket av de nio stegen som
-  helst. Ett klickat förslag och Boggels egna texter räknas aldrig.
+  helst. Ett klickat förslag och Lindos egna texter räknas aldrig.
   `finding` är namnet på det alternativ insikten bygger på, ordagrant ur
   "Det här hittade vi ute i världen"; det matchas mot `ctx.evidenceMap`
   enligt namnregeln (0.10) och får då sin länk, annars null (alltid null
@@ -323,21 +326,21 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
 
 ### 0.7 Ton och mjuk kontroll
 
-- `BOGGELS_ROST` (`roles.ts`) monteras efter rollen i alla stegens anrop
+- `LINDOS_ROST` (`roles.ts`) monteras efter rollen i alla stegens anrop
   (0.12) och går före rollbeskrivningen där de krockar: en erfaren, varm
   men rak affärsmänniska som visar det genom vad den lägger märke till
   (0.13), du-tilltal, korta meningar, inga utropstecken eller emojis,
   utgå alltid från något användaren skrivit, visa kunskap genom att
   sätta ord på det som bär eller skaver i just den här idén. Be aldrig
   om ett exempel bara för att ett svar är kort (Intervjuarens äldre
-  regel) och fråga aldrig om Boggel förstått rätt (Spegelns). Hänvisa
+  regel) och fråga aldrig om Lindo förstått rätt (Spegelns). Hänvisa
   aldrig till egen erfarenhet eller till hur ofta något händer. Förbjudet
   bl.a.: "Det är en intressant idé", "Bra fråga", "Låt oss utforska",
   "Det finns många faktorer att tänka på", "Vilken spännande …", "Det
   låter som …", "jag har sett", "i min erfarenhet", "de flesta
   grundare", "studier visar". Inget beröm.
 - `SKARP_BASE`s ton: varm, kunnig, konkret — som en erfaren
-  affärsrådgivare. Boggel ersätter inte användarens rådgivare; den
+  affärsrådgivare. Lindo ersätter inte användarens rådgivare; den
   hjälper användaren att tänka klarare och komma förberedd.
 - Promptexemplen gäller medvetet ANDRA idéer så att modellen kopierar
   skärpan, inte innehållet: i stegens instruktioner pensionerade
@@ -366,17 +369,17 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   - "Dina ord" (`anvandare`): citaten i idékartan, en egen eller
     omskriven ram/kärna, citaten bakom alternativen i steg 5/7, det
     starka i slutkortet och stoppregeln när användaren skrivit den
-    själv (ett klickat förslag utan ändring är "Boggels tolkning").
-  - "Boggels tolkning" (`ai_tolkning`): idékartans korta formuleringar
+    själv (ett klickat förslag utan ändring är "Lindos tolkning").
+  - "Lindos tolkning" (`ai_tolkning`): idékartans korta formuleringar
     och en vald AI-ram/-kärna, vad alternativen betyder (`demandNote`),
     "Om kunden inte gör något", "Det vi inte vet än", "Saker värda att
     testa", idén i en mening, "Så står idén nu" och "Ditt första test".
   - "Hittat på nätet" (`extern_kalla`): alternativen i steg 6, och de
-    alternativ som en insikt, en sak värd att testa eller varningen från
+    alternativ som en insikt, en rådsröst eller varningen från
     steg 8 nämner — länken kommer alltid från research-fyndet.
 - Citat som visas som användarens ord (noteringar, `*Quote`-fälten,
   insiktens citat, alternativens citat, det starka i slutkortet,
-  Skeptikerns `quote`) kontrolleras i kod: de behålls bara om de står
+  rådsrösternas `quote`) kontrolleras i kod: de behålls bara om de står
   ordagrant i användarens text (`findQuoteSpan`/`findQuoteInSources` i
   `text.ts` — tål skiftläge, blanksteg och citattecken, returnerar
   originalets exakta delsträng). Annars visas ingen markering.
@@ -504,7 +507,7 @@ på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
   "Jämför med det vi hittade ute i världen …". Unikt = en ovanlig,
   värdefull KOMBINATION, inte "ingen annan gör det" (§1 punkt 5).
   Speglingen sätter ord på vad svaret visar OCH vad det ännu inte visar
-  — den står ovanför "Saker värda att testa". En följdfråga tar sitt
+  — den står under Lindos råd i steg 9. En följdfråga tar sitt
   perspektiv från ett av verktygen för `followUp`.
 - **Sparas:** `ctx.uniqueAndBusiness`: `uniqueCombination` (en–två
   meningar med användarens ord), `conflictWarning` och `anvandare`,
@@ -518,43 +521,22 @@ på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
   nytt anrop) när användaren försöker igen.
 - **Idékartan:** Det unika och affären ← `uniqueShort` (högst 15 ord).
 
-#### Steg 9 — Skeptikern
+#### Steg 9 — Lindos råd
 
-- **Skärm:** lead = `answerUnique`s spegling, rubriken "Saker värda att
-  testa." med raden "Det här är det som avgör om idén håller — inget av
-  det är ett nej.", ev. varningen från steg 8, punkterna
-  (`TestList`) och sist stoppregeln i `QuestionBlock` med förslag.
-- **Vem går först:** AI:n (Skeptikern), sedan användaren med
-  stoppregeln.
-- **Anrop:** `skepticAssessment` — fortfarande ett eget, isolerat anrop.
-  Väntan: "Skeptikern läser igenom allt du skrivit …", "Väljer det som
-  är mest värt att testa …". 1–3 punkter, valda efter informationsvärde
-  bland nio typer ("Det som måste stämma", "Det som talar emot", "Varför
-  ingen redan löst det", "Lätt att kopiera", "Behövs tekniken?", "En
-  känd fallgrop", "Vem betalar egentligen?", "Det som håller dem kvar",
-  "Går det att leva med?"), aldrig samma typ två gånger och det mest
-  osäkra och avgörande först — även det som redan sagts prövas. Varje
-  punkt: en rak mening om vad som MÅSTE stämma eller talar emot, med
-  användarens ord där det går (`quote`, kontrollerat i kod), och EN
-  mening om det billigaste sättet att pröva just det inom några dagar —
-  ett test, ingen lösning, inga påhittade siffror. Beteende och
-  åtaganden (betalning, en bokad pilot, en introduktion) räknas starkare
-  än åsikter och beröm, och testet frågar efter senaste gången något
-  hände, inte om framtiden. "En känd fallgrop" (ur KÄNDA FALLGROPAR,
-  0.13) kräver användarens ordagranna ord i `quote`; en sådan punkt utan
-  verifierat citat tas bort om det finns andra punkter. Nämner en punkt
-  ett alternativ ute i världen får den dess länk. Ingen positiv
-  sammanfattning. `stopQuestion` ("Vad skulle få dig att byta riktning
-  eller lägga ner?" anpassad till idén och till det mest avgörande i
-  punkterna, med ett av verktygen för `stopQuestion`) har förslag
-  byggda på punkterna, utan siffror — tröskeln lämnas till användaren.
-  Stoppregeln kräver inget eget anrop.
-- **Sparas:** `ctx.skeptic` (`concerns` med typ, punkt, test och citat;
-  `stopRule` och `stopRuleSource` — "forslag" när ett förslag klickats
-  utan ändring, och då kallas orden aldrig användarens egna) och
-  stoppregeln som `skeptikern`.
-- **Idékartan:** Att testa ← den första saken värd att testa och
-  "Stoppregel: …", direkt när stoppregeln är skriven.
+Ersätter Skeptikern och "Saker värda att testa" — se §0.15 ("Lindos
+råd") för röster, Ordföranden, skärm, kontroller och vad som sparas.
+
+- **Vem går först:** Lindo (rådet), sedan användaren med stoppregeln.
+- **Anrop:** `councilAssessment` — ett eget, isolerat anrop. Väntan:
+  "Rådet läser igenom allt du skrivit …", "Fem röster säger vad de
+  tycker …", "Ordföranden väger ihop det …". `stopQuestion` ("Vad skulle
+  få dig att byta riktning eller lägga ner?" anpassad till idén och till
+  Ordförandens största risk, med ett av verktygen för `stopQuestion`)
+  har förslag byggda på rådet, utan siffror — tröskeln lämnas till
+  användaren. Stoppregeln kräver inget eget anrop.
+- **Sparas:** `ctx.council` och stoppregeln som `skeptikern`.
+- **Idékartan:** Att testa ← Ordförandens första steg och "Stoppregel:
+  …", direkt när stoppregeln är skriven.
 
 #### Steg 10 — Slutkort och test
 
@@ -612,11 +594,11 @@ på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
   högst 60 tecken (`situation.alternativ`), annars "Vad gör kunden i dag
   i stället?".
 - Finns direkta alternativ följer EN mening om vad det betyder
-  (`demandNote`, "Boggels tolkning"): att andra redan tar betalt för att
+  (`demandNote`, "Lindos tolkning"): att andra redan tar betalt för att
   lösa det kan betyda att det finns efterfrågan, och vad som då skiljer
   användarens idé. Därefter "OM KUNDEN INTE GÖR NÅGOT" (`doNothing`, med
   användarens ord om dagens lösning) och "DET VI INTE VET ÄN" (0–3
-  luckor), båda "Boggels tolkning".
+  luckor), båda "Lindos tolkning".
 - Hittas inget körs anropet ändå: inga alternativ, en lugn rad ("Vi
   hittade inget på nätet som liknar din idé. Det kan betyda en lucka —
   eller att kunderna löser det på ett annat sätt.") och en fråga om vad
@@ -634,7 +616,7 @@ Inga sifferbetyg, staplar eller procent. `ClosingCard` visar, i den här
 ordningen (en del utan innehåll utelämnas):
 
 1. **"Här har du hamnat."** — idén i EN mening som går att säga högt
-   (`ideaOneLiner`, "Boggels tolkning"), med användarens ord
+   (`ideaOneLiner`, "Lindos tolkning"), med användarens ord
    guldmarkerade om de står i meningen.
 2. **Det som är starkt** — 1–3 saker som är starka i idén: fakta om idén
    som användarens egna ord visar, aldrig beröm av personen, var och en
@@ -644,37 +626,39 @@ ordningen (en del utan innehåll utelämnas):
 3. **Insikten** (0.6), om en hittats — belöningen, direkt efter det
    starka, med "Stämmer"/"Inte riktigt" och "Noterat." när användaren
    svarat.
-4. **Så står idén nu** ("Boggels tolkning") — de sex områdena (Problemet,
+4. **Så står idén nu** ("Lindos tolkning") — de sex områdena (Problemet,
    Du som grundare, Det som skiljer lösningen, Genomförbarhet, Affären,
    Hur snabbt du kan testa), det starka först, var och en med en nivå:
    **Starkt** (bara när underlaget tydligt visar det), **På god väg**
    eller **Behöver mer underlag** (mest antaganden), och EN mening om
    nästa steg som nämner något konkret ur användarens ord och inte
-   upprepar en sak värd att testa. Vad bedömningen bygger på visas bara
+   upprepar Ordförandens första steg. Vad bedömningen bygger på visas bara
    vid "Behöver mer underlag".
 5. **Din idé, del för del** — idékartans fyllda fält i stegordning med
    ursprung, sist "Använder · Köper · Betalar · Första kanal" (det som
    saknas: "Inte klart än").
-6. **Saker värda att testa** ("Boggels tolkning") — Skeptikerns punkter
-   med test och ev. länk, ev. varningen från steg 8 och "DIN STOPPREGEL"
-   ("Dina ord" när användaren skrivit den, "Boggels tolkning" när ett
-   förslag klickats utan ändring).
-7. **Ditt första test** ("Boggels tolkning") — den FÖRSTA saken värd att
-   testa utvecklad till ett konkret test, inget nytt: Hypotes, Så testar
-   du, Det räknas som bevis (knutet till stoppregeln om den finns), Inom
-   48 timmar.
+6. **Lindos råd** ("Lindos förslag", 0.15) — de fem rösterna och
+   Ordföranden (`CouncilView`), ev. varningen från steg 8 och "DIN
+   STOPPREGEL" ("Dina ord" när användaren skrivit den, "Lindos tolkning"
+   när ett förslag klickats utan ändring). Ersätter "Saker värda att
+   testa".
+7. **Ditt första test** ("Lindos tolkning") — Ordförandens slutsats
+   (största risken och första steget) utvecklad till ett konkret test,
+   inget nytt: Hypotes, Så testar du, Det räknas som bevis (knutet till
+   stoppregeln om den finns), Inom 48 timmar.
 8. **Det här kan du ta med till din rådgivare** — exakt tre frågor,
    grundade i det som fortfarande är osäkert.
 9. **"Kopiera slutkortet"** och "Börja om". Kopian är markdown som
    byggs i klienten (`renderClosingCardMarkdown`, en ren funktion) av
    det som visas, inklusive användarens svar på insikten.
    `finishSkarpSession` sparar texten med `saveSession` (`resultText`,
-   oförändrad signatur) när det finns ett klient-id — en gång, när kortet
-   först visas, så den sparade texten saknar svaret på insikten (det
+   oförändrad signatur) när det finns ett klient-id — en gång per
+   session, när kortet först visas (även om användaren går tillbaka och
+   kommer hit igen, 0.15), så den sparade texten saknar svaret på insikten (det
    finns i kopian och i `ctx.insights`).
 
-Under kortet: **Fråga Boggel om idén** (`FollowupDialog`,
-`askSkarpFollowup` oförändrad) — följdfrågor och invändningar som Boggel
+Under kortet: **Fråga Lindo om idén** (`FollowupDialog`,
+`askSkarpFollowup` oförändrad) — följdfrågor och invändningar som Lindo
 svarar kort på. Bara den senaste frågan och svaret syns; tidigare ligger
 hopfällda under "Tidigare frågor (n)". Ingen chattlogg.
 
@@ -686,7 +670,7 @@ insikten) och §8.7 (slutkortet visas i `ClosingCard`, inte i
 
 Alla i repot `gxy652fxr`, under `src/lib/skarp/`. Prompten monteras
 likadant överallt: den cachebara prefixen är `SKARP_BASE` + roll +
-`BOGGELS_ROST` (steg 6 och 8 har ingen roll), systemprompten stegets
+`LINDOS_ROST` (steg 6 och 8 har ingen roll), systemprompten stegets
 egen instruktion med SKÄRPA-blocket sist (0.13). Klassificeringen har
 bara `SKARP_BASE` som prefix och inget block — den skriver inget
 användaren ser.
@@ -703,7 +687,7 @@ användaren ser.
 | `answerReality` | `step6-reality.ts` | `skarp_reality_answer` / `RealityAnswerSchema` | – |
 | `proposeMechanisms` | `step7-mechanism.ts` | `skarp_mechanism` / `MechanismResultSchema` | Linsen |
 | `answerUnique` | `step8-unique.ts` | `skarp_unique` / `UniqueResultSchema` | – |
-| `skepticAssessment` | `step9-skeptic.ts` | `skarp_skeptic` / `SkepticResultSchema` | Skeptikern\* |
+| `councilAssessment` | `step9-council.ts` | `skarp_council` / `CouncilResultSchema` | Lindos råd (`LINDOS_RAD`)\* |
 | `closingSummary` | `step10-closing.ts` | `skarp_closing_summary` / `ClosingSummarySchema` | Syntetiseraren\* |
 | `closingAssessment` | `step10-closing.ts` | `skarp_closing_assessment` / `ClosingAssessmentSchema` | Syntetiseraren\* |
 | `findInsight` | `insight.ts` | `skarp_insight` / `InsightSchema` | Syntetiseraren\* |
@@ -722,7 +706,7 @@ användaren ser.
   6-svaret, 8) tar `{ context, main, followUp? }`;
   `reframeProblem`/`proposeMechanisms` tar `{ context, ownFrame? }`
   resp. `{ context, ownMechanism? }`; `buildReality`,
-  `skepticAssessment`, `closingSummary` och `closingAssessment` tar
+  `councilAssessment`, `closingSummary` och `closingAssessment` tar
   `{ context }`; `findInsight` tar `{ context, moment }`. Skärpan har
   inte ändrat någon indata (bara nya valfria kontextfält).
 - Dolda resultatfält (visas aldrig, men routen, flödestestet och evalen
@@ -738,8 +722,9 @@ användaren ser.
   `KEEP_OWN_MECHANISM_MOVE`, `reframeToSuggestion`,
   `mechanismToSuggestion`, de gamla siffer- och säkerhetsetiketterna i
   `render.ts`, filerna `interview.ts` och `suggestions.ts` och
-  komponenten `EvidenceCard`. `reframeProblem`, `proposeMechanisms` och
-  `skepticAssessment` har kvar sina namn men är omskrivna.
+  komponenten `EvidenceCard`. `reframeProblem` och `proposeMechanisms`
+  har kvar sina namn men är omskrivna. `skepticAssessment`
+  (`step9-skeptic.ts`) är ersatt av `councilAssessment` (0.15).
 - Scheman: `schemas.ts` (Skärp-ägda; `src/lib/ai/schemas.ts` är orörd).
   Visad prosa trunkeras aldrig i schemat — korthet styrs av prompt, mjuk
   kontroll och efterbearbetning.
@@ -751,7 +736,8 @@ användaren ser.
   `mekanism`, `unikt-affar`, `skeptikern`), `ideaMap`, `insights`, och
   för steg 4–10 `problemMap`, `frame`, `evidenceMap` (med `what`,
   `sourceUrl` och `demandNote`), `mechanism`, `uniqueAndBusiness`,
-  `skeptic` (`concerns` med test och citat) och `closing`. Valfria och
+  `council` (Lindos råd: röster, Ordföranden och stoppregeln, 0.15),
+  `contributions` (Lindos bidrag med rubrik, 0.14–0.15) och `closing`. Valfria och
   aldrig utskrivna i `contextBlock`: `profile` (klassificeringen,
   uppfriskad) och `lenses` (verktygen bakom det som visats, 0.13).
 - Hjälpare: `text.ts` (citatmatchning, meningsdelning och -trimning),
@@ -761,16 +747,16 @@ användaren ser.
   `sharp.ts` (stegens gemensamma frågeregler och `sharpChecks`),
   `knowledge/` (kunskapsbasen, urvalet och blocket, 0.13), `choice.ts`
   (`settleChoiceOptions`, `settleOwnChoice`, `userSources`), `labels.ts`
-  (svenska etiketter för ramtyper, tankeoperationer, Skeptikerns typer,
+  (svenska etiketter för ramtyper, tankeoperationer, rådets röster,
   områden och nivåer — alltid i kod, aldrig av AI:n), `render.ts`
   (`renderSituationSentence`, `ORIGIN_LABELS`,
   `renderClosingCardMarkdown`), `progress.ts` (tid kvar), `map-note.ts`
-  (kartrörelsen i ord), `roles.ts` (`BOGGELS_ROST`, `VOICE_EXAMPLES`).
+  (kartrörelsen i ord), `roles.ts` (`LINDOS_ROST`, `LINDOS_RAD`, `VOICE_EXAMPLES`).
 - UI: `src/components/skarp/` (`SkarpProgress`, `StepScreen`,
   `AnswerComposer`, `IdeaReadView`, `InsightCard`, `IdeaMap`,
   `ThinkingLine`, `FocusError`, `SkarpRail`, och för steg 4–10
   `ChoiceList`, `RealityView`, `QuestionBlock`, `TestList`,
-  `ClosingCard`, `FollowupDialog`), delade primitiver enligt prototypen
+  `ContributionList`, `CouncilView`, `ClosingCard`, `FollowupDialog`), delade primitiver enligt prototypen
   i `src/components/shared/boggel-ui.tsx` (`PrimaryButton`,
   `TextButton`, `Kicker`, `NumberRomb`, `Highlight`, `GoldDash`,
   `LinedPaper`) och guldtonerna/markeringarna i `src/styles.css`.
@@ -779,7 +765,7 @@ användaren ser.
 ### 0.13 Skärpan: kunskapsbas, anpassning och röst
 
 Skärp används av grundare som redan har en idé och kan grunderna.
-Skärpan ska få Boggel att se det användaren inte har sett: inbyggd
+Skärpan ska få Lindo att se det användaren inte har sett: inbyggd
 expertkunskap (en kunskapsbas av tankeverktyg), frågor valda efter
 informationsvärde, en skarpare röst — och en eval som mäter det
 (`docs/skarp-kvalitet.md`). Underlaget är `docs/rapport-affarsideer.md`.
@@ -856,13 +842,13 @@ kommer färdig i stegens resultat.
   texten ger ett konkret svar — dem frågar ingen VAD de är), `open` (2–6
   områden som är mest osäkra OCH avgörande, ordnade efter vilket svar
   som skulle ändra idén mest om det visade sig fel), `riskiestAssumption`
-  (en mening om det som måste stämma — Boggels tolkning, aldrig citerad
+  (en mening om det som måste stämma — Lindos tolkning, aldrig citerad
   som användarens ord) och `level`. Bara platshållarkontrollen, ingen
   mjuk kontroll.
 - **Sagt är inte belagt.** Planer, priser, kanaler och "kunderna gillar
   det" kan vara både `stated` och `open`. Bevis blir aldrig `stated` av
   åsikter eller planer, bara av beteende (betalning, återkommande
-  användning, egna siffror ur verksamheten). Boggel frågar alltså inte
+  användning, egna siffror ur verksamheten). Lindo frågar alltså inte
   om det som redan står där, men prövar hur säkert det är.
 - `settleProfile` gör varje svar till en giltig profil, även mockens:
   okända värden och dubbletter bort; exakt en kundtyp först (den första
@@ -925,7 +911,7 @@ samma ordning, så flödestest och eval kan jämföra körningar rakt av.
   +6. Redan sagt (`stated` + `derivedCoverage`): ett grundverktyg vars
   alla områden redan är sagda får −2 och vinner aldrig på poäng (det
   fyller bara ut); ett fördjupningsverktyg som tar upp något som är både
-  sagt och öppet får +1 ("pröva det som sagts") — utom i Skeptikern,
+  sagt och öppet får +1 ("pröva det som sagts") — utom i Lindos råd,
   slutkortet och slutkortets insikt, där det sagda prövas ändå.
   Signaler: +1,5 per distinkt ordstam som står (från ordbörjan) i
   användarens egna ord, högst +4,5. Redan visat tidigare: −5.
@@ -964,7 +950,7 @@ steg 1. Fälten per anrop (`KNOWLEDGE_CALLS`, `INSIGHT_KNOWLEDGE`):
 | `findInsight` efter-verkligheten | `insight`: insikt-efter-verkligheten (3), utan `answerReality`s verktyg för `mechanismQuestion` | insikt |
 | `proposeMechanisms` | `options`: mekanism (3, inget id); `nextQuestion`: unikt-affar (3) | alternativ + fråga |
 | `answerUnique` | `followUp`: unikt-affar (2) | fråga |
-| `skepticAssessment` | `points`: skeptikern (3, inget id); `stopQuestion`: skeptikern (2) | punkter |
+| `councilAssessment` | `council`: skeptikern (3, inget id); `stopQuestion`: skeptikern (2) | punkter (rösternas vinklar) |
 | `closingAssessment` | `closing`: slutkort (3, inget id) | slutkort |
 | `findInsight` slutkort | `insight`: insikt-slutkort (3), utan `closingAssessment`s verktyg | insikt |
 
@@ -975,9 +961,9 @@ i samma block får aldrig samma verktyg som ett tidigare.
 Blocket, i ordning:
 
 1. "SKÄRPA — gäller före exemplen ovan."
-2. Profilraderna, bara när de har innehåll: "Idén (Boggels tolkning):
+2. Profilraderna, bara när de har innehåll: "Idén (Lindos tolkning):
    B2B · SaaS. Nivå: erfaren.", "Redan sagt (fråga inte VAD — pröva hur
-   säkert det är): …", "Mest osäkert och avgörande just nu: …", "Boggels
+   säkert det är): …", "Mest osäkert och avgörande just nu: …", "Lindos
    tolkning av det som måste stämma (citera den aldrig som användarens
    ord): …" och nivåraden. Utan profil (steg 1) utelämnas de.
 3. Reglerna. För varje fält med verktygs-id, "Så väljer du frågan": läs
@@ -993,8 +979,8 @@ Blocket, i ordning:
    en konkret händelse som grundaren ännu inte beskrivit räknas som
    skarp); ankaret i användarens ord står i SAMMA mening som frågan. Alternativen i steg 5/7 får inget id per alternativ, men minst
    ett ska vara något en kunnig grundare inte redan har övervägt.
-   Skeptikerns punkter tar det mest osäkra och avgörande först, även det
-   som redan sagts. Insikten använder verktygen och fallgroparna som
+   Rådets röster tar det mest osäkra och avgörande först, även det som
+   redan sagts. Insikten använder verktygen och fallgroparna som
    linser och skriver id:t i `lens`, eller null. Slutkortets nästa steg,
    test och rådgivarfrågor prövar det mest osäkra och avgörande — aldrig
    ett allmänt råd.
@@ -1007,9 +993,9 @@ Blocket, i ordning:
    Senare fält får dem korta (perspektivskiftet och den skarpa frågan);
    följdfrågan är märkt "bara om en följdfråga behövs; "lens" får vara
    null". Id:n skrivs utan hakparentes.
-6. För Skeptikern, insikterna och slutkortet: "KÄNDA FALLGROPAR FÖR
+6. För Lindos råd, insikterna och slutkortet: "KÄNDA FALLGROPAR FÖR
    <TYPER> (heuristiker — påstå aldrig hur ofta något händer):" — högst
-   fem för Skeptikern, tre annars.
+   fem för rådet, tre annars.
 
 Stegens frågefält (`STEP_FIELDS`):
 
@@ -1056,9 +1042,9 @@ Gemensamma rader i `sharp.ts`, samma i alla steg:
   bara när modellens `lens` är ett av fältets erbjudna verktyg — annars
   ingen etikett. Huvudfrågor och de öppna frågorna i steg 5/7: stegets
   kicker "Steg n av 10 · <namn> · <perspektiv>". Med ett perspektiv står
-  raden kvar medan Boggel arbetar (väntraden vid knappen visar redan
+  raden kvar medan Lindo arbetar (väntraden vid knappen visar redan
   det, och en kortare rad skulle få skärmen att hoppa på mobil); utan
-  perspektiv ersätter "Boggel läser …" suffixet som förut. Steg 6:s fråga och
+  perspektiv ersätter "Lindo läser …" suffixet som förut. Steg 6:s fråga och
   stoppfrågan i steg 9: bara i `QuestionBlock`s kicker, "Din tur ·
   <perspektiv>"; stegets kicker är som förut. Följdfrågor visar aldrig
   något perspektiv ("· om du vill").
@@ -1086,7 +1072,7 @@ Gemensamma rader i `sharp.ts`, samma i alla steg:
 
 #### Rösten
 
-`BOGGELS_ROST` behåller alla tidigare regler och förbud och får:
+`LINDOS_ROST` behåller alla tidigare regler och förbud och får:
 
 - personan: en erfaren, varm men rak affärsmänniska som har sett
   hundratals idéer — säger det aldrig, utan visar det genom vad den
@@ -1100,7 +1086,7 @@ Gemensamma rader i `sharp.ts`, samma i alla steg:
 - hellre en obekväm fråga om det som avgör idén än en bekväm om det som
   redan är sagt; aldrig en fråga vars svar redan står i idén eller
   svaren; säg aldrig vilket ramverk eller verktyg du använder;
-- avgränsningen i `SKARP_BASE` betyder att Boggel inte GER planer,
+- avgränsningen i `SKARP_BASE` betyder att Lindo inte GER planer,
   kalkyler eller råd om marknadsföring, prissättning, logistik eller
   drift — men gärna FRÅGAR om de antaganden om pris, kanal, leverans och
   pengar som avgör om just den här idén håller;
@@ -1131,7 +1117,7 @@ EN rättande runda (0.7).
 - **Förbjudna fraser**, utökade med "jag har sett", "i min erfarenhet",
   "de flesta grundare", "många grundare", "studier visar", "forskning
   visar" och "statistiskt". "Jag har sett" och "i min erfarenhet" är
-  bara förbjudna i Boggels egen röst — i förslagen (användarens
+  bara förbjudna i Lindos egen röst — i förslagen (användarens
   jag-form) är de vanliga svar, och en insikt, spegling eller vinkel
   som citerar användaren ordagrant får återge dem.
 - **Ärlighet** (`honestyProblem`): (a) statistik — "de flesta",
@@ -1147,8 +1133,8 @@ EN rättande runda (0.7).
   3, 10 eller 100. En erbjuden verktygsetikett som står i sin helhet i
   texten ("dag 30") tas bort före kontrollen; etikettens enskilda ord
   och tal släpper aldrig igenom något på annat ställe. Gäller varje
-  visad fråga och why (huvud- och följdfråga), vinkeln, Skeptikerns
-  punkt och test, insikten, slutkortets `next` och rådgivarfrågorna.
+  visad fråga och why (huvud- och följdfråga), vinkeln, rådets röster
+  och Ordföranden, insikten, slutkortets `next` och rådgivarfrågorna.
 - **Verktygs-id** (`lensProblem`): en huvudfråga (`nextQuestion`,
   `frameQuestion`, `mechanismQuestion`, `question`, `stopQuestion`)
   måste ha ett `lens` bland fältets verktyg. Följdfrågor får ha null.
@@ -1164,11 +1150,11 @@ EN rättande runda (0.7).
   blockets platta och skarpa exempel eller `VOICE_EXAMPLES`, med minst
   två innehållsord som inte alla står i användarens egen text (böjningar
   räknas: "månaden" när hen skrev "månad"). Gäller
-  visade frågor och why, Skeptikerns punkter och insikten.
+  visade frågor och why, rådets röster och insikten.
 - **Blind fläck** (`blindSpotProblem`): `blind_flack` kräver `gap`, och
   området får inte stå i profilens `stated` eller i `derivedCoverage`
-  (0.6). **Känd fallgrop** i steg 9 kräver användarens ordagranna ord i
-  `quote` (0.9).
+  (0.6). En **känd fallgrop** i en rådsröst ska knytas till användarens
+  egna ord (0.15).
 - Ordningen för en visad fråga: format och förbjudna fraser → ärlighet →
   verktygs-id → platt grundfråga → avskrivet exempel.
 
@@ -1187,7 +1173,7 @@ verktygen och taket. Hur Skärpan mäts står i `docs/skarp-kvalitet.md`.
 
 ### 0.14 Ge först, fråga sen (grundprincipen)
 
-Ett riktigt test visade att Boggel var för passiv: den ställde frågor men
+Ett riktigt test visade att Lindo var för passiv: den ställde frågor men
 tillförde nästan inget eget, fastnade i detaljer om planen (t.ex. vem
 som ska vara testperson) i stället för idén, och vissa frågor var
 otydliga. Orsaken var den gamla grundregeln — "tankemotor, inte
@@ -1197,12 +1183,12 @@ gjorde att all kunskap från kunskapsbasen bara blev frågor. **Den regeln
 gäller inte längre och ska inte återinföras** i prompter, roller eller
 dokument.
 
-**Ny princip:** Boggel är en expert som tänker MED användaren och
+**Ny princip:** Lindo är en expert som tänker MED användaren och
 tillför mer än användaren själv gör. Efter femton minuter ska användaren
 ha fått många nya perspektiv, vinklar och konkreta förslag på sin idé
 som hen inte hade innan.
 
-1. **Bidrag i varje steg.** Efter användarens svar levererar Boggel ett
+1. **Bidrag i varje steg.** Efter användarens svar levererar Lindo ett
    eget bidrag (`contribution`) på 2–4 korta punkter: perspektiv,
    förslag, möjligheter eller risker (`kind`: `perspektiv`, `forslag`,
    `mojlighet`, `risk`; steg 6 även `positionering`), byggda på idén,
@@ -1213,7 +1199,7 @@ som hen inte hade innan.
    före frågan. Frågan är sekundär och används bara för att låsa upp
    nästa bidrag.
 2. **Steg 6 — konkurrenterna.** Efter användarens reaktion analyserar
-   Boggel idén mot de verkliga konkurrenterna i researchen och föreslår
+   Lindo idén mot de verkliga konkurrenterna i researchen och föreslår
    hur den kan vinna: var konkurrenterna är svaga, vilket segment de
    missar och 2–3 möjliga positioneringar. Bara konkurrenter och fakta
    ur researchen; finns inga, jämförs idén med det kunden gör i dag och
@@ -1226,29 +1212,29 @@ som hen inte hade innan.
    svenska, högst 15 ord, ingen jargong.
 5. **Användaren först bara där det räknas:** steg 1 (idén) och steg 5
    och 7, där användaren skriver sin egen problemram och kärna innan
-   Boggels förslag visas (med flyktvägen "Jag vet inte – visa förslag").
-   I alla andra steg ger Boggel sitt bidrag direkt efter svaret. Steg
+   Lindos förslag visas (med flyktvägen "Jag vet inte – visa förslag").
+   I alla andra steg ger Lindo sitt bidrag direkt efter svaret. Steg
    4:s bidrag föreslår därför ingen problemram och ingen lösning.
-6. **Ärlighetsskydden står kvar.** Bidragen märks "Boggels förslag"
-   (samma diskreta ursprungsetikett som Boggels tolkning), påstår inga
+6. **Ärlighetsskydden står kvar.** Bidragen märks "Lindos förslag"
+   (samma diskreta ursprungsetikett som Lindos tolkning), påstår inga
    fakta som inte finns i användarens svar eller researchen, och
    insikterna citerar fortfarande användarens egna ord.
 7. **Slutkortet** samlar de bästa bidragen under "Perspektiv du fått av
-   Boggel": varje stegs första (starkaste) punkt, sedan andra, högst
+   Lindo": varje stegs första (starkaste) punkt, sedan andra, högst
    åtta, i stegordning — så att användaren ser hur mycket nytt hen fått.
 
 **Konstruktion (`gxy652fxr`).** Inga nya AI-anrop: bidraget kommer i
 samma anrop som redan bedömer svaret — `readIdea` (steg 1),
 `answerWhyYou` (2), `answerCustomer` (3), `answerProblem` (4),
 `answerReality` (6) och `answerUnique` (8). Steg 5 och 7 är redan
-Boggels förslag efter användarens egen text, och steg 9:s punkter är
-risker med ett test. Schemat har fältet `contribution` (`schemas.ts`),
+Lindos förslag efter användarens egen text, och steg 9 är Lindos råd
+(0.15). Schemat har fältet `contribution` (`schemas.ts`),
 prompten regeln `contributionRule` / `REALITY_CONTRIBUTION_RULE`
 (`sharp.ts`), och kunskapsblocket ger varje sådant anrop sina verktyg
 FÖRST för bidraget, i det besvarade stegets slot (`KNOWLEDGE_CALLS`,
 utan frågeexempel så att punkterna blir påståenden). Verktygen bakom ett
 visat bidrag läggs i `ctx.lenses`, så samma perspektiv inte återkommer,
-och punkterna i `ctx.contributions`, som senare steg ser ("Boggels
+och punkterna i `ctx.contributions`, som senare steg ser ("Lindos
 tidigare bidrag — upprepa inte") och slutkortet samlar. Insikten på
 samma skärm får inte samma verktyg som bidraget. Den mjuka kontrollen
 (`sharpChecks().contribution`) kräver 2–4 punkter (steg 6: 3–5 med minst
@@ -1256,9 +1242,193 @@ två positioneringar), minst ett förslag, påståenden i stället för frågor,
 inga förbjudna fraser, inga påhittade namn eller siffror, inga avskrivna
 exempel och ingen logistik (`planProblem`, som också gäller frågorna).
 Rollerna (`roles.ts`: `SKARP_BASE`, `FRAGESTIL`, Rådgivaren, Linsen,
-Skeptikern, `BOGGELS_ROST`) är omskrivna efter principen. Gränssnittet
-visar bidraget med befintliga komponenter (`ContributionList` ovanpå
-`TestList`) överst i `StepScreen` och under läsningen i steg 1.
+Lindos råd (`LINDOS_RAD`), `LINDOS_ROST`) är omskrivna efter principen.
+Gränssnittet visar bidraget med `ContributionList` (rubrik och en mening
+per punkt, 0.15) överst i `StepScreen`, under läsningen i steg 1 och
+under insikten efter steg 3 och 6.
+
+### 0.15 Lindo — namn, person, nivå, språk, rådet och gränssnittet
+
+**Verktyget heter Lindo. Boggel är företaget.** I gränssnittet, prompterna
+och dokumenten heter verktyget Lindo: "Lindos förslag", "Lindos tolkning",
+"Lindos råd", "Fråga Lindo om idén", "Lindo läser …", och märket i
+headern är "Lindo◆". Ordet Boggel står bara där det verkligen avser
+företaget (t.ex. rollens första rad: "Du är Lindo — Boggels AI …") och i
+designsystemets namn (`boggel-ui`, `BOGGEL_EASE`). Kompass-läget och dess
+texter berörs inte.
+
+1. **Lindo som person.** Lindo pratar i jag-form, har egna åsikter och
+   säger dem ("Ärligt talat tror jag att …", "Om jag var du skulle jag
+   …"), minns vad användaren sagt tidigare och refererar till det
+   naturligt ("Det hänger ihop med det du sa om …"). Varm, nyfiken, rak
+   och lite lekfull — som en kompis som kan affärer, över en kopp kaffe.
+   Lindo låtsas aldrig vara en människa: inga egna minnen eller
+   erfarenheter ("jag har sett", "när jag drev"), inga påhittade känslor.
+   Står i `SKARP_BASE` och `LINDOS_ROST` (`roles.ts`). Ärlighetsskydden i
+   §0.14 gäller oförändrat.
+2. **Rätt nivå.** Frågor och förslag handlar om målgruppen och den
+   typiska kunden (ICP), aldrig om enskilda personer i användarens
+   omgivning eller i exemplen. Fel: "Vilken av prospektets klienter hade
+   en oskarp idé men kom ändå framåt utan hjälp?" Rätt: "Tänk på en
+   typisk grundare med en luddig idé. Vad gör att vissa ändå kommer
+   framåt utan hjälp?" Exempel med namngivna personer (Sara, svågern,
+   salongsägaren) i kunskapsbasen och prompterna är omskrivna till
+   kundgrupper och roller (en central inköpare, en typisk klinik). Regeln
+   står i `FRAGESTIL` ("RÄTT NIVÅ"), `QUESTION_RULES` (regel 6),
+   `LINDOS_ROST` och bidragens ärlighetsregel (`sharp.ts`).
+3. **Vardagligt och tydligt språk.** Som en kompis som kan affärer
+   pratar över en kopp kaffe. Otydligt: "Vilken friktion uppstår i
+   köpprocessen hos din målgrupp?" → Vardagligt: "Vad är det som gör att
+   folk drar sig för att köpa?" Otydligt: "Hur positionerar du dig
+   gentemot alternativen?" → Vardagligt: "Varför skulle någon välja dig i
+   stället för det de redan använder?" Den mjuka kontrollen
+   `jargonProblem` (`validators.ts`) stoppar facktermer (friktion,
+   köpprocess, positionera, värdeerbjudande, segment …) i frågor, bidrag
+   och rådets röster — utom när användaren själv har skrivit ordet.
+   Bidragsslaget `positionering` visas som "Sticka ut".
+4. **Lindos förslag — designen.** Varje punkt har en kort rubrik (högst
+   sex ord) och EN mening (högst 25 ord, jag-form):
+   `ContributionPointSchema` = `{ kind, title, text }`, och den mjuka
+   kontrollen kräver rubriken och en mening. `ContributionList` visar
+   punkterna som rader på pappret med Boggels grafiska profil: guldstreck
+   och "DET HÄR SER JAG" (steg 6: "SÅ KAN DU VINNA") med etiketten
+   "Lindos förslag"; en romb per punkt vars form säger vad den är (fylld
+   guld = förslag eller sticka ut, guldkontur = perspektiv eller
+   möjlighet, streckad = risk); rubriken i Lindos röst (DM Serif) med en
+   liten mono-etikett för slaget och meningen under; raderna stiger in en
+   i taget (`BOGGEL_EASE`). Slutkortets "Perspektiv du fått av Lindo"
+   använder samma lista med stegnamnet i etiketten.
+5. **Lindos råd (steg 9)** — ersätter Skeptikern och "Saker värda att
+   testa", se nedan.
+6. **Gränssnittet** — ingen klippt text och ingen sidscroll, en renare
+   karta och att gå tillbaka, se nedan.
+
+#### Lindos råd
+
+Ett eget, isolerat AI-anrop: `councilAssessment` (`step9-council.ts`,
+`skarp_council` / `CouncilResultSchema`, rollen `LINDOS_RAD`, starkare
+modellnivå), aldrig samma anrop som skapar eller sammanfattar idén. Fem
+röster, 1–2 meningar var, i fast ordning:
+
+- **Motsägaren** — varför idén kan misslyckas (gärna en känd fallgrop
+  knuten till användarens ord).
+- **Förstaprincip-tänkaren** — skalar bort antagandena och pekar på det
+  som måste vara sant.
+- **Optimisten** — den dolda uppsidan, hur idén kan bli mycket större.
+- **Den utomstående** — hur en typisk kund, eller en konkurrent ur "Det
+  här hittade vi ute i världen", skulle reagera (namnet ordagrant
+  därifrån, aldrig ett påhittat).
+- **Exekutören** — vad som är realistiskt och vad som borde göras först.
+
+Rösterna får säga emot varandra ("Jag håller inte med Optimisten — …")
+men upprepar aldrig varandra. Sist väger **Ordföranden** ihop dem: ett
+beslut (gå vidare, ändra något först eller pausa), den största risken
+och det första steget — en mening var. Samma anrop ställer frågan om
+stoppregeln (`stopQuestion`, anpassad till Ordförandens största risk,
+förslag utan siffror). Stoppregeln efter rådet fungerar som förut:
+svaret blir stoppregeln ordagrant, och ett förslag klickat utan ändring
+märks aldrig som användarens egna ord.
+
+- **Ärlighet:** märkt "Lindos förslag"; inga fakta, namn eller siffror
+  utanför användarens svar och researchen; `quote` kontrolleras ordagrant
+  och ett namn ur researchen får sin länk. Mjuk kontroll
+  (`councilProblem`): exakt fem olika röster, högst två meningar och 50
+  ord per röst, inga förbjudna fraser, ingen jargong, inget påhittat,
+  inga avskrivna exempel; Ordförandens tre delar en mening var.
+- **Skärm:** överst rådet (`CouncilView`). Varje röst har ett eget märke
+  så att de går att skilja åt med en blick — mörk romb (Motsägaren), tom
+  romb (Förstaprincip-tänkaren), guldromb (Optimisten), streckad romb
+  (Den utomstående), halvfylld romb (Exekutören) — med etikett och roll
+  i mono till vänster och rösten i DM Serif till höger. Ordföranden har
+  ett eget block med guldkant och den stora guldromben, med raderna
+  Beslut, Största risken och Första steget. Därefter ev. varningen från
+  steg 8 och steg 8:s spegling och förslag. Frågan om stoppregeln står
+  fast nertill.
+- **Sparas:** `ctx.council` (`voices` med röst och text, `chair`,
+  `stopRule`, `stopRuleSource`) i stället för `ctx.skeptic`;
+  `contextBlock` skriver ut det som "LINDOS RÅD (Lindos tolkning, inte
+  användarens ord)". Svaret sparas som `skeptikern` (steg-id:t är
+  oförändrat).
+- **Idékartan:** Att testa ← Ordförandens första steg och "Stoppregel: …".
+- **Slutkortet:** "Saker värda att testa" finns inte längre. Sektionen
+  **Lindos råd** (samma `CouncilView`, märkt "Lindos förslag", med ev.
+  varning och "Din stoppregel") står före **Ditt första test**, som
+  utvecklar Ordförandens slutsats — risken och det första steget — till
+  hypotes, metod, bevis och 48-timmarssteg, utan att upprepa första
+  steget ordagrant. Markdown-kopian har samma sektion.
+- **Budget:** rådet ersätter Skeptikerns anrop; fortfarande 18 logiska
+  anrop utan följdfrågor.
+
+#### Gränssnittet
+
+- **Inget klipps.** Ingen fråga, spegling, insikt, förslag eller
+  rådsröst klipps med "…": inga `line-clamp`, `truncate`, ellipser eller
+  fasta höjder på sådan text. `trimToSentences` (`text.ts`) behåller
+  alltid hela meningar och lägger aldrig till "…" — blir texten för lång
+  släpps meningar från slutet, och den första behålls hel.
+- **Ingen sidscroll** på 1366×768, 1440×900 och mobil (390 bred). Sidan
+  är `h-[100dvh] overflow-hidden`. Varje skärm (`StepScreen`) har tre
+  delar: kickern, en del som scrollar internt (`ScrollRegion` — spegling,
+  Lindos bidrag, listor och rådet; en tonad kant visar att det finns
+  mer) och en fast nederdel med frågan och svarsytan, där knappen står
+  bredvid pappret (`inlineSubmit`). Valskärmarna och slutkortet scrollar
+  i sin lista. I railen scrollar idékartan under en fast rubrik; på
+  mobil sitter kartans miniatyr i idékartans rad, och den utfällda
+  idékartan scrollar inuti sig själv. Prövas med skärmbilder av alla tio
+  steg i de tre storlekarna: ingen sidscroll, rubriken och knappen i
+  bild, ingen klippt text.
+- **Kartan, klockren.** Det som gjorde den rörig: den zoomade 1,7 gånger
+  in på positionen, så att axlar och konkurrenter gled in och ut ur
+  bild; konkurrenternas namn stod i kartan, klipptes vid kanten och
+  krockade med axel- och kvadrantetiketterna; axlarnas namn låg inne i
+  rutan ovanpå markörerna; spåret ritades med svarta rutor och en
+  heldragen svart linje, lika starkt som positionen nu; kvadrantnamnen
+  hade samma vikt som data. Nu: samma två axlar och samma romb som
+  flyttas, men ingen zoom; axlarnas namn utanför rutan; kvadrantnamnen
+  svagt i hörnen; markörerna 10 % från kanten, aldrig klippta. **Nu** =
+  den gula romben med puls och etiketten "Du är här" på den sida där det
+  finns plats. **Varit** = små tomma romber och en prickad, dämpad linje;
+  det senaste draget är en tunn guldlinje. Konkurrenterna är numrerade
+  romber (fylld = säker placering, streckad = osäker) som puttas isär om
+  de hamnar på samma punkt, med namnen i en lista under kartan.
+- **Gå tillbaka.** "← Tillbaka" i headern och klickbara avklarade steg i
+  stegindikatorn (steg man redan svarat på efter det aktuella syns
+  ljusare). Routen sparar varje visad skärm i en historik med allt den
+  byggde på (kontext, idékarta, karta, val). Tillbaka visar en sparad
+  skärm igen — stegets första skärm, i steg 1 den senaste läsningen —
+  med användarens tidigare svar förifyllt.
+  - **Oförändrat framåt** (samma svar, val eller stoppregel) visar nästa
+    sparade skärm: inga nya AI-anrop, inget sparas två gånger och kartan
+    flyttas inte igen.
+  - **Ändrat svar** kastar allt efter skärmen: steget körs om, idékartan
+    och kartan uppdateras från det läget, och de påverkade senare stegen
+    körs om när användaren kommer dit, med de tidigare svaren förifyllda
+    (huvudfråga, följdfråga, egen problemram och kärna, stoppregel).
+  - **Research** körs bara om enligt befintlig regel (punkt 4): en
+    sökning per session och högst ett omtag om kunden ändras innan steg
+    6 har nåtts — "nåtts" gäller det längsta steget användaren varit på,
+    även efter att ha gått tillbaka. Ändras steg 3 efter det söker steg 6
+    med samma mening som researchen fick, så cachen träffar. En ändrad
+    idé i steg 1 är en ny session (ny karta, egen research enligt samma
+    regel).
+  - **Rättelser i idékartan** följer med när en äldre skärm visas igen,
+    för fält som är ifyllda där; ändras ett svar gäller rättelserna av
+    fälten från det steget och framåt inte längre.
+  - **Slutkortet sparas en gång per session** (`finishSkarpSession`),
+    även om användaren går tillbaka och kommer till slutkortet igen.
+    Insikterna räknas om bara när svaren i sessionen har ändrats
+    (nyckeln är alla svar, inte bara stegets).
+
+**Konstruktion (`gxy652fxr`).** `src/routes/skarp.tsx` (historiken:
+`HistoryEntry`, `Snapshot`, `replay`, `leaveWith`, `restoreEntry`,
+`backTarget`, `stepTarget`), `SkarpProgress` (Tillbaka och klickbara
+segment), `StepScreen` och `ScrollRegion`, `CouncilView`,
+`ContributionList`, `SkarpMap`. Webbläsarkörningar med fejkade AI-svar
+på desktop och mobil prövar tillbaka-flödet: steg 3 via stegindikatorn →
+förifyllt → oförändrat framåt utan anrop; ändrat steg 3 → steg 3 och
+insikten körs om, ingen ny research; steg 4 och 5 förifyllda; ändrat
+steg 5 → nya ramar; lika många punkter på kartan som förut; från
+slutkortet till steg 9 och tillbaka utan anrop och utan ny sparning.
 
 ## 1. Principerna, kort
 
@@ -1266,7 +1436,7 @@ visar bidraget med befintliga komponenter (`ContributionList` ovanpå
 > principen och står kvar bara som historik.
 
 1. **(Gammal, ersatt av §0.14.)** Tidigare: "tankemotor, inte
-   idémaskin". Nu: ge först, fråga sen — Boggel tillför egna
+   idémaskin". Nu: ge först, fråga sen — Lindo tillför egna
    perspektiv, förslag, möjligheter och risker efter varje svar.
 2. **(Gammal, ersatt av §0.14.)** Tidigare: "Du först" i många steg. Nu:
    användaren skriver själv först bara i steg 1, 5 och 7.
@@ -1456,7 +1626,7 @@ till på (ursprungstext + rättelse) — fortfarande inom 2 anrop för hela
 steget om ingen rättelse behövs, +1 om en rättelse görs.
 
 **Sparas:** idékort v0 = `{ideaText, mirror, fakta, tolkning, hopp}`.
-Ingen flyktväg ("visa förslag") i detta steg — Boggel hittar inte på
+Ingen flyktväg ("visa förslag") i detta steg — Lindo hittar inte på
 idéer, så det finns inget att föreslå när rutan är tom.
 
 ### Steg 2 — Varför du (Intervjuaren; ge först sedan §0.14)
@@ -1729,7 +1899,7 @@ rad) — säg till.
 Jag tolkar "en flyktväg så att ingen fastnar" som att den gäller
 rena VAL-steg (5: problemram, 7: mekanism) och som ett enkelt
 exempel-stöd på intervjufrågor (2, 3, 4, 8) — INTE steg 1 (inget att
-föreslå när Boggel inte hittar på idéer). Säg till om du vill ha den
+föreslå när Lindo inte hittar på idéer). Säg till om du vill ha den
 bredare eller smalare.
 
 ### 8.3 Kartans rörelse i val-steg (5, 7)
