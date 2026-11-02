@@ -12,7 +12,7 @@ Produkten positioneras medvetet som "styrd metod framför fri chatt" — en öpp
 
 I Kompass-läget betyder det fortfarande menyval med fritext som override, som tidigare.
 
-I Skärp-läget är det fortfarande ett fast, stegvis flöde genom tio namngivna steg, men sedan "Ge först, fråga sen" (se nedan och §0.14 i `docs/skarp-flode.md`) levererar Lindo ett eget bidrag efter varje svar och frågar sedan. Användaren skriver själv först bara i steg 1 (idén) och i steg 5 och 7 (egen problemram och kärna), med flyktvägen "Jag vet inte — visa förslag" där.
+I Skärp-läget är det fortfarande ett fast, stegvis flöde genom tio namngivna steg, men sedan "Ge först, fråga sen" (se nedan och §0.14 i `docs/skarp-flode.md`) levererar Lindo ett eget bidrag efter varje svar och frågar sedan — sedan §0.16 i exakt tre delar per steg: en kvittens, Lindos tankar (1–3 kort) och en fråga. Användaren skriver själv först bara i steg 1 (idén) och i steg 5 och 7 (egen problemram och kärna), med flyktvägen "Jag vet inte — visa förslag" där.
 
 ## Fast avslutningsmall (Kompass-läget)
 
@@ -66,6 +66,37 @@ tänker först" — som gjorde att all kunskap bara blev frågor. Beslut:
 - Den gamla principen ska inte återinföras i prompter, roller eller
   dokument.
 
+## Skärp: kvittens, Lindos tankar, en fråga — research i steg 1 och idémodellen
+
+Beslut (§0.16 i `docs/skarp-flode.md`), efter ett test med en simulerad
+grundare:
+
+- **Varje steg har exakt tre delar:** en kvittens (EN mening om vad
+  Lindo tog med sig), Lindos tankar (1–3 kort, konkret rubrik och en
+  mening) och EN fråga. Inga upprepningar av idén — idékartan visar
+  helheten.
+- **Steg 1 loopar inte:** "Har jag fattat rätt?" med "Ja" eller "Lägg
+  till något", högst en rättelserunda; tillägget kvitteras i steg 2.
+- **Frågor som går att svara på på tio sekunder:** Lindos hypotes +
+  reaktion, "Vet inte" alltid okej (Lindo gissar, märkt som gissning,
+  och går vidare), aldrig logistik eller kunskap om tredje part.
+- **Ta fram brett, visa smalt i kod:** modellen föreslår cirka sex kort
+  och koden sållar bort det generiska, ramverksaktiga, redan sagda och
+  motsägelsefulla — samma idé som det deterministiska verktygsvalet: det
+  som går att kontrollera i kod görs i kod.
+- **Research i steg 1 med marknadsbild:** researchen startar när idén
+  skickas, i bakgrunden, och ett extra AI-anrop (budgetens enda tillägg,
+  19 anrop utan följdfrågor) kondenserar den till en marknadsbild som
+  alla senare anrop får. Steg 6 söker med samma fråga, så ingen ny
+  sökning görs.
+- **Idémodellen:** säljare, köpare, betalare, beslutare och
+  kärnhypoteser, uppdaterad dolt i varje steg och skickad i varje anrop;
+  Lindo motsäger den inte utan att säga att den ändrar sig.
+- **En kolumn som scrollar naturligt** ersätter "ingen sidscroll" (inre
+  scrollrutor gömde innehåll); kartan står alltid still och syns helt.
+- **Laddtiden:** inga AI-anrop före första skärmen, tunga delar (3D-nålen)
+  först när webbläsaren är ledig, Skärps kod förladdad.
+
 ## Skärp: verktyget heter Lindo, rådet ersätter Skeptikern, ingen sidscroll
 
 Beslut (§0.15 i `docs/skarp-flode.md`):
@@ -83,8 +114,9 @@ Beslut (§0.15 i `docs/skarp-flode.md`):
   varandra och en Ordförande med beslut, största risk och första steg,
   i ett eget anrop (ingen ökning av antalet anrop). Rådet ersätter
   "Saker värda att testa" och föder slutkortets testkort.
-- **Ingen klippt text, ingen sidscroll.** Steget får plats på 1366×768,
-  1440×900 och mobil; listor och idékartan scrollar internt.
+- **Ingen klippt text.** (Den första versionen hade också "ingen
+  sidscroll" med inre scrollrutor; det är ersatt av en kolumn som
+  scrollar naturligt, se beslutet ovan.)
 - **Tillbaka utan dubbelarbete.** Varje visad skärm sparas med allt den
   byggde på; oförändrat framåt spelar upp det sparade (inga nya
   AI-anrop, ingen dubbel sparning eller kartflytt), ett ändrat svar kör

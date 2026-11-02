@@ -22,28 +22,72 @@ prompter och dokument heter AI:n Lindo ("Lindos förslag", "Lindos
 tolkning", "Lindos råd", "Fråga Lindo om idén"). Ordet Boggel står bara
 där det verkligen avser företaget (och i designsystemets namn,
 `boggel-ui`). Lindo är en person men låtsas aldrig vara en människa:
-jag-form, egna åsikter som sägs rakt ("Ärligt talat tror jag att …",
-"Om jag var du skulle jag …"), minns vad användaren sagt och refererar
-till det naturligt, varm, nyfiken, rak och lite lekfull — som en kompis
-som kan affärer, över en kopp kaffe. Se §0.15 i `docs/skarp-flode.md`.
+jag-form, egna åsikter som sägs rakt, minns vad användaren sagt och
+refererar till det naturligt, varm, nyfiken, rak och lite lekfull — som
+en kompis som kan affärer, över en kopp kaffe. Utan maner: "Ärligt talat
+tror jag …" och "Om jag var du …" högst en gång per steg och aldrig i
+kvittensen, citattecken runt användarens ord bara i insiktsögonblicken,
+och hypoteser låter som hypoteser ("kanske", "jag gissar"). Se §0.15 och
+§0.16 i `docs/skarp-flode.md`.
 
 Skärp-läget är INTE ett styrt menyflöde längre (det var det gamla
 flödet). Grundprincipen är GE FÖRST, FRÅGA SEN (§0.14): Lindo är en
 expert som tänker MED användaren och tillför mer än användaren själv
-gör. Efter varje svar levererar Lindo ett eget bidrag på 2–4 korta
-punkter — perspektiv, konkreta förslag (en ny målgrupp, ett annat sätt
-att ta betalt, ett sätt att sticka ut, en kil in på marknaden),
-möjligheter och risker — märkt "Lindos förslag". Varje punkt är en kort
-rubrik (högst sex ord) och EN mening, visad skannbart med Boggels
-grafiska profil (gul accent, romber, papperskänsla, mjuk animation).
-Bidraget är huvudinnehållet; frågan är kort, sekundär och handlar om
-idén (problem, kund, värde, skillnad mot alternativen, affär), aldrig om
-genomförandets logistik. Användaren skriver själv först BARA i steg 1
-(idén) och i steg 5 och 7 (egen problemram och kärna) innan Lindos
-förslag visas. Den gamla principen — "tankemotor, inte idémaskin",
-"AI:n frågar, speglar, strukturerar och utmanar", "skriver aldrig
-färdiga idéer", "Du först" i alla steg — gäller INTE längre och ska inte
-återinföras.
+gör. **Varje steg har exakt tre delar (§0.16):** (1) en **kvittens** —
+EN mening om vad Lindo tog med sig från förra svaret, inte en
+sammanfattning av idén; (2) **Lindos tankar** — 1–3 kort, var och ett
+en konkret rubrik (högst sex ord, aldrig ett verktygsnamn) och EN mening,
+märkta "Lindos förslag" och visade med Boggels grafiska profil (gul
+accent, romber, papperskänsla, mjuk animation); (3) **EN fråga** med 2–4
+klickbara svar, "Vet inte" och fritext. Inga upprepningar av idén —
+idékartan visar helheten. Korten tas fram brett och visas smalt: modellen
+föreslår cirka sex kandidater och koden sållar bort det som kunde stått
+om vilken idé som helst, bara upprepar ett ramverk, redan sagts eller
+motsäger idémodellen; varje kort har något konkret (ett exempel, ett
+namngivet kundsegment, något ur marknadsbilden, ett första drag), högst
+ett riskkort per steg. Frågorna handlar om idén (problem, kund, värde,
+skillnad mot alternativen, affär), aldrig om genomförandets logistik.
+Användaren skriver själv först BARA i steg 1 (idén) och i steg 5 och 7
+(egen problemram och kärna) innan Lindos förslag visas. Den gamla
+principen — "tankemotor, inte idémaskin", "AI:n frågar, speglar,
+strukturerar och utmanar", "skriver aldrig färdiga idéer", "Du först" i
+alla steg — gäller INTE längre och ska inte återinföras.
+
+**Steg 1 loopar inte:** Lindo speglar idén i 1–2 meningar som bara
+återger det användaren sagt (inga bedömningar som "underlag saknas") och
+frågar en gång "Har jag fattat rätt?" — "Ja, vidare" eller "Lägg till
+något". Ett tillägg kvitteras kort överst i steg 2 ("Uppfattat – jag tar
+med att …") och flödet går vidare; högst en rättelserunda, senare
+tillägg skrivs i nästa steg. Fakta/tolkning/hopp sorteras bara internt.
+
+**Frågeregeln (§0.16):** varje fråga ska gå att svara på på tio sekunder
+utan research och utan kunskap om en viss person eller ett visst
+företag. Huvudformen är Lindos egen hypotes + reaktion ("Jag tror det
+svåra är tajmingen: materialet blir över en viss vecka, men köparna
+behöver det en annan. Stämmer det med vad ni sett?" med "Ja, det är
+kärnan", "Delvis", "Nej, det är något annat"); en sak, högst 15 ord,
+vardaglig svenska, inga dubbelfrågor, aldrig "vilka kan ni ringa i
+morgon" eller "vilka kontakter har ni". Steg 2 "Varför du" handlar om
+användarens fördel (erfarenhet, insikt, åtkomst), aldrig en ringlista.
+"Vet inte" är alltid okej: Lindo ger då sin bästa gissning, märkt som
+gissning, och går vidare.
+
+**Idémodellen (§0.16):** Lindo har en löpande bild av idén i
+`ctx.ideaModel` — vem som säljer, köper, betalar och bestämmer, och
+kärnhypoteserna — som varje steg uppdaterar dolt och som skickas med i
+varje anrop tillsammans med det användaren sagt och det Lindo redan
+föreslagit. Lindo får inte motsäga sig själv utan att säga att den
+ändrar sig och varför, och samma perspektiv kommer inte tillbaka, inte
+heller i en rättelserunda.
+
+**Researchen startar i steg 1 (§0.16):** när idén skickas körs
+Perplexity-researchen i bakgrunden, parallellt med speglingen, och ett
+extra AI-anrop kondenserar den till en marknadsbild (aktörer, hur det
+löses i dag, befintliga lösningar i Sverige/Norden och internationellt,
+vad som brukar gå fel) som följer med i alla senare anrop. Steg 6 visar
+fortfarande fynden, sökta med samma fråga (cacheträff). Ingen research
+efter steg 3 längre; en körning per session, ett omtag om idén ändras i
+grunden i steg 1.
 
 **Nivåregeln:** frågor och förslag handlar om målgruppen och den typiska
 kunden (ICP), aldrig om enskilda personer ("Tänk på en typisk grundare
@@ -88,30 +132,32 @@ Skärpan (§0.13) tänker Lindo med en inbyggd kunskapsbas — som sedan
 §0.14 i första hand formar bidragen, inte bara frågorna — tankeverktyg
 och kända fallgropar per idétyp, bara heuristiker och aldrig statistik —
 och väljer frågor efter informationsvärde för grundare som redan kan
-grunderna. Ett tyst klassificeringsanrop efter steg 1 (sessionens enda
-extra anrop: 18 logiska anrop utan följdfrågor, tak ~25) bedömer idétyp,
+grunderna. Ett tyst klassificeringsanrop efter steg 1 bedömer idétyp,
 vad som redan är sagt (sagt är inte belagt), vad som är mest osäkert och
 avgörande och hur van användaren är, och vanlig kod väljer sedan
-deterministiskt vilka verktyg varje steg får i SKÄRPA-blocket. Varje
-fråga är EN mening på högst 15 ord, en sak, enkel svenska, med ankaret i
-användarens egna ord och visar sitt perspektiv som en diskret etikett,
-nya mjuka kontroller stoppar statistik, påhittade namn och siffror,
-platta grundfrågor, facktermer och avskrivna exempel, och
+deterministiskt vilka verktyg varje steg får i SKÄRPA-blocket.
+Anropsbudgeten är 19 logiska anrop utan följdfrågor (18 + marknadsbilden),
+20 med ett tillägg i steg 1, tak ~25. Frågan visar sitt perspektiv som en
+diskret etikett, mjuka kontroller stoppar statistik, påhittade namn och
+siffror, platta grundfrågor, facktermer och avskrivna exempel, och
 kvalitetsevalen i `docs/skarp-kvalitet.md` mäter om det blir skarpare.
 
-**Gränssnittet (§0.15):** ingen fråga, spegling, insikt, förslag eller
-rådsröst klipps med "…" (ingen line-clamp/truncate/ellips/fast höjd,
-`trimToSentences` behåller hela meningar). Hela steget får plats utan att
-sidan scrollar på 1366×768, 1440×900 och mobil — listor, rådet och
-idékartan scrollar internt, frågan och svarsytan står fast nertill.
-Kartan har kvar två axlar och romben som flyttas, men ingen zoom,
+**Gränssnittet (§0.15, §0.16):** ingen fråga, spegling, insikt, förslag
+eller rådsröst klipps med "…" (ingen line-clamp/truncate/ellips/fast
+höjd, `trimToSentences` behåller hela meningar). Steget är EN kolumn som
+scrollar naturligt — inga inre scrollrutor — med frågan och svarsytan
+lätta att se; kartan i högerkolumnen är alltid helt synlig och står
+still i alla steg (railen kan inte scrollas, idékartan scrollar bara sin
+egen lista). Första skärmen visas direkt: inga AI-anrop innan användaren
+skrivit något, och tunga delar (3D-nålen på startsidan) laddas först när
+de behövs. Kartan har kvar två axlar och romben som flyttas, men ingen zoom,
 axelnamnen utanför rutan, konkurrenterna som numrerade romber med namnen
 i en lista, tydligt var romben är nu och diskret var den har varit. "←
 Tillbaka" och klickbara avklarade steg i stegindikatorn visar tidigare
 skärmar med svaren förifyllda; oförändrat framåt ger inga nya AI-anrop,
 ett ändrat svar kör om de påverkade stegen (med tidigare svar
-förifyllda), research körs bara om enligt den befintliga regeln, och
-inget sparas dubbelt eller flyttar kartan två gånger.
+förifyllda), research körs bara om enligt regeln ovan, och inget sparas
+dubbelt eller flyttar kartan två gånger.
 Se §0 i `docs/skarp-flode.md`, som gäller före resten av dokumentet.
 Fullständig specifikation: `docs/skarp-flode.md`.
 

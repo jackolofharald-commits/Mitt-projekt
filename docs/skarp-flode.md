@@ -20,9 +20,15 @@ nya rösten. Över allt detta gäller sedan grundprincipen **Ge först,
 fråga sen (§0.14)**, som ersätter "tankemotor, inte idémaskin" överallt,
 och **Lindo (§0.15)**: verktygets namn och person, nivå- och språkregeln,
 designen av förslagen, Lindos råd i steg 9 och gränssnittet (ingen klippt
-text, ingen sidscroll, kartan och att gå tillbaka).
-**§0 gäller, och §0.15 och §0.14 går före resten av §0.** §1–§10 beskriver fas 1–2
-och står kvar som historik; där de krockar med §0 gäller §0.
+text, kartan och att gå tillbaka). Senast **§0.16**, efter ett test med en
+simulerad grundare: varje steg är **kvittens → Lindos tankar (1–3 kort) →
+EN fråga**, steg 1 utan loop, frågor som går att svara på på tio sekunder
+(Lindos hypotes + reaktion, "Vet inte" alltid okej), research redan i steg
+1 med en marknadsbild, idémodellen, mindre maner och ett gränssnitt med en
+kolumn som scrollar naturligt och en karta som står still.
+**§0 gäller; §0.16 går före §0.15 och §0.14, som går före resten av §0.**
+§1–§10 beskriver fas 1–2 och står kvar som historik; där de krockar med §0
+gäller §0.
 
 ## 0. Fas 3 — upplevelse och konstruktion (alla tio steg ombyggda)
 
@@ -108,6 +114,10 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   scrollas fram som ett nyss ifyllt fält, en avvisad visas överstruken.
 
 ### 0.3 En huvudfråga per steg, högst en följdfråga
+
+> **Ändrat av §0.16:** frågan har ingen `why`-rad längre. Huvudformen är
+> Lindos egen hypotes och en kort fråga om den (`hypothesis` + `question`),
+> och "Vet inte" finns alltid bland svaren.
 
 - Varje steg har EN huvudfråga: EN mening (högst 15 ord och 130 tecken sedan §0.14,
   ett "?") med ankaret i användarens egna ord i samma mening, plus en
@@ -232,6 +242,11 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   formulering utan `own` ger ingen spegling och ingen rörelse.
 
 ### 0.5 Välkomnande och spegling
+
+> **Ersatt av §0.16 punkt 2 för steg 1:** "Det här hörde jag", idétexten
+> med noteringar, "stämmer inte", välkomnandet och "Kort sagt" är borta.
+> Steg 1 är nu speglingen (1–2 meningar) och "Har jag fattat rätt?" med
+> "Ja, vidare" och "Lägg till något" — en runda.
 
 - **Steg 1, "Det här hörde jag":** välkomnandet är ett stycke på högst
   två meningar överst: `readIdea`s `welcome` — EN mening (högst 30 ord)
@@ -560,6 +575,13 @@ råd") för röster, Ordföranden, skärm, kontroller och vad som sparas.
   (0.11).
 
 ### 0.10 Det här hittade vi ute i världen
+
+> **Ändrat av §0.16 punkt 4:** researchen startar när idén skickas i steg 1
+> (`prepareMarket`, frågan `buildMarketQuery(idé)` i `ctx.researchQuery`),
+> inte efter steg 3, och kondenseras till en marknadsbild som följer med i
+> alla anrop. `triggerCompetitorResearch` och `buildCompetitorQuery` finns
+> inte längre; en rättad kund kör inte om researchen. Steg 6 visar
+> fortfarande fynden, sökta med exakt samma fråga.
 
 - Researchen körs oförändrad en gång per session, i bakgrunden direkt
   efter steg 3 (`triggerCompetitorResearch`, ämnet `konkurrenter`,
@@ -1038,6 +1060,9 @@ Gemensamma rader i `sharp.ts`, samma i alla steg:
 
 #### Perspektivetiketter och vinkeln i steg 1
 
+> **Ändrat av §0.16:** steg 1 har ingen vinkel (`angle`) längre — Lindos
+> tankar om idén står överst i steg 2. Etiketterna gäller oförändrat.
+
 - **Etiketten** är verktygets `perspective`, satt i kod på servern och
   bara när modellens `lens` är ett av fältets erbjudna verktyg — annars
   ingen etikett. Huvudfrågor och de öppna frågorna i steg 5/7: stegets
@@ -1160,6 +1185,10 @@ EN rättande runda (0.7).
 
 #### Anropen och budgeten
 
+> **Ändrat av §0.16 punkt 8:** marknadsbilden är ett anrop till — 19
+> logiska anrop utan följdfrågor, 20 med ett tillägg i steg 1, taket
+> omkring 25.
+
 Klassificeringen är det enda nya logiska anropet: 18 per session utan
 följdfrågor och rättelser (17 före Skärpan), 23 med en följdfråga i vart
 och ett av steg 2, 3, 4, 6 och 8, och 24 med dessutom en rättelse i
@@ -1172,6 +1201,12 @@ steg 2, profilens uppfriskning, perspektiven, vinkeln, de erbjudna
 verktygen och taket. Hur Skärpan mäts står i `docs/skarp-kvalitet.md`.
 
 ### 0.14 Ge först, fråga sen (grundprincipen)
+
+> **Ändrat av §0.16:** bidraget heter Lindos tankar och är 1–3 kort efter
+> en kvittens — valda i kod ur cirka sex kandidater, specifika för idén,
+> högst ett riskkort per steg. Steg 8 har inga egna kort (Lindos råd är
+> steg 9:s tankar), och efter steg 3 och 6 står korten på skärmen efter
+> insikten. Principen gäller oförändrad.
 
 Ett riktigt test visade att Lindo var för passiv: den ställde frågor men
 tillförde nästan inget eget, fastnade i detaljer om planen (t.ex. vem
@@ -1248,6 +1283,15 @@ per punkt, 0.15) överst i `StepScreen`, under läsningen i steg 1 och
 under insikten efter steg 3 och 6.
 
 ### 0.15 Lindo — namn, person, nivå, språk, rådet och gränssnittet
+
+> **Ändrat av §0.16:** "Ingen sidscroll" och `ScrollRegion` är borta — en
+> kolumn scrollar naturligt och kartan står alltid still (punkt 6).
+> Öppningsfraserna i punkt 1 ("Ärligt talat tror jag …", "Om jag var du
+> …") är ingen standard längre: högst en per steg och aldrig i
+> kvittensen (punkt 5). Listan heter "Lindos tankar" och har 1–3 kort.
+> Rådets skärm börjar med kvittensen av steg 8. I "Gå tillbaka" är steg
+> 1:s skärm "Har jag fattat rätt?" och research-regeln ersatt av §0.16
+> punkt 4.
 
 **Verktyget heter Lindo. Boggel är företaget.** I gränssnittet, prompterna
 och dokumenten heter verktyget Lindo: "Lindos förslag", "Lindos tolkning",
@@ -1429,6 +1473,222 @@ förifyllt → oförändrat framåt utan anrop; ändrat steg 3 → steg 3 och
 insikten körs om, ingen ny research; steg 4 och 5 förifyllda; ändrat
 steg 5 → nya ramar; lika många punkter på kartan som förut; från
 slutkortet till steg 9 och tillbaka utan anrop och utan ny sparning.
+
+### 0.16 Kvittens, Lindos tankar och en fråga (testet med en simulerad grundare)
+
+Lindo testades av en simulerad grundare (idé: en marknadsplats för
+överblivet byggmaterial). Flödet var stabilt och "ge först" fungerade,
+men upplevelsen hade fem grundproblem: varje steg hade för mycket och
+upprepade idén; steg 1 loopade; frågorna krävde research eller kunskap
+om tredje part och handlade ibland om logistik; förslagen var generiska,
+kom tillbaka (vem som betalar tre gånger) och motsade varandra; och
+nästan varje kort började med samma maner. I gränssnittet gömde inre
+scrollrutor innehåll, kartan hamnade längre ner efter researchsteget och
+det tog lång tid från klick på Skärp till första skärmen. **§0.16 går
+före §0.15 och §0.14.**
+
+1. **Varje steg har exakt tre delar.**
+   1. **Kvittens** — EN mening om vad Lindo tog med sig från förra
+      svaret, inte en sammanfattning av idén (`reflection`; i steg 2
+      `bridge`). Början varierar; aldrig "Du säger", "Du skrev", "Det
+      låter", "Ärligt talat" eller "Om jag var du"; inga citattecken.
+      På ett "vet inte": Lindos bästa gissning, märkt "Min gissning: …".
+      Regeln `ACK_RULE` (`sharp.ts`), kontrollen `ackProblem`
+      (`validators.ts`).
+   2. **Lindos tankar** — 1–3 kort, var och ett en konkret rubrik (högst
+      sex ord, aldrig ett verktygs- eller ramverksnamn som "Följ
+      kostnaden till betalaren") och EN mening (cirka 25 ord), märkta
+      "Lindos förslag" (`ContributionList`, rubriken "Lindos tankar"; i
+      steg 7 "Så kan du vinna").
+   3. **EN fråga** — Lindos hypotes och en kort fråga om den, 2–4
+      klickbara svar, "Vet inte" och fritext (punkt 3).
+
+   Borta: "Det här hörde jag" med hela idétexten, "Kort sagt",
+   `why`-raden under frågan, railens upprepning av speglingen och alla
+   andra upprepningar av idén — idékartan visar helheten. Insikten efter
+   steg 3 och 6 visar bara insikten; steg 4 börjar sedan med kvittensen
+   och tankarna om kunden, och steg 7 med kvittensen och "Så kan du
+   vinna". Steg 5 och 7: kvittens och tankar, sedan skriver användaren
+   först ("Vet inte – visa Lindos förslag" finns). Steg 8 har inga egna
+   kort; steg 9 börjar med kvittensen av steg 8, sedan Lindos råd —
+   stegets tankar — och frågan om stoppregeln.
+
+2. **Steg 1 — en runda, ingen loop.** Efter "Klar" visar Lindo
+   **"Har jag fattat rätt?"** med speglingen: 1–2 meningar som BARA
+   återger det användaren sagt, utan bedömningar ("underlag saknas",
+   "inga belopp finns" stoppas av `mirrorProblem`). Fakta, tolkning och
+   hopp sorteras bara internt (`ctx.mirror`) — inga "stämmer / stämmer
+   inte". Knapparna är **"Ja, vidare →"** och **"Lägg till något"**. Ett
+   tillägg läses en gång (`readIdea` med `correction`) och kvitteras kort
+   överst i steg 2 — "Uppfattat – jag tar med att ni vill förenkla hela
+   kedjan, inte bara bygga en marknadsplats." — och flödet går vidare,
+   aldrig en ny runda med hela texten. Högst en rättelserunda; det
+   användaren kommer på senare skriver hen i nästa steg. Säger
+   `fundamentalChange` att tillägget ändrat idén i grunden får researchen
+   sitt enda omtag (punkt 4).
+
+3. **Frågor som går att svara på.** Grundaren ska kunna svara på tio
+   sekunder, utan research och utan att veta något om en viss person
+   eller ett visst företag. **Huvudformen är Lindos hypotes + reaktion:**
+   "Jag tror det svåra är tajmingen: materialet blir över en viss vecka,
+   men köparna behöver det en annan. Stämmer det med vad ni sett?" med
+   "Ja, det är kärnan", "Delvis", "Nej, det är något annat" och fritext.
+   - En sak per fråga, frågan högst 15 ord, vardaglig svenska, inga
+     dubbelfrågor (`doubleQuestion`). Hypotesen låter som en hypotes
+     ("kanske", "jag gissar", "jag tror" — `hypothesisProblem`).
+   - Aldrig om genomförandet: "vilka kan ni ringa i morgon", "vilka
+     kontakter har ni", vem som ska testa, när, möten (`planProblem`).
+   - Steg 2 "Varför du" handlar om varför användaren har en fördel —
+     erfarenhet, insikt eller åtkomst — aldrig en ringlista.
+   - **"Vet inte" är alltid okej.** Gränssnittet visar alltid "Vet inte"
+     bland svaren (`withDontKnow` i routen; prompten skriver det inte
+     själv). Då ger Lindo sin bästa gissning, märkt som gissning (i
+     kvittensen "Min gissning: …", i idékartan "Gissning: …"), och går
+     vidare — ett "vet inte" ger aldrig en följdfråga (`isDontKnow`).
+   - Schemat: `SkarpQuestionSchema` = `{ assumption, lens, hypothesis,
+     question, suggestions }`; `why` är borttaget. Följdfrågor och
+     stoppfrågan är raka frågor (`hypothesis: null`); de öppna frågorna
+     i steg 5 och 7 har varken förslag eller hypotes.
+
+4. **Smartare och mindre generiska förslag.**
+   1. **Researchen flyttad till steg 1.** När idén skickas startar routen
+      `prepareMarket` i bakgrunden, parallellt med speglingen (frågan
+      `buildMarketQuery(idé)`, sparad i `ctx.researchQuery`): en
+      Perplexity-sökning (`research()`, ämnet `konkurrenter`) och ETT
+      extra AI-anrop som kondenserar fynden till en **marknadsbild**
+      (`MarketPictureSchema`, `research.ts`) — aktörerna, hur problemet
+      löses i dag, befintliga lösningar i Sverige/Norden och
+      internationellt (namn ordagrant ur fynden, med länken därifrån)
+      och vad som brukar gå fel; inga siffror. Marknadsbilden ligger i
+      `ctx.market` och skickas med i alla senare anrop (`marketBlock`,
+      "MARKNADSBILD"). Ett steg väntar högst 8 sekunder, en gång, på en
+      marknadsbild som inte är klar (`MARKET_WAIT_MS`) — den stoppar
+      aldrig flödet. Steg 6 visar fortfarande fynden; `buildReality` och
+      `mapCompetitors` söker med EXAKT `ctx.researchQuery`
+      (`researchQueryOf`), så cachen och in-flight-spärren träffar och
+      ingen ny sökning görs. Researchen efter steg 3 är borttagen.
+      Regeln: en körning per session, ett omtag om idén ändras i grunden
+      i steg 1. En omskriven idé i steg 1 är som förut en ny session.
+      Hittar researchen inget blir marknadsbilden tom utan AI-anrop, och
+      Lindo påstår inget om marknaden.
+   2. **Ta fram brett, visa smalt.** Varje stegs anrop tar fram cirka sex
+      kandidater (`candidates`, 3–8) och markerar själv de som ska bort
+      (`generic`, `framework`, `repeat`, `contradicts`) och vilka som är
+      bäst (`best`). Koden (`sharpChecks().selectCards`, `sharp.ts`)
+      sållar bort det markerade och det som inte är en kort rubrik och
+      en mening, frågor, platshållare, citattecken, förbjudna fraser,
+      påhittade namn och siffror, logistik, facktermer, avskrivna
+      exempel, verktygsnamn som rubrik — och kort som **inte nämner
+      något ur idén, svaren, marknadsbilden eller idémodellen** (de hade
+      kunnat stå om vilken idé som helst), kort som upprepar ett tidigare
+      kort, och "vem som betalar/köper/bestämmer" när det perspektivet
+      redan visats. Högst ett riskkort och högst ett kort som börjar med
+      en åsiktsfras per steg. De 1–3 bästa visas. Klarar ingen urvalet
+      ber den mjuka kontrollen om nya kandidater en gång; klarar ändå
+      ingen visar steget bara kvittensen och frågan.
+   3. **Specifikt för branschen och idén.** Varje kort har något konkret:
+      ett exempel, ett namngivet kundsegment, något ur marknadsbilden
+      eller ett första drag (`cardsRule`, `CONTRIBUTION_TOOL_RULES`).
+   4. **Idémodellen.** `ctx.ideaModel` är Lindos löpande bild av idén:
+      vem som säljer (har det som säljs), köper, betalar och bestämmer,
+      och kärnhypoteserna (högst fem) — plus det användaren sagt
+      (`ctx.answers`) och det Lindo föreslagit (`ctx.contributions`).
+      Varje anrop som bedömer ett svar skickar en dold uppdatering
+      (`modelUpdate`); routen slår ihop den med `mergeIdeaModel`
+      (`idea-model.ts`: ett nytt rollvärde ersätter, null lämnar orört,
+      "okänt" räknas inte, hypoteser läggs sist utan dubbletter). Den
+      skickas med i varje anrop (`ideaModelBlock`, "IDÉMODELL"). Lindo
+      får inte motsäga den utan att säga att den ändrar sig och varför
+      ("Jag ändrar mig: …") — den mjuka kontrollen `changedMind` ber
+      annars om ett nytt svar. Samma perspektiv kommer inte tillbaka,
+      inte heller i en rättelserunda: visade kort står i idémodellen som
+      "Lindo har redan föreslagit", verktygen bakom dem i `ctx.lenses`,
+      och kunskapsblocket listar "Perspektiv som redan visats".
+
+5. **Ton — mindre maner.** Lindo har fortfarande egna åsikter och säger
+   dem rakt, men "Ärligt talat tror jag" och "Om jag var du skulle jag"
+   är ingen standardinledning längre: högst ett sådant kort per steg
+   (`opinionOpener`) och aldrig i kvittensen. Citattecken runt
+   användarens ord bara i insiktsögonblicken (`quoteMarksProblem` på
+   kvittens, kort och hypotes — även enkla '…'). Hypoteser låter som
+   hypoteser. Högst ett riskkort per steg; den stora granskningen görs i
+   Lindos råd (steg 9).
+
+6. **Gränssnittet — en kolumn som scrollar, en karta som står still.**
+   Ersätter §0.15:s "Ingen sidscroll".
+   - Steget är EN kolumn som scrollar naturligt, utan inre scrollrutor
+     (`ScrollRegion` är borttagen): kicker, kvittens, Lindos tankar,
+     frågan med hypotesen, svaren och svarsytan. Appens ram är
+     `h-[100dvh]`; stegkolumnen är den enda som scrollar, så headern
+     och kartan ligger kvar.
+   - **Kartan i högerkolumnen är alltid helt synlig och står still i
+     alla steg.** Railen är `overflow: clip` (går inte att scrolla, inte
+     ens med `scrollIntoView`), och idékartan scrollar bara sin egen
+     lista (`revealInIdeaMap` i `IdeaMap.tsx`). Det var `scrollIntoView`
+     när ett fält fylldes som scrollade railen och flyttade ner kartan.
+   - Frågan och svarsytan är lätta att se: en fråga med hypotes har
+     något mindre rubrik, och ett klick på ett svar scrollar fram
+     svarsytan och "Klar →". På 1440×900 får ett typiskt steg plats
+     utan scroll; på 1366×768 står svarsytan vid underkanten.
+   - Railens rad under kartan säger bara vad senaste svaret gjorde på
+     kartan ("Det du svarade flyttar dig mot …") — kvittensen står redan
+     i steget.
+   - Mobil: kartans miniatyr sitter i idékartans rad ovanför steget,
+     kolumnen scrollar.
+   - Inget klipps (oförändrat, §0.15). "← Tillbaka" och klickbara steg
+     som §0.15; steg 1:s skärm är "Har jag fattat rätt?" med tillägget
+     förifyllt, och oförändrat framåt ger inga nya anrop.
+   - Prövat i webbläsaren (fejkade AI-svar, byggmaterialsidén) på
+     1366×768, 1440×900 och 390×844: ingen inre scrollruta, ingen
+     sidledsscroll, ingen klippt text, kartans läge oförändrat i alla
+     steg, en kvittens, 1–3 kort och en fråga per frågesteg, "Vet inte"
+     bland svaren, och tillbaka till steg 3 och oförändrat framåt utan
+     nya anrop.
+
+7. **Laddtiden.** Mätt i produktionsbygget (`npm run build` +
+   förhandsvisning) i Chromium, 1366×768. Före: från klick på Skärp på
+   startsidan till första skärmen 1 646 ms — three.js (cirka 0,9 MB, den
+   tredimensionella nålen) laddades direkt på startsidan, och Skärps kod
+   hämtades först efter klicket. Inga AI-anrop före första skärmen
+   (oförändrat). Nu: nålen laddas först när startsidan är klar och
+   webbläsaren ledig (2D-nålen fram till dess), Skärps kod förladdas när
+   startsidan är ledig (`router.preloadRoute`) och lägeskorten förladdar
+   vid hovring eller fokus (`preload="intent"`). Efter: från klicket
+   till Skärp-skärmen 43–56 ms; ett klick innan sidan hydrerats (hel
+   sidladdning av /skarp) 236 ms; direkt till /skarp syns textrutan efter
+   100 ms och är interaktiv efter cirka 0,5 s. Fortfarande inga AI-anrop
+   innan användaren har skrivit något.
+
+8. **Budgeten.** 19 logiska anrop utan följdfrågor (18 + marknadsbilden),
+   20 med ett tillägg i steg 1; taket är omkring 25.
+
+9. **Testerna.** Flödestestet (`scripts/skarp-flow-test.ts`) har en
+   testperson som svarar som en människa — kort (1–2 meningar), ibland
+   "Vet inte", ibland bara ett klick — och lägger till en sak i steg 1;
+   det kontrollerar en rättelserunda, research i steg 1 med samma fråga
+   i steg 6, idémodellen, högst tre kort per steg, kvittensen som EN
+   mening och taket. Kunskapstestet prövar kortvalet, kvittensen,
+   hypotesfrågorna och idémodellen. Kvalitetsevalens simulerade grundare
+   svarar kort, och körningen startar marknadsresearchen i steg 1 (mot
+   baslinjen fortfarande efter steg 3).
+
+**Konstruktion (`gxy652fxr`).** `schemas.ts` (`hypothesis`,
+`CardCandidateSchema` och `cards`, `IdeaModelUpdateSchema`, den nya
+`ReadIdeaSchema` med `mirror`, `bridge`, `fundamentalChange`,
+`MarketPictureSchema`), `sharp.ts` (`QUESTION_RULES`,
+`PLAIN_QUESTION_RULES`, `ACK_RULE`, `cardsRule`, `MODEL_UPDATE_RULE`,
+`selectCards`, `changedMind`), `validators.ts` (`hypothesisProblem`,
+`doubleQuestion`, `ackProblem`, `isDontKnow`, `quoteMarksProblem`,
+`opinionOpener`), `idea-model.ts`, `research.ts` (`buildMarketQuery`,
+`researchQueryOf`, `prepareMarket`), `types.ts` (`researchQuery`,
+`market`, `ideaModel`, `marketBlock`, `ideaModelBlock`), stegfilerna,
+`routes/skarp.tsx` (`idea-confirm`, `startMarket`/`waitForMarket`,
+`withModel`, kvittens och kort per skärm), komponenterna `StepScreen`
+(`QuestionHeading`), `QuestionBlock`, `IdeaConfirmView` (ersätter
+`IdeaReadView`), `InsightCard`, `ContributionList`, `SkarpRail`,
+`IdeaMap` och `AnswerComposer`, samt `routes/index.tsx` (laddtiden).
+AI-leverantörslagret, Kompass-läget, ärlighetsskydden och kartans
+koncept är orörda.
 
 ## 1. Principerna, kort
 
