@@ -9,8 +9,9 @@ källan CLAUDE.md pekar till för Skärp-läget; `docs/product.md`,
 flödet.
 
 Kompass-läget, designen, API-/AI-lagret (OpenRouter, reservkedjan, tålig
-JSON-tolkning, timeouts, Perplexity-providern, research-pipelinen, cachen,
-loggningen) och affärsmodellen berörs INTE av detta dokument.
+JSON-tolkning, timeouts, cachen, loggningen) och affärsmodellen berörs INTE
+av detta dokument. Perplexity-providern och research-pipelinen har sedan
+§0.17 egna sökplaner för Skärps två körningar; Kompass anrop är oförändrade.
 
 Status: fas 3 — alla tio steg är ombyggda, i repot `gxy652fxr`
 (`src/lib/skarp/`, `src/components/skarp/`, `src/routes/skarp.tsx`).
@@ -25,8 +26,12 @@ simulerad grundare: varje steg är **kvittens → Lindos tankar (1–3 kort) →
 EN fråga**, steg 1 utan loop, frågor som går att svara på på tio sekunder
 (Lindos hypotes + reaktion, "Vet inte" alltid okej), research redan i steg
 1 med en marknadsbild, idémodellen, mindre maner och ett gränssnitt med en
-kolumn som scrollar naturligt och en karta som står still.
-**§0 gäller; §0.16 går före §0.15 och §0.14, som går före resten av §0.**
+kolumn som scrollar naturligt och en karta som står still. **§0.17**
+bygger om researchen: två körningar (bred när idén skickas, riktad efter
+steg 3), riktade sökningar, graderade källor, en strukturerad marknadsbild
+och fynd med länk i steg 6 och på Lindos kort.
+**§0 gäller; §0.17 går före §0.16, som går före §0.15 och §0.14, som går
+före resten av §0.**
 §1–§10 beskriver fas 1–2 och står kvar som historik; där de krockar med §0
 gäller §0.
 
@@ -1551,6 +1556,11 @@ före §0.15 och §0.14.**
      i steg 5 och 7 har varken förslag eller hypotes.
 
 4. **Smartare och mindre generiska förslag.**
+   > **Ändrat av §0.17:** två körningar (bred när idén skickas, riktad
+   > efter steg 3), egna sökplaner (ämnena `marknad` och `segment`), en
+   > ny marknadsbild med graderade källor, och steg 6 startar aldrig en
+   > ny sökning.
+
    1. **Researchen flyttad till steg 1.** När idén skickas startar routen
       `prepareMarket` i bakgrunden, parallellt med speglingen (frågan
       `buildMarketQuery(idé)`, sparad i `ctx.researchQuery`): en
@@ -1660,7 +1670,8 @@ före §0.15 och §0.14.**
    innan användaren har skrivit något.
 
 8. **Budgeten.** 19 logiska anrop utan följdfrågor (18 + marknadsbilden),
-   20 med ett tillägg i steg 1; taket är omkring 25.
+   20 med ett tillägg i steg 1; taket är omkring 25. **Ändrat av §0.17:**
+   20 utan följdfrågor (två marknadsbilder), 21 med ett tillägg.
 
 9. **Testerna.** Flödestestet (`scripts/skarp-flow-test.ts`) har en
    testperson som svarar som en människa — kort (1–2 meningar), ibland
@@ -1689,6 +1700,153 @@ före §0.15 och §0.14.**
 `IdeaMap` och `AnswerComposer`, samt `routes/index.tsx` (laddtiden).
 AI-leverantörslagret, Kompass-läget, ärlighetsskydden och kartans
 koncept är orörda.
+
+### 0.17 Researchen: två körningar, riktade sökningar och graderade källor
+
+Researchen gav för lite: ofta bara en sökning, forskningsartiklar i
+stället för produkter, och kommersiella konkurrenter missades (för en idé
+där AI-modeller spelar varulv hittades varken aiwerewolf.net eller
+Mentiss Werewolf på Steam). Svaret ekade dessutom `"max_tool_calls":
+null`. §0.17 bygger om researchen för Skärp-läget; Kompass-läget får samma
+anrop som förut. **§0.17 går före §0.16 punkt 4.1 och punkt 8**, i övrigt
+gäller §0.16.
+
+1. **Agent API-formatet.** Perplexitys Agent API (`POST /v1/responses`)
+   tar `input` (fri text), `instructions` (systemprompten), `tools` (varje
+   verktyg ett objekt med egna inställningar) och `max_steps` — taket för
+   agentens steg. Ett fält som heter `max_tool_calls` finns inte
+   (kontrollerat mot `ResponsesRequest` i Perplexitys officiella SDK,
+   `@perplexity-ai/perplexity_ai` 0.41.0); det skickades förut och
+   ignorerades, därav `null` i svaret. Nu skickas `max_steps` per ämne
+   (14 för den breda körningen, 12 för den riktade);
+   `PERPLEXITY_MAX_STEPS` sätter ett tak för alla körningar, och den gamla
+   variabeln `PERPLEXITY_MAX_TOOL_CALLS` läses inte längre. Kompass ämnen
+   (`konkurrenter`, `problem`) skickar samma instruktion och samma verktyg
+   som förut, utan tak och utan sökplats — enda skillnaden är att fältet
+   som ignorerades inte skickas.
+
+2. **Två körningar per session, båda i bakgrunden.** Den breda (ämnet
+   `marknad`, frågan `buildMarketQuery(idé)` i `ctx.researchQuery`) startar
+   när idén skickas, parallellt med speglingen. Den riktade (ämnet
+   `segment`, frågan `buildSegmentQuery(idé, kunden och situationen)` i
+   `ctx.segmentQuery`) startar när steg 3 är klart (`startSegment`) — då
+   är kunden och situationen kända. Användaren väntar aldrig på den
+   riktade; ett steg väntar som förut högst 8 sekunder, en gång, på den
+   breda (`MARKET_WAIT_MS`). Servern väntar upp till tre minuter på
+   agenten (`BACKGROUND_RESEARCH_MS`), klienten upp till fyra
+   (`MARKET_TIMEOUT_MS`). Regeln: den breda körs en gång och får ett omtag
+   om idén ändras i grunden i steg 1; den riktade körs en gång och får ett
+   omtag om svaret i steg 3 ändras (inte vid en rättelse i idékartan). Steg
+   6 och konkurrentkartan startar ALDRIG en ny sökning: de läser båda
+   körningarnas fynd ur cachen, minnescachen eller en körning som pågår
+   (`contextFindings`, `research(…, { startNew: false })`), och finns
+   inget där används marknadsbildens rader.
+
+3. **Riktade sökningar** (`research/plans.ts`). Den breda körningens
+   instruktion kräver FLERA SEPARATA sökningar, minst en per vinkel, på
+   svenska och engelska där det passar: direkta konkurrenter (produkttyp,
+   "alternativ till", jämförelsesidor, appbutiker, Steam, Product Hunt),
+   indirekta alternativ (manuellt, kalkylark, konsulter, en annan sorts
+   produkt, att inte göra något), svensk och nordisk marknad (svenska,
+   norska, danska och finska sökord), hur målgruppen pratar (forum,
+   recensioner, communities), misslyckade försök (nedlagt, konkurs, "post
+   mortem") och regler och trender — och sedan `fetch_url` på de två–tre
+   viktigaste konkurrenternas egna sajter. Den riktade körningen söker
+   konkurrenter för just segmentet, vad segmentet använder i dag och
+   klagar på, segmentets egna ord, svenska och nordiska aktörer och
+   mötesplatser för segmentet, och misslyckade försök att nå det.
+   `web_search` har svensk sökplats (`user_location.country: "SE"`),
+   `fetch_url` högst tre sidor. Källreglerna: produkter före forskning
+   (forskning bara som komplement); för vad ett företag gör läses deras
+   egen sajt; forum och recensioner är ledtrådar, inte fakta; sakuppgifter
+   bara från myndigheter eller originalstudier; aldrig påhittade företag
+   eller länkar. Agenten avslutar med en rad per fynd: `KATEGORI | Namn |
+   URL | mening` (DIREKT, INDIREKT, RÖST, MISSLYCKAT, REGEL, FORSKNING).
+
+4. **Fynden** (`perplexity-agent.server.ts`, `toFindings`). Ett fynd per
+   sökträff och per hämtad sida. Agentens lista godtas bara för länkar som
+   finns bland träffarna eller de hämtade sidorna (har agenten angett
+   startsidan används träffen på samma webbplats); en godtagen rad ger
+   fyndet agentens namn, kategori och mening, och en rad vars länk inte
+   finns stryks — agenten kan aldrig tillföra ett fynd. Källans slag sätts
+   i kod av domänen (`source-kinds.ts`, aldrig av en AI): egen sajt,
+   produktlistning (appbutiker, Steam, Product Hunt …), forum, recension,
+   myndighet, studie (forskningsinstitut med egna rapporter, t.ex. RISE och
+   IVL), forskning, media, övrigt. Fynden sorteras på agentens kategori
+   (direkta först, forskning sist) och sedan på källans slag (produkter
+   först). Kompass ämnen tolkas exakt som förut.
+
+5. **Marknadsbilden** (`MarketPictureSchema`, `condenseMarket` i
+   `research.ts`): ett AI-anrop per körning. Fynden numreras ([1], [2] …,
+   högst 40) och varje rad i marknadsbilden pekar på ett nummer; länken och
+   källans slag hämtas från fyndet (AI:n skriver aldrig en länk), namnet
+   måste stå i fyndet, forskning hör bara hemma under forskning, inga
+   siffror, en mening per rad. Listorna, korta och täta: direkta
+   konkurrenter (högst 6, med region), indirekta alternativ (5), hur
+   målgruppen pratar (4), misslyckade försök (3), regler och trender (4),
+   forskning som komplement (2) och kunskapsluckor (4). Den breda och den
+   riktade bilden slås ihop (`mergeMarkets`: den riktade först, dubbletter
+   bort) i `ctx.market`, och `marketBlock` märker källorna efter slag: vad
+   företagen själva säger, ledtrådar ur forum och recensioner ("inte
+   fakta"), forskning "bara som komplement". Hittas inget blir bilden tom
+   utan AI-anrop, och Lindo påstår inget om marknaden.
+
+6. **Lindo använder researchen.** Lindos kort i steg 2–8 får bygga på ett
+   konkret fynd: kortets `finding` är fyndets namn ordagrant ur
+   marknadsbilden, koden kontrollerar det mot marknadsbilden
+   (`findingRefFor`) och tar länken därifrån — kortet visar då "Hittat på
+   nätet: namn ↗" (även i slutkortet); ett namn som inte finns ger ingen
+   länk. Steg 5:s ramar och steg 7:s mekanismer får ta avstamp i hur
+   målgruppen pratar och i det konkurrenterna inte gör. **Steg 6** får båda
+   körningarnas fynd (produkter först, högst 30), väljer högst sex
+   alternativ med namn ur underlaget (länken från fyndet; forskning är
+   aldrig "direkt" och står sist) och skriver vad kunden gör om hen inte
+   gör något, med källan om ett fynd visar det (`doNothingSource` → länk,
+   annars märkt "Lindos tolkning"). Skärmen visar fynden grupperade —
+   **Direkta konkurrenter**, **Indirekta alternativ**, **Forskning — som
+   komplement** och **Om kunden inte gör något** — med en mening och en
+   länk var. Frågan bygger på en namngiven konkurrent, och efter
+   användarens reaktion visar "Så kan du vinna" konkret var en namngiven
+   konkurrent är svag för just den här kunden och hur idén kan vinna.
+   Konkurrentkartan placerar bara produkter och företag
+   (`competitorCandidates`), direkta först.
+
+7. **Budgeten.** 20 logiska AI-anrop utan följdfrågor (18 + två
+   marknadsbilder), 21 med ett tillägg i steg 1; taket är omkring 25.
+   Perplexity: två agentkörningar per session (plus omtagen ovan).
+
+8. **Testerna** — vad som prövas utan nycklar och vad som kräver riktiga
+   anrop. Exempeldata (`scripts/fixtures/research/ideas.ts`) för de fem
+   testidéerna (byggmaterial-marknadsplats, Lindo själv, AI-modeller som
+   spelar varulv, cykelservice som hämtar och lämnar, ett B2B SaaS för
+   restauranger): Perplexitys svar i API:ets form med en påhittad rad per
+   körning (ska strykas) och forskning först för varulvsidén (ska hamna
+   sist), och kondenseringens utdata. `scripts/research-test.ts --torr`
+   kör dem genom samma kod som appen; `--fem` kör de fem idéerna mot
+   Perplexity på riktigt och sparar resultatet i `eval-results/`;
+   `"idé" --kund "…"` kör båda körningarna för en egen idé. Utskriften
+   visar request body (och att `max_tool_calls` inte skickas), antalet
+   sökningar och hämtade sidor, sökfrågorna, fynden per kategori med
+   källans slag, strukna rader, andelen produkter mot forskning, den
+   färdiga marknadsbilden som Lindo får den och kostnaden (Perplexitys
+   `usage.cost` och `[ai-cost]` för kondenseringen). Flödestestet har
+   `--exempeldata[=id]` (exakt två körningar, steg 6 läser cachen) och
+   kunskapstestet en egen del för researchen.
+
+**Konstruktion (`gxy652fxr`).** `research/plans.ts` (sökplanerna,
+`planFor`), `research/source-kinds.ts` (`classifySource`),
+`research/perplexity-agent.server.ts` (request body med `max_steps`,
+`fetch_url_results`, `parseAgentList`, `mergeAgentList`, `orderFindings`),
+`research/index.ts` (`startNew`, `setResearchProviderForTests`),
+`research/types.ts` (`SourceKind`, `FindingCategory`, ämnena `marknad` och
+`segment`), `skarp/research.ts` (`buildSegmentQuery`, `contextFindings`,
+`condenseMarket`, `settleMarket`, `mergeMarkets`, `marketSources`,
+`marketFindings`, `matchFinding`), `skarp/schemas.ts` (`MarketPictureSchema`
+v2, `finding` på kandidaterna, `doNothingSource`), `skarp/sharp.ts`
+(`CARD_FINDING`, `findingRefFor`), `skarp/step6-reality.ts`
+(`contextFindings`, `doNothingFindingOf`, `competitorCandidates`),
+`routes/skarp.tsx` (`startSegment`, `marketFor`), `RealityView` (grupperna)
+och `ContributionList` (fyndlänken). Kompass-koden är orörd.
 
 ## 1. Principerna, kort
 

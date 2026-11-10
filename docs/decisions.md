@@ -36,6 +36,10 @@ Research-lager (marknadsdata) och kärn-AI (resonemang, leverantörsoberoende �
 
 Abstraktionslager mot researchleverantören byggs istället för att hårdkoda mot Perplexity specifikt. Återanvändbar research cachas över användare (24–48h) för breda ämnen, för att hålla kostnaden per session nere.
 
+## Skärp: två researchkörningar, graderade källor och fynd med länk
+
+Skärp-läget kör Perplexitys agent två gånger per session, båda i bakgrunden: brett när idén skickas och riktat mot kunden och situationen efter steg 3 (§0.17 i `docs/skarp-flode.md`). Agent API:ets tak heter `max_steps` — `max_tool_calls` finns inte i API:t och ignorerades. Sökplanerna kräver flera separata sökningar per vinkel och läser de viktigaste konkurrenternas egna sajter. Produkter går före forskning, och källans slag sätts i kod av domänen, aldrig av en AI: ett företags egen sajt är vad det säger om sig självt, forum och recensioner är ledtrådar, myndigheter och originalstudier är underlag för fakta, forskning är bara ett komplement. Agentens egen lista godtas bara för länkar som finns bland sökträffarna, och marknadsbilden pekar på numrerade fynd — en AI skriver aldrig en länk. Steg 6 och konkurrentkartan startar aldrig en ny sökning. Kompass anrop är oförändrade. Researchen provas utan nycklar med exempeldata (`scripts/research-test.ts --torr`) och på riktigt med `--fem`.
+
 ## Samtalsdesign prioriteras över kunskapsbas
 
 Upplevelsen av att bli förstådd skapas genom interaktionsdesign i systemprompten (följdfrågor, reflektion av mönster), inte genom en fristående "psykologikunskapsbas".

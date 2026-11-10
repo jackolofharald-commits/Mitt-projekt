@@ -80,14 +80,28 @@ föreslagit. Lindo får inte motsäga sig själv utan att säga att den
 ändrar sig och varför, och samma perspektiv kommer inte tillbaka, inte
 heller i en rättelserunda.
 
-**Researchen startar i steg 1 (§0.16):** när idén skickas körs
-Perplexity-researchen i bakgrunden, parallellt med speglingen, och ett
-extra AI-anrop kondenserar den till en marknadsbild (aktörer, hur det
-löses i dag, befintliga lösningar i Sverige/Norden och internationellt,
-vad som brukar gå fel) som följer med i alla senare anrop. Steg 6 visar
-fortfarande fynden, sökta med samma fråga (cacheträff). Ingen research
-efter steg 3 längre; en körning per session, ett omtag om idén ändras i
-grunden i steg 1.
+**Researchen: två körningar i bakgrunden (§0.17):** den breda när idén
+skickas (parallellt med speglingen) och den riktade när steg 3 är klart
+(kunden och situationen) — användaren väntar aldrig på dem. Perplexitys
+Agent API får `input`, `instructions`, `tools` (web_search med svensk
+sökplats, fetch_url för konkurrenternas egna sajter) och `max_steps`
+(`max_tool_calls` finns inte i API:t); sökplanerna kräver flera separata
+sökningar (direkta konkurrenter, indirekta alternativ, svensk/nordisk
+marknad, hur målgruppen pratar, misslyckade försök, regler och trender).
+Produkter före forskning; källans slag sätts i kod av domänen (egen sajt
+= vad företaget säger om sig självt, forum/recensioner = ledtrådar,
+myndigheter/studier = fakta, forskning = komplement); agentens lista
+godtas bara för länkar som finns bland sökträffarna — inga påhittade
+företag. Ett AI-anrop per körning kondenserar fynden till en kort, tät
+marknadsbild (direkta konkurrenter, indirekta alternativ, hur målgruppen
+pratar, misslyckade försök, regler och trender, kunskapsluckor) med
+hänvisningar till fynden, och den följer med i alla senare anrop. Lindos
+kort i steg 2–8 får bygga på ett fynd och visar då "Hittat på nätet" med
+länk. Steg 6 läser bara cachen (ingen ny sökning) och visar fynden
+grupperade — direkta, indirekta, om kunden inte gör något — med en
+mening och en länk var. Den breda får ett omtag om idén ändras i grunden
+i steg 1, den riktade om svaret i steg 3 ändras. Kompass anrop är
+oförändrade.
 
 **Nivåregeln:** frågor och förslag handlar om målgruppen och den typiska
 kunden (ICP), aldrig om enskilda personer ("Tänk på en typisk grundare
@@ -136,11 +150,12 @@ grunderna. Ett tyst klassificeringsanrop efter steg 1 bedömer idétyp,
 vad som redan är sagt (sagt är inte belagt), vad som är mest osäkert och
 avgörande och hur van användaren är, och vanlig kod väljer sedan
 deterministiskt vilka verktyg varje steg får i SKÄRPA-blocket.
-Anropsbudgeten är 19 logiska anrop utan följdfrågor (18 + marknadsbilden),
-20 med ett tillägg i steg 1, tak ~25. Frågan visar sitt perspektiv som en
-diskret etikett, mjuka kontroller stoppar statistik, påhittade namn och
-siffror, platta grundfrågor, facktermer och avskrivna exempel, och
-kvalitetsevalen i `docs/skarp-kvalitet.md` mäter om det blir skarpare.
+Anropsbudgeten är 20 logiska anrop utan följdfrågor (18 + två
+marknadsbilder), 21 med ett tillägg i steg 1, tak ~25. Frågan visar sitt
+perspektiv som en diskret etikett, mjuka kontroller stoppar statistik,
+påhittade namn och siffror, platta grundfrågor, facktermer och avskrivna
+exempel, och kvalitetsevalen i `docs/skarp-kvalitet.md` mäter om det
+blir skarpare.
 
 **Gränssnittet (§0.15, §0.16):** ingen fråga, spegling, insikt, förslag
 eller rådsröst klipps med "…" (ingen line-clamp/truncate/ellips/fast
