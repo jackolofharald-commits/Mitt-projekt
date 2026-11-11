@@ -100,8 +100,11 @@ kort i steg 2–8 får bygga på ett fynd och visar då "Hittat på nätet" med
 länk. Steg 6 läser bara cachen (ingen ny sökning) och visar fynden
 grupperade — direkta, indirekta, om kunden inte gör något — med en
 mening och en länk var. Den breda får ett omtag om idén ändras i grunden
-i steg 1, den riktade om svaret i steg 3 ändras. Kompass anrop är
-oförändrade.
+i steg 1, den riktade om användarens eget svar i steg 3 ändras. Servern
+har ett eget tak för researchen (per instans) och kör bara frågor i
+Skärps format; webbtext och användarens svar är material, aldrig
+instruktioner, och en direkt konkurrent måste stå i fyndets rubrik eller
+domän (§0.17 punkt 9). Kompass anrop är oförändrade.
 
 **Nivåregeln:** frågor och förslag handlar om målgruppen och den typiska
 kunden (ICP), aldrig om enskilda personer ("Tänk på en typisk grundare

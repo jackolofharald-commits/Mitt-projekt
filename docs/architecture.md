@@ -43,4 +43,5 @@ Supabase, konfigurerad via Lovable-exporten.
 
 - Abstraktionslager mot researchleverantören (inte hårdkodat mot Perplexity specifikt), så att leverantör kan bytas ut.
 - Cachning av återanvändbar research över användare (t.ex. 24–48h) för breda ämnen, istället för att fråga på nytt varje session — annars blir kostnaden per session onödigt hög.
+- Skärps bakgrundsresearch (`prepareMarket`) har ett eget tak på servern utöver klientens två körningar per session: högst 30 körningar per timme och 6 per klient och dygn (`SKARP_RESEARCH_PER_HOUR`, `SKARP_RESEARCH_PER_CLIENT_DAY`), och bara frågor i Skärps eget format körs. Taket hålls i minnet **per serverinstans** och nollställs vid omstart — med flera instanser eller serverless-kallstarter är det ett golv mot loopar, inte ett globalt skydd; ett riktigt globalt tak kräver en delad räknare (t.ex. i Supabase). Se `docs/skarp-flode.md` §0.17 punkt 9.
 - Kärn-AI-anrop (se Backend ovan, leverantörsoberoende) hanterar prompthantering, orkestrering och strukturering av svar i kärnflödet.

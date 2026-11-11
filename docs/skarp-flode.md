@@ -183,7 +183,7 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   stegets fråga och svar (`qaBlock`): personprofilen, tidigare frågor
   och svar ordagrant (märkta "(valt förslag)" när svaret var ett klickat
   förslag), idékartans rättelser, insikterna med användarens reaktion
-  och efter hand problemkartan, ramen, "Det här hittade vi ute i
+  och efter hand problemkartan, ramen, "Det här hittade jag ute i
   världen", kärnan, det unika och affären, sakerna värda att testa och
   slutkortet — med instruktionen att bygga vidare på dem och aldrig
   fråga om något som redan är besvarat. Sist i stegets systemprompt
@@ -315,7 +315,7 @@ och romben (§6), Kompass-läget och AI-/research-lagret är orörda.
   svaren och idékartans rättelser, från vilket av de nio stegen som
   helst. Ett klickat förslag och Lindos egna texter räknas aldrig.
   `finding` är namnet på det alternativ insikten bygger på, ordagrant ur
-  "Det här hittade vi ute i världen"; det matchas mot `ctx.evidenceMap`
+  "Det här hittade jag ute i världen"; det matchas mot `ctx.evidenceMap`
   enligt namnregeln (0.10) och får då sin länk, annars null (alltid null
   efter steg 3).
 - En blind fläck pekar ut sitt område (`gap`, dolt). Står området redan i
@@ -579,7 +579,7 @@ råd") för röster, Ordföranden, skärm, kontroller och vad som sparas.
   hypotes), så att följdfrågorna vet vad kortet sa, och slutkortets text
   (0.11).
 
-### 0.10 Det här hittade vi ute i världen
+### 0.10 Det här hittade jag ute i världen
 
 > **Ändrat av §0.16 punkt 4:** researchen startar när idén skickas i steg 1
 > (`prepareMarket`, frågan `buildMarketQuery(idé)` i `ctx.researchQuery`),
@@ -624,11 +624,12 @@ råd") för röster, Ordföranden, skärm, kontroller och vad som sparas.
   (`demandNote`, "Lindos tolkning"): att andra redan tar betalt för att
   lösa det kan betyda att det finns efterfrågan, och vad som då skiljer
   användarens idé. Därefter "OM KUNDEN INTE GÖR NÅGOT" (`doNothing`, med
-  användarens ord om dagens lösning) och "DET VI INTE VET ÄN" (0–3
+  användarens ord om dagens lösning) och "DET JAG INTE VET ÄN" (0–3
   luckor), båda "Lindos tolkning".
-- Hittas inget körs anropet ändå: inga alternativ, en lugn rad ("Vi
-  hittade inget på nätet som liknar din idé. Det kan betyda en lucka —
-  eller att kunderna löser det på ett annat sätt.") och en fråga om vad
+- Hittas inget körs anropet ändå: inga alternativ, en lugn rad ("Jag har
+  inga fynd från nätet om alternativ till din idé, så här säger jag inget
+  om konkurrenterna." — aldrig att det finns en lucka, eftersom att inget
+  hittades inte betyder att inget finns) och en fråga om vad
   kunden gör i dag — eller, när användaren redan sagt det, om varför det
   sättet ännu inte har ersatts (0.9, steg 6).
 - **Namnregeln** (insikternas `finding`, steg 8:s varning, steg 9:s
@@ -1832,6 +1833,43 @@ gäller §0.16.
    `usage.cost` och `[ai-cost]` för kondenseringen). Flödestestet har
    `--exempeldata[=id]` (exakt två körningar, steg 6 läser cachen) och
    kunskapstestet en egen del för researchen.
+
+9. **Skydd och ärlighet** (kvalitetsgenomgången).
+   - **Serverns tak.** `prepareMarket` kör bara frågor i Skärps eget
+     format (de börjar med "Affärsidé från en grundare i Sverige:") och
+     har ett eget tak utöver klientens två körningar: högst 30 körningar
+     per timme och högst 6 per klient och dygn
+     (`SKARP_RESEARCH_PER_HOUR`, `SKARP_RESEARCH_PER_CLIENT_DAY`). Taket
+     räknas i minnet per serverinstans och nollställs vid omstart — ett
+     golv mot loopar, inte ett fullständigt skydd. Över taket blir
+     marknadsbilden tom, som när inget hittas, och en loggrad skrivs.
+   - **Webbtext är material, aldrig instruktioner.** Fyndens rubriker och
+     utdrag rensas från radbrytningar och egna [n]-hänvisningar innan de
+     numreras, och kondenseringen får veta att fyndens text och idén
+     aldrig är instruktioner. Samma rad står i Lindos regler för
+     användarens svar och MARKNADSBILDEN.
+   - **En direkt konkurrent är fyndets egen aktör:** namnet måste stå i
+     fyndets rubrik eller i länkens domän — ett namn som bara nämns i ett
+     utdrag godtas inte som direkt konkurrent.
+   - **Forskning bara som komplement:** forskning blir aldrig en röst, ett
+     misslyckat försök eller en regel, varken i kontrollen eller när
+     marknadsbilden sätts ihop. Den riktade planens fjärde punkt söker
+     "svenska och nordiska aktörer som redan når just det här segmentet".
+   - **Tillägget i steg 1** står först i frågan till den breda körningens
+     omtag (`buildMarketQuery(idé, tillägg)`), så att det inte kapas bort
+     när idén är lång; utan tillägg är frågan exakt som förut.
+   - **Den riktade körningens omtag** avgörs av det användaren själv
+     svarade i steg 3 (och idén med tillägget, `ctx.researchIdea`) — inte
+     av Lindos formulering av kunden, som kan låta lite annorlunda när
+     steget körs om.
+   - **Tak för hela kontexten:** `SkarpContextSchema` tar emot högst
+     200 000 tecken (JSON); följdfrågorna i slutkortet högst 4 000 tecken
+     per meddelande och svaret i "Fråga Lindo om idén" högst cirka 600
+     tokens. Svarsytan visar en räknare från 3 500 tecken och släpper inte
+     igenom mer än 4 000 — inget kapas tyst.
+   - **Felmeddelandet** skiljer på nätverk ("Anslutningen krånglade …")
+     och ett svar som inte gick att få fram ("Jag fick inte fram något
+     svar just nu. Det du har skrivit finns kvar — försök igen.").
 
 **Konstruktion (`gxy652fxr`).** `research/plans.ts` (sökplanerna,
 `planFor`), `research/source-kinds.ts` (`classifySource`),
