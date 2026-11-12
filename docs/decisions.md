@@ -38,7 +38,23 @@ Abstraktionslager mot researchleverantören byggs istället för att hårdkoda m
 
 ## Skärp: två researchkörningar, graderade källor och fynd med länk
 
-Skärp-läget kör Perplexitys agent två gånger per session, båda i bakgrunden: brett när idén skickas och riktat mot kunden och situationen efter steg 3 (§0.17 i `docs/skarp-flode.md`). Agent API:ets tak heter `max_steps` — `max_tool_calls` finns inte i API:t och ignorerades. Sökplanerna kräver flera separata sökningar per vinkel och läser de viktigaste konkurrenternas egna sajter. Produkter går före forskning, och källans slag sätts i kod av domänen, aldrig av en AI: ett företags egen sajt är vad det säger om sig självt, forum och recensioner är ledtrådar, myndigheter och originalstudier är underlag för fakta, forskning är bara ett komplement. Agentens egen lista godtas bara för länkar som finns bland sökträffarna, och marknadsbilden pekar på numrerade fynd — en AI skriver aldrig en länk. Steg 6 och konkurrentkartan startar aldrig en ny sökning. Kompass anrop är oförändrade. Researchen provas utan nycklar med exempeldata (`scripts/research-test.ts --torr`) och på riktigt med `--fem`.
+Skärp-läget kör Perplexitys agent två gånger per session, båda i bakgrunden: brett när idén skickas och riktat mot första kundgruppen och situationen efter steg 4 (§0.17 och §0.18 i `docs/skarp-flode.md`). Agent API:ets tak heter `max_steps` — `max_tool_calls` finns inte i API:t och ignorerades. Sökplanerna kräver flera separata sökningar per vinkel och läser de viktigaste konkurrenternas egna sajter. Produkter går före forskning, och källans slag sätts i kod av domänen, aldrig av en AI: ett företags egen sajt är vad det säger om sig självt, forum och recensioner är ledtrådar, myndigheter och originalstudier är underlag för fakta, forskning är bara ett komplement. Agentens egen lista godtas bara för länkar som finns bland sökträffarna, och marknadsbilden pekar på numrerade fynd — en AI skriver aldrig en länk. Steg 6 och konkurrentkartan startar aldrig en ny sökning. Kompass anrop är oförändrade. Researchen provas utan nycklar med exempeldata (`scripts/research-test.ts --torr`) och på riktigt med `--fem`.
+
+## Skärp: första kundgruppen väljs i steg 4 och bekräftas i steg 8
+
+Flödet utgick från att användaren redan vet vem kunden är. Nu hjälper
+Lindo användaren att smalna av till den grupp där problemet är mest akut
+och som kan och vill betala, utan nya steg och utan nya anrop: steg 3:s
+anrop tar fram steg 4:s kort och en hypotes om en smalare grupp, steg 4:s
+svar blir första kundgruppen i idémodellen, den riktade researchen
+flyttas från efter steg 3 till efter steg 4 och söker på gruppen, och
+steg 7:s anrop tar fram steg 8:s avstämning mot researchen. Frågorna i
+steg 4 och 8 byggs i kod av modellens delar och ett klick tolkas i kod —
+så att formen alltid håller och valet aldrig hänger på en modells
+tolkning. Pris: den riktade researchen startar ett steg senare och hinner
+oftare inte till steg 6, och steg 8:s fråga handlar om gruppen i stället
+för om det unika (det läses nu ur det användaren redan sagt). Se
+`docs/skarp-flode.md` §0.18.
 
 ## Samtalsdesign prioriteras över kunskapsbas
 

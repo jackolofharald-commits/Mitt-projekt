@@ -28,10 +28,13 @@ EN fråga**, steg 1 utan loop, frågor som går att svara på på tio sekunder
 1 med en marknadsbild, idémodellen, mindre maner och ett gränssnitt med en
 kolumn som scrollar naturligt och en karta som står still. **§0.17**
 bygger om researchen: två körningar (bred när idén skickas, riktad efter
-steg 3), riktade sökningar, graderade källor, en strukturerad marknadsbild
-och fynd med länk i steg 6 och på Lindos kort.
-**§0 gäller; §0.17 går före §0.16, som går före §0.15 och §0.14, som går
-före resten av §0.**
+steg 4 sedan §0.18), riktade sökningar, graderade källor, en strukturerad
+marknadsbild och fynd med länk i steg 6 och på Lindos kort. **§0.18**
+låter Lindo hjälpa användaren att hitta sin första kundgrupp — där
+problemet är mest akut och som kan och vill betala — i steg 4, och stämma
+av valet mot researchen i steg 8, utan nya steg och utan nya anrop.
+**§0 gäller; §0.18 går före §0.17, som går före §0.16, som går före §0.15
+och §0.14, som går före resten av §0.**
 §1–§10 beskriver fas 1–2 och står kvar som historik; där de krockar med §0
 gäller §0.
 
@@ -414,6 +417,12 @@ på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
 
 #### Steg 4 — Utvidga problemet
 
+> **Ändrat av §0.18:** frågan är Lindos hypotes om var problemet är
+> störst ("Jag tror problemet är störst för …, eftersom …. Stämmer det?")
+> med smalare kundgrupper och "Behåll min kundgrupp" som svar; korten
+> resonerar om var problemet är mest akut, och valet blir första
+> kundgruppen.
+
 - **Fråga:** `answerCustomer`s `nextQuestion` — vald efter
   informationsvärde inom stegets frågefält: orsaker och konsekvenser,
   och för den som redan svarat på det vem som bär kostnaden i dag, vem
@@ -518,6 +527,11 @@ på skärmen (0.5); `"…"` i väntetexterna är början av användarens svar.
 - **Idékartan:** Kärnan ← den valda kärnan.
 
 #### Steg 8 — Det unika och affären
+
+> **Ändrat av §0.18:** steg 8 har 1–2 kort (första kundgruppen mot
+> researchen och en första väg att nå den) och frågan "Är det här gruppen
+> du börjar med?" — behålla eller justera. Det unika och affären läses ur
+> det användaren redan sagt.
 
 - **Fråga:** `proposeMechanisms`s `nextQuestion`, med den valda kärnans
   spegling som lead (ingen när den egna kärnan behölls — den speglingen
@@ -1515,9 +1529,10 @@ före §0.15 och §0.14.**
    steg 3 och 6 visar bara insikten; steg 4 börjar sedan med kvittensen
    och tankarna om kunden, och steg 7 med kvittensen och "Så kan du
    vinna". Steg 5 och 7: kvittens och tankar, sedan skriver användaren
-   först ("Vet inte – visa Lindos förslag" finns). Steg 8 har inga egna
-   kort; steg 9 börjar med kvittensen av steg 8, sedan Lindos råd —
-   stegets tankar — och frågan om stoppregeln.
+   först ("Vet inte – visa Lindos förslag" finns). Steg 8 har sedan §0.18
+   1–2 kort om första kundgruppen (från steg 7:s anrop); steg 9 börjar
+   med kvittensen av steg 8, sedan Lindos råd — stegets tankar — och
+   frågan om stoppregeln.
 
 2. **Steg 1 — en runda, ingen loop.** Efter "Klar" visar Lindo
    **"Har jag fattat rätt?"** med speglingen: 1–2 meningar som BARA
@@ -1729,15 +1744,16 @@ gäller §0.16.
 2. **Två körningar per session, båda i bakgrunden.** Den breda (ämnet
    `marknad`, frågan `buildMarketQuery(idé)` i `ctx.researchQuery`) startar
    när idén skickas, parallellt med speglingen. Den riktade (ämnet
-   `segment`, frågan `buildSegmentQuery(idé, kunden och situationen)` i
-   `ctx.segmentQuery`) startar när steg 3 är klart (`startSegment`) — då
-   är kunden och situationen kända. Användaren väntar aldrig på den
+   `segment`, frågan `buildSegmentQuery(idé, första kundgruppen och
+   situationen)` i `ctx.segmentQuery`) startar sedan §0.18 när steg 4 är
+   klart (`startSegment`) — då är första kundgruppen vald. Användaren väntar aldrig på den
    riktade; ett steg väntar som förut högst 8 sekunder, en gång, på den
    breda (`MARKET_WAIT_MS`). Servern väntar upp till tre minuter på
    agenten (`BACKGROUND_RESEARCH_MS`), klienten upp till fyra
    (`MARKET_TIMEOUT_MS`). Regeln: den breda körs en gång och får ett omtag
    om idén ändras i grunden i steg 1; den riktade körs en gång och får ett
-   omtag om svaret i steg 3 ändras (inte vid en rättelse i idékartan). Steg
+   omtag om valet av första kundgrupp i steg 4 ändras (inte vid en
+   rättelse i idékartan). Steg
    6 och konkurrentkartan startar ALDRIG en ny sökning: de läser båda
    körningarnas fynd ur cachen, minnescachen eller en körning som pågår
    (`contextFindings`, `research(…, { startNew: false })`), och finns
@@ -1753,8 +1769,8 @@ gäller §0.16.
    recensioner, communities), misslyckade försök (nedlagt, konkurs, "post
    mortem") och regler och trender — och sedan `fetch_url` på de två–tre
    viktigaste konkurrenternas egna sajter. Den riktade körningen söker
-   konkurrenter för just segmentet, vad segmentet använder i dag och
-   klagar på, segmentets egna ord, svenska och nordiska aktörer och
+   konkurrenter för just segmentet (första kundgruppen), vad segmentet
+   använder och betalar för i dag och klagar på, segmentets egna ord, svenska och nordiska aktörer och
    mötesplatser för segmentet, och misslyckade försök att nå det.
    `web_search` har svensk sökplats (`user_location.country: "SE"`),
    `fetch_url` högst tre sidor. Källreglerna: produkter före forskning
@@ -1858,10 +1874,10 @@ gäller §0.16.
    - **Tillägget i steg 1** står först i frågan till den breda körningens
      omtag (`buildMarketQuery(idé, tillägg)`), så att det inte kapas bort
      när idén är lång; utan tillägg är frågan exakt som förut.
-   - **Den riktade körningens omtag** avgörs av det användaren själv
-     svarade i steg 3 (och idén med tillägget, `ctx.researchIdea`) — inte
-     av Lindos formulering av kunden, som kan låta lite annorlunda när
-     steget körs om.
+   - **Den riktade körningens omtag** avgörs sedan §0.18 av användarens
+     val av första kundgrupp i steg 4 (och idén med tillägget,
+     `ctx.researchIdea`) — inte av Lindos formulering av situationen, som
+     kan låta lite annorlunda när ett steg körs om.
    - **Tak för hela kontexten:** `SkarpContextSchema` tar emot högst
      200 000 tecken (JSON); följdfrågorna i slutkortet högst 4 000 tecken
      per meddelande och svaret i "Fråga Lindo om idén" högst cirka 600
@@ -1885,6 +1901,133 @@ v2, `finding` på kandidaterna, `doNothingSource`), `skarp/sharp.ts`
 (`contextFindings`, `doNothingFindingOf`, `competitorCandidates`),
 `routes/skarp.tsx` (`startSegment`, `marketFor`), `RealityView` (grupperna)
 och `ContributionList` (fyndlänken). Kompass-koden är orörd.
+
+### 0.18 Första kundgruppen: från problemet till köparen
+
+Flödet utgick från att användaren redan vet vem kunden är. §0.18 låter
+Lindo hjälpa användaren att smalna av till den kundgrupp där problemet
+är mest akut och som kan och vill betala, och sedan stämma av valet mot
+researchen — utan nya steg och utan nya anrop. **§0.18 går före §0.17
+punkt 2 (när den riktade körningen startar) och före §0.16 och §0.9 där
+de beskriver steg 4 och 8.** Principerna gäller oförändrade: ge först,
+ICP-nivå (en kundgrupp, aldrig en person eller ett enskilt företag),
+vardagligt språk, hypoteser som hypoteser, inga påhittade fakta.
+
+1. **Steg 3 är oförändrat** — situationen: när, vad som utlöser
+   problemet, vad kunden gör i dag. Enda tillägget: ser Lindo en
+   uppenbart intressantare kundgrupp får ETT av korten på steg 3:s skärm
+   (från steg 2:s anrop, `answerWhyYou`) vara ett spår — rubriken säger
+   gruppen och texten börjar "Ett spår att ha i bakhuvudet: …", som en
+   gissning. Frågan byter inte kund.
+
+2. **Steg 4 — kundgruppen växer fram ur problemet.** Korten (från steg
+   3:s anrop, `answerCustomer`) resonerar om var problemet är mest akut
+   utifrån svaren och marknadsbilden: för vilka det händer ofta, vad det
+   kostar, om gruppen redan betalar för en lösning, om den som har
+   problemet får bestämma om köpet, och hur lätta de är att nå — som
+   hypoteser, aldrig "oftast" eller "de flesta" (ärlighetskontrollen
+   stoppar statistik). Frågan byggs i kod (`narrowingQuestion`,
+   `first-group.ts`) av modellens delar i `narrowing` (`group`, `reason`,
+   `alternatives`, och det dolda `assumption`/`lens`):
+
+   > Jag tror problemet är störst för {grupp}, eftersom {kort skäl}.
+   > Stämmer det?
+
+   Svaren: 2–3 smalare kundgrupper (hypotesens grupp först, högst 9 ord
+   var), "Behåll min kundgrupp", "Vet inte" och fritext. Det är en
+   avsmalning inom eller nära kundgruppen från steg 3, inget byte, om
+   inte användaren själv skriver en annan grupp. Mjuka kontroller:
+   gruppens längd, att den inte är en reaktion, frågekontrollerna
+   (ärlighet, facktermer, perspektiv) på den byggda frågan.
+
+3. **Valet tolkas i kod när det är ett klick** (`resolveNarrowing`): en
+   grupp = "vald", "Behåll min kundgrupp" = gruppen från steg 3
+   (`situation.malgrupp`), "Vet inte" = hypotesens grupp som Lindos
+   gissning. Bara egen text läser steg 4:s anrop (`answerProblem`) ut,
+   med användarens egna ord (`forstaKundgrupp`, kontrollerad mot svaret).
+   Samma anrop skriver en mening om varför gruppen är rätt att börja med
+   (`forstaKundgruppVarfor`, som hypotes; "Min gissning: …" vid vet
+   inte), kvittensen säger vilken grupp ni börjar med, och korten och
+   steg 5:s fråga gäller den gruppen. Svaret på en fråga skickas nu
+   alltid med Lindos hypotes i frågetexten och de visade förslagen
+   (`QaInput.options`) — förut gick hypotesen förlorad och "Ja" stod
+   utan sammanhang.
+
+4. **Idémodellen och idékartan.** `ctx.ideaModel.forstaKundgrupp` =
+   `{ group, why, source }` (källan: vald, eget, behall, gissning) sätts
+   av koden, aldrig av modellens `modelUpdate`, och skrivs ut i
+   IDÉMODELL-blocket i varje senare anrop ("Första kundgrupp — den grupp
+   användaren valt att börja med; frågor, kort, problemramen och testet
+   utgår från den"). Att köparen i idémodellen blir den valda gruppen
+   räknas inte som att Lindo ändrar sig (`sameGroup`). Idékartans
+   kundfält får raden "Börjar med: …" ("(Lindos gissning)" vid vet inte).
+   Steg 5:s ramar formuleras för gruppen, och i Lindos råd utgår Den
+   utomstående och Exekutören från den.
+
+5. **Researchen.** Den riktade körningen startar när steg 4 är klart (i
+   stället för efter steg 3) och söker på första kundgruppen och
+   situationen (`segmentOf`, `buildSegmentQuery`); planen söker också
+   vad gruppen betalar för i dag. Omtaget: bara när valet i steg 4
+   ändras till en annan grupp, högst en gång — fortfarande två körningar
+   per session plus högst ett omtag var. Användaren väntar aldrig. Steg 6
+   tar med den riktade om den hunnit bli klar (oftare inte nu, eftersom
+   den startar ett steg senare); steg 7–10 får den.
+
+6. **Steg 8 — bekräfta valet.** Steg 7:s anrop (`proposeMechanisms`) tar
+   redan fram steg 8:s 1–2 kort (`GROUP_CHECK_CARDS_RULE`): en
+   avstämning av första kundgruppen mot marknadsbilden — konkurrenter som
+   redan tar just den gruppen (namnet ordagrant, "Hittat på nätet" med
+   länk), tecken på att gruppen betalar för något liknande i dag; säger
+   researchen inget: "jag hittade ingen som riktar sig just till …",
+   aldrig "ingen gör det" — och en konkret första väg att nå gruppen där
+   den redan finns, på gruppnivå (aldrig en ringlista). Frågan byggs i
+   kod (`groupCheckQuestion`):
+
+   > {Lindos slutsats av avstämningen, som hypotes} Är det här gruppen
+   > du börjar med?
+
+   Svaren: "Ja, jag börjar där", 1–2 "Hellre {justerad grupp}", "Vet
+   inte" och fritext. Steg 8:s anrop (`answerUnique`) tolkar valet
+   (`resolveGroupCheck`: behålla och vet inte = samma grupp, "Hellre …" =
+   den justerade, egen text läses ut), skriver om varför-meningen nu när
+   gruppen stämts av mot researchen, och läser det unika och affären ur
+   det användaren redan sagt (frågan i steget handlar om gruppen). En
+   justering i steg 8 startar ingen ny research.
+
+7. **Slutkortet** har raden "Första kundgrupp" i "Din idé, del för del":
+   gruppen och en mening om varför, märkt "Lindos tolkning" (gruppen
+   märkt "Dina ord" bara när användaren skrev den själv). Kopian har
+   samma rad. Testkortet riktas mot gruppen: hypotesen och metoden
+   gäller just den, och metoden når den där den finns.
+
+8. **Budgeten** är oförändrad: 20 logiska anrop utan följdfrågor, 21 med
+   ett tillägg i steg 1, tak omkring 25. Allt ovan görs i anrop som redan
+   fanns.
+
+9. **Testerna.** Kunskapstestet del 12 (frågorna, tolkningen av valet,
+   researchfrågan, idémodellen). Flödestestet: i realistiskt läge
+   smalnar testpersonen av en gång (klickar en av Lindos andra grupper i
+   steg 4) och bekräftar i steg 8; i vagt läge väljer hen "Behåll min
+   kundgrupp" och svarar "Vet inte" i steg 8. Webbläsarriggen kör tre
+   idéer: en som smalnar av och bekräftar, en som behåller och sedan
+   justerar, en som svarar "Vet inte" i båda.
+
+**Konstruktion (`gxy652fxr`).** `skarp/first-group.ts` (konstanterna,
+`narrowingQuestion`, `groupCheckQuestion`, `resolveNarrowing`,
+`resolveGroupCheck`, `groupProblem`, `firstGroupLine`), `skarp/schemas.ts`
+(`NarrowingSchema`, `GroupCheckSchema`, `forstaKundgrupp`/
+`forstaKundgruppVarfor` i steg 4 och 8, korten i steg 7), `skarp/types.ts`
+(`ideaModel.forstaKundgrupp`, `QaInput.options`, IDÉMODELL-raden),
+`skarp/idea-model.ts` (`sameGroup`), `skarp/sharp.ts`
+(`GROUP_CHECK_CARDS_RULE`, `changedMind` med den valda gruppen),
+`skarp/step2-why.ts` (spåret), `step3-customer.ts`, `step4-problem.ts`
+(`currentGroupOf`, `ownGroupProblem`), `step5-reframe.ts`,
+`step7-mechanism.ts`, `step8-unique.ts` (`firstGroupOf`),
+`step9-council.ts`, `step10-closing.ts`, `skarp/research.ts`
+(`segmentOf`), `research/plans.ts`, `routes/skarp.tsx`
+(`withFirstGroup`, `startSegment` efter steg 4, steg 8:s kort,
+`closingFirstGroup`), `IdeaMap` (`extra`), `ClosingCard` och `render.ts`
+(raden "Första kundgrupp"). Kompass-koden är orörd.
 
 ## 1. Principerna, kort
 

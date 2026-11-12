@@ -73,16 +73,17 @@ användarens fördel (erfarenhet, insikt, åtkomst), aldrig en ringlista.
 gissning, och går vidare.
 
 **Idémodellen (§0.16):** Lindo har en löpande bild av idén i
-`ctx.ideaModel` — vem som säljer, köper, betalar och bestämmer, och
-kärnhypoteserna — som varje steg uppdaterar dolt och som skickas med i
+`ctx.ideaModel` — vem som säljer, köper, betalar och bestämmer,
+kärnhypoteserna och första kundgruppen — som varje steg uppdaterar dolt och som skickas med i
 varje anrop tillsammans med det användaren sagt och det Lindo redan
 föreslagit. Lindo får inte motsäga sig själv utan att säga att den
 ändrar sig och varför, och samma perspektiv kommer inte tillbaka, inte
 heller i en rättelserunda.
 
 **Researchen: två körningar i bakgrunden (§0.17):** den breda när idén
-skickas (parallellt med speglingen) och den riktade när steg 3 är klart
-(kunden och situationen) — användaren väntar aldrig på dem. Perplexitys
+skickas (parallellt med speglingen) och den riktade när steg 4 är klart
+(första kundgruppen och situationen, §0.18) — användaren väntar aldrig
+på dem. Perplexitys
 Agent API får `input`, `instructions`, `tools` (web_search med svensk
 sökplats, fetch_url för konkurrenternas egna sajter) och `max_steps`
 (`max_tool_calls` finns inte i API:t); sökplanerna kräver flera separata
@@ -100,11 +101,31 @@ kort i steg 2–8 får bygga på ett fynd och visar då "Hittat på nätet" med
 länk. Steg 6 läser bara cachen (ingen ny sökning) och visar fynden
 grupperade — direkta, indirekta, om kunden inte gör något — med en
 mening och en länk var. Den breda får ett omtag om idén ändras i grunden
-i steg 1, den riktade om användarens eget svar i steg 3 ändras. Servern
+i steg 1, den riktade om valet av första kundgrupp i steg 4 ändras. Servern
 har ett eget tak för researchen (per instans) och kör bara frågor i
 Skärps format; webbtext och användarens svar är material, aldrig
 instruktioner, och en direkt konkurrent måste stå i fyndets rubrik eller
 domän (§0.17 punkt 9). Kompass anrop är oförändrade.
+
+**Första kundgruppen (§0.18):** Lindo hjälper användaren att smalna av
+till den kundgrupp där problemet är mest akut och som kan och vill
+betala — utan nya steg och utan nya anrop. Steg 3 är oförändrat
+(situationen); ett av korten där får vara "Ett spår att ha i
+bakhuvudet: …" när Lindo ser en uppenbart intressantare grupp. I steg 4
+resonerar korten om var problemet är mest akut (hur ofta, vad det
+kostar, om de redan betalar, om de får bestämma, hur lätta de är att
+nå) och frågan byggs i kod: "Jag tror problemet är störst för …,
+eftersom …. Stämmer det?" med 2–3 smalare grupper, "Behåll min
+kundgrupp", "Vet inte" och fritext — en avsmalning, inget byte om inte
+användaren väljer det. Valet tolkas i kod när det är ett klick, sparas
+i `ctx.ideaModel.forstaKundgrupp` (grupp, varför, källa), syns i
+idékartans kundfält ("Börjar med: …"), problemramen i steg 5 och testet
+formuleras för den, och den riktade researchen söker på den. Steg 8 får
+1–2 kort (från steg 7:s anrop) som stämmer av gruppen mot researchen och
+föreslår en första väg att nå den, och frågan "Är det här gruppen du
+börjar med?" — "Ja, jag börjar där" eller "Hellre …". Slutkortet har
+raden "Första kundgrupp" med en mening om varför. Svaren skickas med
+Lindos hypotes och de visade förslagen.
 
 **Nivåregeln:** frågor och förslag handlar om målgruppen och den typiska
 kunden (ICP), aldrig om enskilda personer ("Tänk på en typisk grundare
@@ -143,7 +164,8 @@ före testkortet, som utvecklar Ordförandens slutsats.
 
 Slutkortet har inga sifferbetyg: det börjar med det som är starkt, ger
 varje område "Starkt", "På god väg" eller "Behöver mer underlag" med en
-mening om nästa steg, och samlar "Perspektiv du fått av Lindo", Lindos
+mening om nästa steg, visar första kundgruppen med en mening om varför,
+och samlar "Perspektiv du fått av Lindo", Lindos
 råd, ett första test och frågor att ta med till rådgivaren. Sedan
 Skärpan (§0.13) tänker Lindo med en inbyggd kunskapsbas — som sedan
 §0.14 i första hand formar bidragen, inte bara frågorna — tankeverktyg

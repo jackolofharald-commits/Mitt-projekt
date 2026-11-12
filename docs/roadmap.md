@@ -2,7 +2,7 @@
 
 ## Funktionsbacklogg, i prioritetsordning
 
-1. **Klart:** Extern research (Perplexity Agent API) är inkopplad i kärnflödet, med cachning, bakgrundsstart och skydd mot dubbla/samtidiga anrop. I Skärp-läget (efter flödesombyggnaden, se `docs/skarp-flode.md`) triggas EN konkurrent-sökning i bakgrunden direkt efter steg 3 ("Kunden i situationen") och konsumeras i steg 6 ("Verkligheten") av både "Det här hittade vi ute i världen" och konkurrentkartan — högst en körning per session (två bara om användaren redigerar steg 1 eller 3 i efterhand). Ingen separat "problem"-sökning körs i Skärp-läget. I Kompass-läget (oförändrat flöde) fortfarande i problem- och konkurrentstegen.
+1. **Klart:** Extern research (Perplexity Agent API) är inkopplad i kärnflödet, med cachning, bakgrundsstart och skydd mot dubbla/samtidiga anrop. I Skärp-läget körs två sökningar i bakgrunden (se `docs/skarp-flode.md` §0.17 och §0.18): en bred när idén skickas och en riktad när första kundgruppen är vald i steg 4. De kondenseras till en marknadsbild som följer med i alla senare steg, och steg 6 ("Verkligheten") och konkurrentkartan läser fynden ur cachen. Ingen separat "problem"-sökning körs i Skärp-läget. I Kompass-läget (oförändrat flöde) fortfarande i problem- och konkurrentstegen.
 
    Bevisat nödvändigt: i ett testfall (AI-drivet sällskapsspel) missade verktyget de mest relevanta, redan existerande konkurrenterna helt eftersom det bara resonerade från egen kunskap utan att söka.
 
